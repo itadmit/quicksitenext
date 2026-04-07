@@ -1,0 +1,24 @@
+---
+description: Public tenant site rendering conventions
+globs: "{app/site/**,components/tenant/**}"
+alwaysApply: false
+---
+
+# Public Tenant Site
+
+## Tenant Resolution
+
+Layout reads `x-tenant-slug` / `x-tenant-host` headers (set by middleware).
+Always check `verified: true` for custom domain lookups.
+
+## Blocks
+
+Pages are arrays of blocks stored as JSON. Block types: hero, text, image, gallery, cta, contactForm, spacer, html, postsGrid.
+
+`BlockRenderer` parses JSON and maps to components in `components/tenant/blocks/`.
+
+## Styling
+
+- Use CSS variable `var(--tenant-primary)` for tenant brand color
+- Set in layout via `style={{ '--tenant-primary': primaryColor }}`
+- Responsive: mobile-first with Tailwind breakpoints

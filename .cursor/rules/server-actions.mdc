@@ -1,0 +1,29 @@
+---
+description: Server actions patterns for dashboard CRUD
+globs: app/dashboard/**/actions.ts
+alwaysApply: false
+---
+
+# Server Actions
+
+- Always start with `'use server'`
+- Always authenticate with `requireUser()` from `@/lib/auth`
+- Get tenantId via `user.memberships[0].tenantId`
+- Validate input with Zod
+- Wrap DB mutations in try/catch
+- Call `revalidatePath()` after mutations
+- Use `redirect()` for navigation after create/delete
+- Return `{ error: string }` or `{ success: true }` — never throw from actions
+
+```typescript
+'use server';
+import { requireUser } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+
+export async function updateAction(prev: State, fd: FormData): Promise<State> {
+  const user = await requireUser();
+  const tenantId = user.memberships[0].tenantId;
+  // validate, mutate, revalidate
+}
+```

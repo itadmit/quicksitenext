@@ -1,0 +1,50 @@
+---
+description: SaaS CMS Platform architecture and conventions
+alwaysApply: true
+---
+
+# SaaS CMS Platform — Architecture
+
+Multi-tenant CMS platform. Next.js 15 App Router + Prisma + PostgreSQL + Tailwind.
+
+## Core Principles
+
+1. **Server-First** — Pages are Server Components. Data fetched at server level. No `useEffect` for data loading. No "loading..." spinners.
+2. **Client components only for interactivity** — Forms, modals, drag-and-drop. Always receive data via props from parent Server Component.
+3. **Hebrew RTL** — All UI is `dir="rtl"` in Hebrew. Use `font-noto` for headings, `font-sans` for body.
+
+## Multi-Tenancy
+
+- Middleware resolves tenant from Host header (`x-tenant-slug` / `x-tenant-host`)
+- Platform host = auth pages + dashboard
+- Tenant host = public site (rewritten to `/site/...`)
+- TenantId always from `user.memberships[0].tenantId` in dashboard
+
+## Data Flow Pattern
+
+```
+// ✅ CORRECT — Server Component fetches, Client Component interacts
+// page.tsx (Server Component)
+export default async function Page() {
+  const data = await prisma.xxx.findMany({ where: { tenantId } });
+  return <ClientForm data={data} />;
+}
+
+// ❌ WRONG — Client Component fetches on mount
+'use client'
+export default function Page() {
+  useEffect(() => { fetchData().then(setData) }, []);
+}
+```
+
+## After Mutations
+
+Server actions call `revalidatePath()` — page auto-refreshes with fresh data. For redirects use `redirect()`.
+
+## Styling
+
+- Primary: `#a28b5d`, Charcoal: `#151513`, Nude: `#EFEBE6`, Background: `#fbfaf9`
+- Labels: `text-[10px] font-bold uppercase tracking-widest text-charcoal/60`
+- Inputs: `border border-charcoal/20 bg-white px-4 py-3 focus:border-primary focus:outline-none`
+- Primary buttons: `bg-primary text-white text-xs font-bold uppercase tracking-widest`
+- Secondary buttons: `border border-charcoal/20 text-charcoal`

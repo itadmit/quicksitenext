@@ -1,0 +1,307 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────── Auth & Multi-tenancy ─────────────
+
+model User {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  email        String   @unique
+  passwordHash String
+  name         String
+  avatarUrl    String?
+
+  memberships TenantMember[]
+  sessions    Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  slug      String   @unique
+  name      String
+
+  members         TenantMember[]
+  domains         Domain[]
+  pages           Page[]
+  posts           Post[]
+  categories      Category[]
+  tags            Tag[]
+  customPostTypes CustomPostType[]
+  menus           Menu[]
+  popups          Popup[]
+  leads           Lead[]
+  mediaItems      MediaItem[]
+  siteSettings    SiteSettings?
+}
+
+model TenantMember {
+  id       String @id @default(cuid())
+  tenantId String
+  userId   String
+  role     String @default("owner") // owner | editor | viewer
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+}
+
+model Domain {
+  id         String   @id @default(cuid())
+  tenantId   String
+  hostname   String   @unique
+  type       String   @default("subdomain") // subdomain | custom
+  verified   Boolean  @default(false)
+  verifiedAt DateTime?
+  createdAt  DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+// ───────────── Content: Pages ─────────────
+
+model Page {
+  id        String   @id @default(cuid())
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title    String
+  slug     String
+  template String  @default("blank") // blank | home | contact | landing | blog
+  blocks   String  @default("[]") // JSON array of blocks
+  status   String  @default("draft") // draft | published
+  isHome   Boolean @default(false)
+  sortOrder Int    @default(0)
+
+  seoTitle       String?
+  seoDescription String?
+  seoImage       String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+}
+
+// ───────────── Content: Posts ─────────────
+
+model Post {
+  id        String   @id @default(cuid())
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String
+  slug        String
+  excerpt     String?
+  content     String  @default("[]") // JSON rich content blocks
+  coverImage  String?
+  status      String  @default("draft") // draft | published
+  publishedAt DateTime?
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  postTags PostTag[]
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+}
+
+model Category {
+  id       String @id @default(cuid())
+  tenantId String
+  name     String
+  slug     String
+
+  posts  Post[]
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+}
+
+model Tag {
+  id       String @id @default(cuid())
+  tenantId String
+  name     String
+  slug     String
+
+  postTags PostTag[]
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+// ───────────── Content: Custom Post Types ─────────────
+
+model CustomPostType {
+  id       String @id @default(cuid())
+  tenantId String
+  name     String
+  slug     String
+  fields   String @default("[]") // JSON schema for custom fields
+
+  entries CustomPostEntry[]
+  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+}
+
+model CustomPostEntry {
+  id        String   @id @default(cuid())
+  cptId     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  slug      String
+  data      String   @default("{}") // JSON data matching CPT fields
+  status    String   @default("draft") // draft | published
+
+  cpt CustomPostType @relation(fields: [cptId], references: [id], onDelete: Cascade)
+
+  @@unique([cptId, slug])
+}
+
+// ───────────── Navigation ─────────────
+
+model Menu {
+  id       String @id @default(cuid())
+  tenantId String
+  name     String
+  location String @default("header") // header | footer | sidebar
+
+  items  MenuItem[]
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, location])
+}
+
+model MenuItem {
+  id       String @id @default(cuid())
+  menuId   String
+  parentId String?
+  label    String
+  href     String   @default("#")
+  target   String   @default("_self") // _self | _blank
+  sortOrder Int     @default(0)
+
+  menu     Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  parent   MenuItem?  @relation("MenuItemTree", fields: [parentId], references: [id])
+  children MenuItem[] @relation("MenuItemTree")
+}
+
+// ───────────── Popups ─────────────
+
+model Popup {
+  id        String   @id @default(cuid())
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name     String
+  enabled  Boolean @default(true)
+  priority Int     @default(50)
+
+  trigger           String  @default("on_load") // on_load | exit_intent | time_on_site | scroll_depth
+  delayMs           Int     @default(0)
+  timeOnSiteMs      Int     @default(15000)
+  scrollDepthPercent Int    @default(50)
+
+  title        String
+  body         String
+  imageUrl     String?
+  ctaLabel     String?
+  ctaHref      String?
+  dismissLabel String  @default("סגור")
+
+  frequency            String @default("once_per_session") // always | once_per_session | once_per_days_after_dismiss
+  hideDaysAfterDismiss Int    @default(7)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+// ───────────── Leads ─────────────
+
+model Lead {
+  id        String   @id @default(cuid())
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name    String
+  email   String
+  phone   String?
+  company String?
+  source  String  @default("website_contact")
+  message String?
+
+  status              String @default("NEW") // NEW | CONTACTED | QUALIFIED | PROPOSAL_SENT | WON | LOST
+  internalNotes       String?
+  lastResponseSummary String?
+  lastResponseAt      DateTime?
+  lastResponseChannel String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+// ───────────── Media ─────────────
+
+model MediaItem {
+  id        String   @id @default(cuid())
+  tenantId  String
+  createdAt DateTime @default(now())
+  filename  String
+  url       String
+  mimeType  String
+  size      Int      @default(0) // bytes
+  alt       String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+// ───────────── Site Settings (singleton per tenant) ─────────────
+
+model SiteSettings {
+  id       String @id @default(cuid())
+  tenantId String @unique
+
+  siteName           String  @default("")
+  tagline            String  @default("")
+  logoUrl            String?
+  faviconUrl         String?
+  primaryColor       String  @default("#a28b5d")
+  footerText         String  @default("")
+  socialLinks        String  @default("[]") // JSON array
+  customCss          String  @default("")
+  analyticsId        String  @default("")
+  defaultSeoTitle    String  @default("")
+  defaultSeoDesc     String  @default("")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}

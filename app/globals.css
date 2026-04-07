@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans text-charcoal bg-background-light;
+  }
+  h1, h2, h3, h4, h5, h6, .headline-font {
+    @apply font-noto font-bold tracking-tight;
+  }
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reveal-active {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.gradient-fade-bottom {
+  background: linear-gradient(to top, #fbfaf9 15%, rgba(251, 250, 249, 0) 100%);
+}

@@ -1,0 +1,36 @@
+---
+description: Dashboard page patterns — server-first rendering
+globs: app/dashboard/**/page.tsx
+alwaysApply: false
+---
+
+# Dashboard Pages — Server-First
+
+Every dashboard page MUST be a Server Component that fetches data at the top level.
+
+## Pattern
+
+```tsx
+// page.tsx — Server Component (NO 'use client')
+import { getCurrentUser } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { redirect } from 'next/navigation';
+import ClientPart from './ClientPart';
+
+export default async function Page() {
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  const tenantId = user.memberships[0].tenantId;
+
+  const data = await prisma.xxx.findMany({ where: { tenantId } });
+  return <ClientPart data={data} />;
+}
+```
+
+## Rules
+
+- **NEVER** use `useEffect` to fetch data on page load
+- **NEVER** show "טוען..." loading spinners for initial page data
+- Pass all data as props to client components
+- Client components handle forms, filters, modals — NOT data fetching
+- Use `searchParams` for server-side filtering (not client state)
