@@ -20,6 +20,7 @@ const config: Config = {
         sans: ['var(--font-assistant)', 'sans-serif'],
         noto: ['var(--font-noto-hebrew)', 'sans-serif'],
         display: ['var(--font-bellefair)', 'serif'],
+        logo: ['var(--font-space-grotesk)', 'sans-serif'],
       },
       animation: {
         'slow-zoom': 'slow-zoom 20s ease-in-out infinite alternate',
