@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { redirect, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Block } from '@/lib/block-registry';
 import BlockEditor from '@/components/dashboard/BlockEditor';
@@ -12,10 +12,7 @@ type Props = { params: Promise<{ id: string }> };
 export default async function EditPagePage({ params }: Props) {
   const { id } = await params;
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
-
-  const tenantId = user.memberships[0]?.tenantId;
-  if (!tenantId) redirect('/register');
+  const tenantId = user!.memberships[0].tenantId;
 
   const page = await prisma.page.findFirst({
     where: { id, tenantId },

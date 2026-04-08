@@ -1,16 +1,12 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export const metadata = { title: 'עמודים | דשבורד' };
 
 export default async function PagesListPage() {
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
-
-  const tenantId = user.memberships[0]?.tenantId;
-  if (!tenantId) redirect('/register');
+  const tenantId = user!.memberships[0].tenantId;
 
   const pages = await prisma.page.findMany({
     where: { tenantId },

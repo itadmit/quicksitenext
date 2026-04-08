@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { createHmac, randomBytes } from 'crypto';
 import { prisma } from './prisma';
@@ -36,7 +37,7 @@ export async function createSession(userId: string): Promise<string> {
   return raw;
 }
 
-export async function getSession() {
+export const getSession = cache(async () => {
   const jar = await cookies();
   const raw = jar.get(SESSION_COOKIE)?.value;
   if (!raw) return null;
@@ -61,13 +62,13 @@ export async function getSession() {
   }
 
   return session;
-}
+});
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   const session = await getSession();
   if (!session) return null;
   return session.user;
-}
+});
 
 export async function requireUser() {
   const user = await getCurrentUser();

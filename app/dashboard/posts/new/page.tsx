@@ -1,12 +1,10 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { redirect } from 'next/navigation';
 import PostForm from './PostForm';
 
 export default async function NewPostPage() {
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
-  const tenantId = user.memberships[0].tenantId;
+  const tenantId = user!.memberships[0].tenantId;
   const categories = await prisma.category.findMany({ where: { tenantId }, orderBy: { name: 'asc' } });
 
   return (

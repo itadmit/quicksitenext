@@ -1,12 +1,11 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { redirect, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import EditPostForm from './EditPostForm';
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
-  const tenantId = user.memberships[0].tenantId;
+  const tenantId = user!.memberships[0].tenantId;
   const { id } = await params;
 
   const [post, categories] = await Promise.all([
