@@ -204,3 +204,48 @@
 .animate-marquee {
   animation: marquee 30s linear infinite;
 }
+
+/* ============================================
+   Homepage — Ocean Fresh / Stripe-inspired
+   ============================================ */
+
+@keyframes hp-enter {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hp-enter {
+  opacity: 0;
+  animation: hp-enter 0.7s ease-out forwards;
+}
+
+.hp-gradient-text {
+  background: linear-gradient(135deg, #635BFF 0%, #7A73FF 40%, #0A2540 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hp-card {
+  transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.hp-card:hover {
+  box-shadow: 0 8px 30px rgba(99, 91, 255, 0.08);
+}
+
+.hp-card:hover .hp-card-icon {
+  color: #635BFF;
+}
+
+.hp-card-icon {
+  transition: color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-enter {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

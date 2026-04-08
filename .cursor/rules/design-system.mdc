@@ -1,0 +1,243 @@
+---
+description: QuickSite Design System — unified visual language for homepage, dashboard, and all platform UI
+globs: app/**/*.tsx, components/**/*.tsx
+alwaysApply: true
+---
+
+# QuickSite Design System
+
+Stripe-inspired, clean, professional. Every page — homepage, dashboard, auth — follows this system.
+
+## Color Palette
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `ocean` | `#635BFF` | Primary brand, buttons, links, active states |
+| `ocean-light` | `#7A73FF` | Hover accents, gradient endpoints |
+| `ocean-bg` | `#F6F5FF` | Light tinted backgrounds (stats, pricing) |
+| `navy` | `#0A2540` | Dark text, dark sections, headings |
+| `white` | `#FFFFFF` | Page background, cards |
+| `slate-100` | — | Borders, dividers |
+| `slate-400/500` | — | Secondary text, labels |
+| `emerald-500` | — | Success states |
+| `red-500` | — | Error states, destructive actions |
+| `amber-500` | — | Warning states |
+
+**Legacy tokens** (`primary`, `charcoal`, `nude`, `gold-soft`) — avoid in new code. Use `ocean` and `navy` instead.
+
+## Typography
+
+| Element | Classes |
+|---------|---------|
+| Page heading | `font-noto text-3xl font-black text-navy` |
+| Section heading | `font-noto text-[2.75rem] font-black leading-[1.15] text-navy` |
+| Card title | `font-noto text-base font-bold text-navy` |
+| Body text | `font-sans text-sm text-slate-600` |
+| Muted text | `text-sm text-slate-500` |
+| Label | `text-[10px] font-bold uppercase tracking-widest text-navy/60` |
+| Logo | `font-logo font-bold` |
+| Numbers / stats | `font-noto font-black text-navy` |
+
+**Rules:**
+- `font-noto` for all headings (Hebrew). Never use `font-display` for Hebrew text.
+- `font-sans` (Assistant) for body and UI text.
+- `font-logo` (Space Grotesk) only for the QuickSite logo.
+
+## Buttons
+
+### Primary
+```
+rounded-full bg-ocean px-5 py-2.5 text-sm font-semibold text-white
+transition-colors duration-200 hover:bg-ocean/85 cursor-pointer
+```
+
+### Secondary
+```
+rounded-full border border-slate-200 px-5 py-2.5 text-sm font-semibold text-navy
+transition-colors duration-200 hover:border-ocean hover:text-ocean cursor-pointer
+```
+
+### Ghost (on dark backgrounds)
+```
+rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-white/50
+transition-colors duration-200 hover:border-white/30 hover:text-white/75 cursor-pointer
+```
+
+### Destructive
+```
+rounded-full bg-red-500 px-5 py-2.5 text-sm font-semibold text-white
+transition-colors duration-200 hover:bg-red-600 cursor-pointer
+```
+
+**Rules:**
+- Always add `cursor-pointer` to interactive elements.
+- All buttons use `rounded-full` for pill shape.
+- Consistent padding: `px-5 py-2.5` standard, `px-8 py-3.5` for hero CTAs.
+- Use `group` + arrow icon for CTA buttons with directional arrows.
+
+## Inputs & Forms
+
+### Text Input
+```
+w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-navy
+placeholder:text-slate-300
+focus:border-ocean focus:outline-none focus:ring-1 focus:ring-ocean/30
+```
+
+### Select
+```
+w-full cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-navy
+focus:border-ocean focus:outline-none focus:ring-1 focus:ring-ocean/30
+```
+
+### Textarea
+```
+w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-navy
+placeholder:text-slate-300 resize-none
+focus:border-ocean focus:outline-none focus:ring-1 focus:ring-ocean/30
+```
+
+### Label
+```
+mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60
+```
+
+### Field Error
+```
+mt-1 text-xs text-red-500
+```
+
+**Rules:**
+- Inputs always use `rounded-lg`, NOT `rounded-full`.
+- Use consistent padding `px-4 py-3` for all input types.
+- `dir="ltr"` on email, phone, URL fields.
+- Validation with Zod in server actions. Show inline errors below fields.
+
+## Cards
+
+### Light card (on white/light bg)
+```
+rounded-2xl border border-slate-200 bg-white p-7
+transition: background-color 200ms, border-color 200ms, box-shadow 200ms
+hover:border-ocean/25 hover:shadow-lg hover:shadow-ocean/[0.06]
+```
+
+### Dark card (on navy bg)
+```
+rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6
+hover:border-ocean-light/20 hover:bg-white/[0.06]
+```
+
+### Dashboard panel
+```
+rounded-2xl border border-slate-200 bg-white p-6
+```
+
+## Tables (Dashboard)
+
+```tsx
+<div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+  <table className="w-full text-right">
+    <thead>
+      <tr className="border-b border-slate-100 bg-ocean-bg">
+        <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-navy/60">
+          ...
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr className="border-b border-slate-50 transition-colors hover:bg-ocean-bg/50">
+        <td className="px-4 py-3 text-sm text-navy">...</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+```
+
+## Status Badges
+
+```
+rounded-full px-2.5 py-0.5 text-xs font-semibold
+```
+
+| Status | Colors |
+|--------|--------|
+| Active / Published | `bg-emerald-50 text-emerald-700` |
+| Draft | `bg-slate-100 text-slate-600` |
+| New | `bg-ocean-bg text-ocean` |
+| Warning | `bg-amber-50 text-amber-700` |
+| Error / Archived | `bg-red-50 text-red-600` |
+
+## Icons
+
+**Use Lucide React exclusively.** Do NOT use Material Symbols Outlined or any icon font.
+
+```tsx
+import { FileText, Globe, Zap } from 'lucide-react';
+// Standard size in UI: h-4 w-4
+// Card/feature icon: h-[18px] w-[18px]
+// Section accent icon: h-6 w-6
+```
+
+Icon containers:
+```
+inline-flex h-10 w-10 items-center justify-center rounded-lg bg-ocean/[0.08]
+```
+
+## Layout
+
+### Dashboard Sidebar
+- Fixed right `w-64`, white bg, `border-l border-slate-100`
+- Nav items: `rounded-lg px-3 py-2.5 text-sm text-slate-500`
+- Active: `bg-ocean/10 text-ocean font-bold`
+- Logo: `font-logo font-bold text-navy`, Q badge `bg-ocean text-white`
+
+### Dashboard Content Area
+- `p-4 pt-16 md:mr-64 md:p-6 md:pt-6 lg:p-8`
+- Page heading followed by content with `mt-8`
+
+### Section Backgrounds
+- Light sections: `bg-white` or `bg-ocean-bg`
+- Dark sections: `bg-navy text-white`
+- Always use `border-t border-slate-100` between same-color sections
+
+## Motion & Transitions
+
+- Hover: `transition-colors duration-200`
+- Cards: `transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease`
+- Entrance: `hp-enter` class (CSS-only, 0.7s ease-out translateY)
+- NO infinite animations, NO 3D transforms, NO heavy glows
+- Always add `@media (prefers-reduced-motion: reduce)` for entrance animations
+
+## Dark Sections Pattern
+
+```tsx
+<section className="bg-navy px-6 py-24 text-white md:py-32">
+  <p className="text-sm font-semibold uppercase tracking-widest text-ocean-light">Label</p>
+  <h2 className="mt-4 font-noto text-3xl font-black">Heading</h2>
+  <p className="mt-6 text-white/50 leading-relaxed">Body</p>
+</section>
+```
+
+## Empty States
+
+```tsx
+<div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 p-12 text-center">
+  <Icon className="mb-4 h-10 w-10 text-slate-300" />
+  <h3 className="font-noto text-base font-bold text-navy">Title</h3>
+  <p className="mt-1 text-sm text-slate-500">Description</p>
+  <Link className="mt-4 [primary button classes]">CTA</Link>
+</div>
+```
+
+## Anti-Patterns
+
+- ❌ `bg-primary`, `text-charcoal`, `border-charcoal/10` → use `bg-ocean`, `text-navy`, `border-slate-200`
+- ❌ Material Symbols icon font → use Lucide React components
+- ❌ `font-display` for Hebrew headings → use `font-noto font-black`
+- ❌ `rounded-md` or `rounded-lg` on buttons → use `rounded-full`
+- ❌ `hover:opacity-90` → use `hover:bg-ocean/85` (explicit color shift)
+- ❌ Inconsistent input padding → always `px-4 py-3`
+- ❌ `useEffect` for data fetching → server components
+- ❌ Loading spinners for page data → server-side fetch
+- ❌ `confirm()` for destructive actions → use a styled confirmation dialog

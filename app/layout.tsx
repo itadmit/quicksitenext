@@ -17,7 +17,7 @@ const notoHebrew = Noto_Sans_Hebrew({
 });
 
 const bellefair = Bellefair({
-  subsets: ['latin'],
+  subsets: ['latin', 'hebrew'],
   weight: '400',
   variable: '--font-bellefair',
   display: 'swap',

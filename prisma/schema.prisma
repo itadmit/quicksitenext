@@ -305,3 +305,18 @@ model SiteSettings {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
+
+// ───────────── Premium Inquiries (platform-level) ─────────────
+
+model PremiumInquiry {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  name         String
+  phone        String
+  email        String
+  business     String
+  businessType String
+  inspiration  String?
+  status       String   @default("NEW")
+  notes        String?
+}

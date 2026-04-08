@@ -15,6 +15,11 @@ const config: Config = {
         nude: '#EFEBE6',
         charcoal: '#151513',
         'gold-soft': '#D4AF37',
+        ocean: '#635BFF',
+        'ocean-light': '#7A73FF',
+        'ocean-cta': '#635BFF',
+        navy: '#0A2540',
+        'ocean-bg': '#F6F5FF',
       },
       fontFamily: {
         sans: ['var(--font-assistant)', 'sans-serif'],
