@@ -1,2 +1,11 @@
-import TableSkeleton from '@/components/dashboard/TableSkeleton';
-export default function CptLoading() { return <TableSkeleton rows={3} cols={3} />; }
+import { SkeletonPageHeader, SkeletonForm, SkeletonTable } from '@/components/dashboard/Skeleton';
+
+export default function CptLoading() {
+  return (
+    <div className="animate-pulse space-y-5">
+      <SkeletonPageHeader />
+      <SkeletonForm fields={2} />
+      <SkeletonTable cols={3} rows={3} />
+    </div>
+  );
+}

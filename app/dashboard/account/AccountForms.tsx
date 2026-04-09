@@ -3,8 +3,8 @@
 import { useActionState } from 'react';
 import { updateProfileAction, changePasswordAction, type AccountActionState } from './actions';
 
-const inputCls = 'w-full border border-charcoal/20 bg-white px-4 py-3 text-charcoal focus:border-primary focus:outline-none';
-const labelCls = 'mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60';
+const inputCls = 'w-full rounded-xl border-0 bg-slate-50 px-4 py-2.5 text-sm text-navy ring-1 ring-slate-200/60 focus:outline-none focus:ring-2 focus:ring-ocean/20 transition-colors';
+const labelCls = 'mb-1 block text-xs font-medium text-slate-500';
 
 export default function AccountForms({ name, email }: { name: string; email: string }) {
   const [profileState, profileAction, profilePending] =
@@ -14,60 +14,66 @@ export default function AccountForms({ name, email }: { name: string; email: str
     useActionState<AccountActionState, FormData>(changePasswordAction, undefined);
 
   return (
-    <div className="space-y-6 max-w-xl">
-      <form action={profileAction} className="border border-charcoal/10 bg-white p-6 space-y-4">
-        <h2 className="font-noto text-lg font-bold text-charcoal">פרטים אישיים</h2>
+    <div className="space-y-5">
+      <form action={profileAction} className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <div className="border-b border-slate-100 px-6 py-4">
+          <h2 className="font-noto text-base font-semibold text-navy">פרטים אישיים</h2>
+        </div>
+        <div className="space-y-4 px-6 py-5">
+          {profileState?.error && <p className="text-sm text-red-600">{profileState.error}</p>}
+          {profileState?.success && <p className="text-sm text-green-600">הפרופיל עודכן בהצלחה</p>}
 
-        {profileState?.error && <p className="text-sm text-red-600">{profileState.error}</p>}
-        {profileState?.success && <p className="text-sm text-green-600">הפרופיל עודכן בהצלחה</p>}
+          <label className="block">
+            <span className={labelCls}>אימייל</span>
+            <input value={email} disabled className={inputCls + ' bg-slate-50 text-slate-400'} />
+          </label>
 
-        <label className="block">
-          <span className={labelCls}>אימייל</span>
-          <input value={email} disabled className={inputCls + ' bg-charcoal/5 text-charcoal/50'} />
-        </label>
+          <label className="block">
+            <span className={labelCls}>שם</span>
+            <input name="name" required defaultValue={name} className={inputCls} />
+          </label>
 
-        <label className="block">
-          <span className={labelCls}>שם</span>
-          <input name="name" required defaultValue={name} className={inputCls} />
-        </label>
-
-        <button
-          type="submit"
-          disabled={profilePending}
-          className="bg-primary px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 disabled:opacity-50"
-        >
-          {profilePending ? 'שומר...' : 'עדכן פרופיל'}
-        </button>
+          <button
+            type="submit"
+            disabled={profilePending}
+            className="rounded-full bg-ocean shadow-sm px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50"
+          >
+            {profilePending ? 'שומר...' : 'עדכן פרופיל'}
+          </button>
+        </div>
       </form>
 
-      <form action={passwordAction} className="border border-charcoal/10 bg-white p-6 space-y-4">
-        <h2 className="font-noto text-lg font-bold text-charcoal">שינוי סיסמה</h2>
+      <form action={passwordAction} className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <div className="border-b border-slate-100 px-6 py-4">
+          <h2 className="font-noto text-base font-semibold text-navy">שינוי סיסמה</h2>
+        </div>
+        <div className="space-y-4 px-6 py-5">
+          {passwordState?.error && <p className="text-sm text-red-600">{passwordState.error}</p>}
+          {passwordState?.success && <p className="text-sm text-green-600">הסיסמה שונתה בהצלחה</p>}
 
-        {passwordState?.error && <p className="text-sm text-red-600">{passwordState.error}</p>}
-        {passwordState?.success && <p className="text-sm text-green-600">הסיסמה שונתה בהצלחה</p>}
+          <label className="block">
+            <span className={labelCls}>סיסמה נוכחית</span>
+            <input name="currentPassword" type="password" required className={inputCls} />
+          </label>
 
-        <label className="block">
-          <span className={labelCls}>סיסמה נוכחית</span>
-          <input name="currentPassword" type="password" required className={inputCls} />
-        </label>
+          <label className="block">
+            <span className={labelCls}>סיסמה חדשה</span>
+            <input name="newPassword" type="password" required minLength={6} className={inputCls} />
+          </label>
 
-        <label className="block">
-          <span className={labelCls}>סיסמה חדשה</span>
-          <input name="newPassword" type="password" required minLength={6} className={inputCls} />
-        </label>
+          <label className="block">
+            <span className={labelCls}>אישור סיסמה חדשה</span>
+            <input name="confirmPassword" type="password" required minLength={6} className={inputCls} />
+          </label>
 
-        <label className="block">
-          <span className={labelCls}>אישור סיסמה חדשה</span>
-          <input name="confirmPassword" type="password" required minLength={6} className={inputCls} />
-        </label>
-
-        <button
-          type="submit"
-          disabled={passwordPending}
-          className="bg-primary px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 disabled:opacity-50"
-        >
-          {passwordPending ? 'שומר...' : 'שנה סיסמה'}
-        </button>
+          <button
+            type="submit"
+            disabled={passwordPending}
+            className="rounded-full bg-ocean shadow-sm px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50"
+          >
+            {passwordPending ? 'שומר...' : 'שנה סיסמה'}
+          </button>
+        </div>
       </form>
     </div>
   );

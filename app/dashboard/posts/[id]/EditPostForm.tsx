@@ -16,52 +16,55 @@ type Props = {
   categories: Category[];
 };
 
+const inputCls = 'w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-navy focus:border-ocean focus:ring-1 focus:ring-ocean/20 focus:outline-none transition-colors';
+const labelCls = 'mb-1 block text-[10px] font-bold uppercase tracking-widest text-navy/60';
+
 export default function EditPostForm({ post, categories }: Props) {
   const [state, formAction, pending] = useActionState<PostActionState, FormData>(updatePostAction, undefined);
 
   return (
     <div>
-      <form action={formAction} className="border border-charcoal/10 bg-white p-6 space-y-5 max-w-3xl">
+      <form action={formAction} className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-6 space-y-5">
         <input type="hidden" name="id" value={post.id} />
-        {state?.error && <p className="text-sm text-red-600 bg-red-50 p-3 border border-red-200">{state.error}</p>}
+        {state?.error && <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{state.error}</p>}
 
         <label className="block">
-          <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">כותרת</span>
-          <input name="title" required defaultValue={post.title} className="w-full border border-charcoal/20 bg-white px-4 py-3 text-charcoal focus:border-primary focus:outline-none" />
+          <span className={labelCls}>כותרת</span>
+          <input name="title" required defaultValue={post.title} className={inputCls} />
         </label>
 
         <label className="block">
-          <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">סלאג (באנגלית)</span>
-          <input name="slug" required defaultValue={post.slug} dir="ltr" className="w-full border border-charcoal/20 bg-white px-4 py-3 text-charcoal focus:border-primary focus:outline-none font-mono text-sm" />
+          <span className={labelCls}>סלאג (באנגלית)</span>
+          <input name="slug" required defaultValue={post.slug} dir="ltr" className={inputCls + ' font-mono text-sm'} />
         </label>
 
         <label className="block">
-          <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">תקציר</span>
-          <textarea name="excerpt" rows={2} defaultValue={post.excerpt ?? ''} className="w-full border border-charcoal/20 bg-white px-4 py-3 text-charcoal focus:border-primary focus:outline-none resize-y" />
+          <span className={labelCls}>תקציר</span>
+          <textarea name="excerpt" rows={2} defaultValue={post.excerpt ?? ''} className={inputCls + ' resize-y'} />
         </label>
 
         <label className="block">
-          <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">תוכן</span>
-          <textarea name="content" rows={10} defaultValue={post.content} className="w-full border border-charcoal/20 bg-white px-4 py-3 text-charcoal focus:border-primary focus:outline-none resize-y" />
+          <span className={labelCls}>תוכן</span>
+          <textarea name="content" rows={10} defaultValue={post.content} className={inputCls + ' resize-y'} />
         </label>
 
         <label className="block">
-          <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">תמונת כיסוי (URL)</span>
-          <input name="coverImage" type="url" defaultValue={post.coverImage ?? ''} dir="ltr" className="w-full border border-charcoal/20 bg-white px-4 py-3 text-charcoal focus:border-primary focus:outline-none font-mono text-sm" />
+          <span className={labelCls}>תמונת כיסוי (URL)</span>
+          <input name="coverImage" type="url" defaultValue={post.coverImage ?? ''} dir="ltr" className={inputCls + ' font-mono text-sm'} />
         </label>
 
         <div className="grid grid-cols-2 gap-4">
           <label className="block">
-            <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">סטטוס</span>
-            <select name="status" defaultValue={post.status} className="w-full border border-charcoal/20 bg-white px-4 py-3 text-charcoal focus:border-primary focus:outline-none">
+            <span className={labelCls}>סטטוס</span>
+            <select name="status" defaultValue={post.status} className={inputCls + ' cursor-pointer'}>
               <option value="draft">טיוטה</option>
               <option value="published">פורסם</option>
             </select>
           </label>
 
           <label className="block">
-            <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">קטגוריה</span>
-            <select name="categoryId" defaultValue={post.categoryId ?? ''} className="w-full border border-charcoal/20 bg-white px-4 py-3 text-charcoal focus:border-primary focus:outline-none">
+            <span className={labelCls}>קטגוריה</span>
+            <select name="categoryId" defaultValue={post.categoryId ?? ''} className={inputCls + ' cursor-pointer'}>
               <option value="">ללא קטגוריה</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
@@ -74,22 +77,22 @@ export default function EditPostForm({ post, categories }: Props) {
           <button
             type="submit"
             disabled={pending}
-            className="bg-primary px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 disabled:opacity-50"
+            className="bg-ocean rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:bg-ocean/85 transition-colors disabled:opacity-50 cursor-pointer"
           >
             {pending ? 'שומר...' : 'שמור שינויים'}
           </button>
-          <Link href="/dashboard/posts" className="border border-charcoal/20 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-charcoal hover:border-primary">
+          <Link href="/dashboard/posts" className="rounded-full border border-slate-200 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-navy hover:border-ocean hover:text-ocean transition-colors">
             ביטול
           </Link>
         </div>
       </form>
 
-      <form action={deletePostAction} className="mt-6 max-w-3xl border-t border-charcoal/10 pt-6">
+      <form action={deletePostAction} className="mt-6 border-t border-slate-200 pt-6">
         <input type="hidden" name="id" value={post.id} />
         <button
           type="submit"
           onClick={(e) => { if (!confirm('למחוק את הפוסט?')) e.preventDefault(); }}
-          className="bg-red-600 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90"
+          className="bg-red-600 rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:bg-red-700 transition-colors cursor-pointer"
         >
           מחק פוסט
         </button>

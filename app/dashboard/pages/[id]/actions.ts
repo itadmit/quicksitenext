@@ -49,9 +49,10 @@ export async function savePageAction(pageId: string, blocksJson: string) {
 const metaSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
-  status: z.enum(['draft', 'published']),
+  status: z.enum(['draft', 'published', 'scheduled']),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
+  publishAt: z.string().optional(),
 });
 
 export async function updatePageMetaAction(
@@ -86,6 +87,7 @@ export async function updatePageMetaAction(
       status: parsed.data.status,
       seoTitle: parsed.data.seoTitle ?? null,
       seoDescription: parsed.data.seoDescription ?? null,
+      publishAt: parsed.data.publishAt ? new Date(parsed.data.publishAt) : null,
     },
   });
 
@@ -98,5 +100,31 @@ export async function deletePageAction(pageId: string) {
 
   await prisma.page.delete({ where: { id: pageId } });
 
+  revalidatePath('/dashboard/pages');
   redirect('/dashboard/pages');
+}
+
+export async function duplicatePageAction(pageId: string) {
+  const { page, tenantId } = await verifyPageOwnership(pageId);
+
+  const count = await prisma.page.count({ where: { tenantId } });
+  const newSlug = `${page.slug}-copy-${Date.now().toString(36)}`;
+
+  const newPage = await prisma.page.create({
+    data: {
+      tenantId,
+      title: `${page.title} (העתק)`,
+      slug: newSlug,
+      template: page.template,
+      blocks: page.blocks,
+      status: 'draft',
+      sortOrder: count,
+      seoTitle: page.seoTitle,
+      seoDescription: page.seoDescription,
+      seoImage: page.seoImage,
+    },
+  });
+
+  revalidatePath('/dashboard/pages');
+  redirect(`/dashboard/pages/${newPage.id}`);
 }

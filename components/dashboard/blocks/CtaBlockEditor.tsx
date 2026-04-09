@@ -17,47 +17,47 @@ export default function CtaBlockEditor({ data, onChange }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">כותרת</label>
+        <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">כותרת</label>
         <input
           value={(data.title as string) ?? ''}
           onChange={(e) => update('title', e.target.value)}
-          className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary transition-colors"
+          className="w-full rounded-lg border border-slate-200 bg-background-light px-3 py-2 text-sm text-navy outline-none focus:border-ocean transition-colors"
         />
       </div>
       <div>
-        <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">תיאור</label>
+        <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">תיאור</label>
         <textarea
           value={(data.description as string) ?? ''}
           onChange={(e) => update('description', e.target.value)}
           rows={3}
-          className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary transition-colors resize-none"
+          className="w-full rounded-lg border border-slate-200 bg-background-light px-3 py-2 text-sm text-navy outline-none focus:border-ocean transition-colors resize-none"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">טקסט כפתור</label>
+          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">טקסט כפתור</label>
           <input
             value={(data.buttonLabel as string) ?? ''}
             onChange={(e) => update('buttonLabel', e.target.value)}
-            className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary transition-colors"
+            className="w-full rounded-lg border border-slate-200 bg-background-light px-3 py-2 text-sm text-navy outline-none focus:border-ocean transition-colors"
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">קישור כפתור</label>
+          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">קישור כפתור</label>
           <input
             value={(data.buttonHref as string) ?? ''}
             onChange={(e) => update('buttonHref', e.target.value)}
             dir="ltr"
-            className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm font-mono text-charcoal outline-none focus:border-primary transition-colors"
+            className="w-full rounded-lg border border-slate-200 bg-background-light px-3 py-2 text-sm font-mono text-navy outline-none focus:border-ocean transition-colors"
           />
         </div>
       </div>
       <div>
-        <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">סגנון</label>
+        <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">סגנון</label>
         <select
           value={(data.variant as string) ?? 'primary'}
           onChange={(e) => update('variant', e.target.value)}
-          className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary transition-colors"
+          className="w-full rounded-lg border border-slate-200 bg-background-light px-3 py-2 text-sm text-navy outline-none focus:border-ocean transition-colors"
         >
           {variants.map((v) => (
             <option key={v.value} value={v.value}>{v.label}</option>

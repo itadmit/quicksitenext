@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useActionState } from 'react';
+import { submitLeadAction, type SubmitLeadState } from '@/app/actions/submit-lead';
 
 type Props = {
   data: Record<string, unknown>;
@@ -11,45 +12,9 @@ export default function ContactFormBlock({ data, tenantId }: Props) {
   const title = (data.title as string) || 'צור קשר';
   const buttonLabel = (data.buttonLabel as string) || 'שליחה';
 
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [state, formAction, pending] = useActionState<SubmitLeadState, FormData>(submitLeadAction, undefined);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setStatus('loading');
-    setErrorMsg('');
-
-    const form = new FormData(e.currentTarget);
-    const body = {
-      name: form.get('name') as string,
-      email: form.get('email') as string,
-      phone: (form.get('phone') as string) || undefined,
-      company: (form.get('company') as string) || undefined,
-      message: (form.get('message') as string) || undefined,
-      source: 'website_contact',
-      tenantId,
-    };
-
-    try {
-      const res = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      if (res.ok) {
-        setStatus('success');
-      } else {
-        const json = await res.json().catch(() => ({}));
-        setErrorMsg(json.error || 'אירעה שגיאה, נסו שוב.');
-        setStatus('error');
-      }
-    } catch {
-      setErrorMsg('אירעה שגיאה בתקשורת.');
-      setStatus('error');
-    }
-  }
-
-  if (status === 'success') {
+  if (state?.success) {
     return (
       <section className="mx-auto max-w-2xl px-4 py-16 text-center">
         <div className="rounded-lg border border-green-200 bg-green-50 p-10">
@@ -71,7 +36,10 @@ export default function ContactFormBlock({ data, tenantId }: Props) {
         </h2>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form action={formAction} className="space-y-5">
+        <input type="hidden" name="tenantId" value={tenantId} />
+        <input type="hidden" name="source" value="website_contact" />
+
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label htmlFor="cf-name" className="mb-1 block text-sm font-medium">
@@ -136,18 +104,18 @@ export default function ContactFormBlock({ data, tenantId }: Props) {
           />
         </div>
 
-        {status === 'error' && (
-          <p className="text-sm text-red-600">{errorMsg}</p>
+        {state?.error && (
+          <p className="text-sm text-red-600">{state.error}</p>
         )}
 
         <div className="text-center">
           <button
             type="submit"
-            disabled={status === 'loading'}
+            disabled={pending}
             className="inline-flex min-h-[48px] items-center justify-center px-10 py-3 text-xs font-bold uppercase tracking-widest text-white transition hover:opacity-90 disabled:opacity-50"
             style={{ backgroundColor: 'var(--tenant-primary)' }}
           >
-            {status === 'loading' ? 'שולח...' : buttonLabel}
+            {pending ? 'שולח...' : buttonLabel}
           </button>
         </div>
       </form>

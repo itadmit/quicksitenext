@@ -33,6 +33,23 @@ export async function createCptAction(prev: CptActionState, fd: FormData): Promi
   return undefined;
 }
 
+export async function updateCptFieldsAction(cptId: string, fieldsJson: string): Promise<CptActionState> {
+  const user = await requireUser();
+  const tenantId = user.memberships[0].tenantId;
+  const cpt = await prisma.customPostType.findFirst({ where: { id: cptId, tenantId } });
+  if (!cpt) return { error: 'סוג תוכן לא נמצא' };
+
+  try {
+    JSON.parse(fieldsJson);
+  } catch {
+    return { error: 'JSON לא תקין' };
+  }
+
+  await prisma.customPostType.update({ where: { id: cptId }, data: { fields: fieldsJson } });
+  revalidatePath(`/dashboard/cpt/${cptId}`);
+  return undefined;
+}
+
 export async function deleteCptAction(id: string) {
   const user = await requireUser();
   const tenantId = user.memberships[0].tenantId;

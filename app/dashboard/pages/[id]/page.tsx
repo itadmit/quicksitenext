@@ -1,9 +1,9 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import type { Block } from '@/lib/block-registry';
 import BlockEditor from '@/components/dashboard/BlockEditor';
+import PageHeader from '@/components/dashboard/PageHeader';
 
 export const metadata = { title: 'עריכת עמוד | דשבורד' };
 
@@ -27,28 +27,18 @@ export default async function EditPagePage({ params }: Props) {
   }
 
   return (
-    <div dir="rtl">
-      <div className="mb-6 flex items-center gap-3">
-        <Link
-          href="/dashboard/pages"
-          className="flex items-center justify-center w-8 h-8 border border-charcoal/20 hover:border-primary transition-colors"
-        >
-          <span className="material-symbols-outlined text-[18px] text-charcoal/60">arrow_forward</span>
-        </Link>
-        <div>
-          <h1 className="font-noto text-2xl font-black text-charcoal">{page.title}</h1>
-          <p className="text-xs text-charcoal/50 font-mono">/{page.slug}</p>
-        </div>
+    <div>
+      <PageHeader title={page.title} subtitle={`/${page.slug}`} backHref="/dashboard/pages">
         <span
-          className={`mr-auto inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest ${
+          className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
             page.status === 'published'
               ? 'bg-green-50 text-green-700'
-              : 'bg-charcoal/5 text-charcoal/50'
+              : 'bg-slate-100 text-slate-500'
           }`}
         >
           {page.status === 'published' ? 'פורסם' : 'טיוטה'}
         </span>
-      </div>
+      </PageHeader>
 
       <BlockEditor
         pageId={page.id}

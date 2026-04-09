@@ -37,3 +37,30 @@ export async function updateLeadAction(prev: LeadActionState, fd: FormData): Pro
   revalidatePath('/dashboard/leads');
   return { success: true };
 }
+
+export async function deleteLeadAction(id: string) {
+  const user = await requireUser();
+  const tenantId = user.memberships[0].tenantId;
+  await prisma.lead.deleteMany({ where: { id, tenantId } });
+  revalidatePath('/dashboard/leads');
+}
+
+export async function bulkUpdateLeadStatusAction(ids: string[], status: string) {
+  const user = await requireUser();
+  const tenantId = user.memberships[0].tenantId;
+  await prisma.lead.updateMany({ where: { id: { in: ids }, tenantId }, data: { status } });
+  revalidatePath('/dashboard/leads');
+}
+
+export async function exportLeadsCsvAction(): Promise<string> {
+  const user = await requireUser();
+  const tenantId = user.memberships[0].tenantId;
+  const leads = await prisma.lead.findMany({ where: { tenantId }, orderBy: { createdAt: 'desc' } });
+
+  const header = 'שם,אימייל,טלפון,חברה,מקור,הודעה,סטטוס,תאריך\n';
+  const rows = leads.map(l =>
+    [l.name, l.email, l.phone ?? '', l.company ?? '', l.source, (l.message ?? '').replace(/[\n,]/g, ' '), l.status, new Date(l.createdAt).toLocaleDateString('he-IL')].map(v => `"${v}"`).join(',')
+  ).join('\n');
+
+  return '\uFEFF' + header + rows;
+}

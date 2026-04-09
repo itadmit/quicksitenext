@@ -18,8 +18,10 @@ model User {
   name         String
   avatarUrl    String?
 
-  memberships TenantMember[]
-  sessions    Session[]
+  memberships   TenantMember[]
+  sessions      Session[]
+  activityLogs  ActivityLog[]
+  notifications Notification[]
 }
 
 model Session {
@@ -37,6 +39,13 @@ model Tenant {
   slug      String   @unique
   name      String
 
+  plan         String   @default("free") // free | starter | pro | enterprise
+  planExpiry   DateTime?
+  pagesLimit   Int      @default(5)
+  postsLimit   Int      @default(20)
+  storageLimit Int      @default(100) // MB
+  membersLimit Int      @default(1)
+
   members         TenantMember[]
   domains         Domain[]
   pages           Page[]
@@ -49,6 +58,9 @@ model Tenant {
   leads           Lead[]
   mediaItems      MediaItem[]
   siteSettings    SiteSettings?
+  activityLogs    ActivityLog[]
+  notifications   Notification[]
+  redirects       Redirect[]
 }
 
 model TenantMember {
@@ -73,6 +85,8 @@ model Domain {
   createdAt  DateTime @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
 }
 
 // ───────────── Content: Pages ─────────────
@@ -87,9 +101,10 @@ model Page {
   slug     String
   template String  @default("blank") // blank | home | contact | landing | blog
   blocks   String  @default("[]") // JSON array of blocks
-  status   String  @default("draft") // draft | published
-  isHome   Boolean @default(false)
-  sortOrder Int    @default(0)
+  status    String    @default("draft") // draft | published | scheduled
+  isHome    Boolean   @default(false)
+  sortOrder Int       @default(0)
+  publishAt DateTime?
 
   seoTitle       String?
   seoDescription String?
@@ -98,6 +113,7 @@ model Page {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, slug])
+  @@index([tenantId])
 }
 
 // ───────────── Content: Posts ─────────────
@@ -123,6 +139,7 @@ model Post {
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, slug])
+  @@index([tenantId])
 }
 
 model Category {
@@ -135,6 +152,7 @@ model Category {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, slug])
+  @@index([tenantId])
 }
 
 model Tag {
@@ -147,6 +165,7 @@ model Tag {
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, slug])
+  @@index([tenantId])
 }
 
 model PostTag {
@@ -171,6 +190,7 @@ model CustomPostType {
   tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, slug])
+  @@index([tenantId])
 }
 
 model CustomPostEntry {
@@ -186,6 +206,7 @@ model CustomPostEntry {
   cpt CustomPostType @relation(fields: [cptId], references: [id], onDelete: Cascade)
 
   @@unique([cptId, slug])
+  @@index([cptId])
 }
 
 // ───────────── Navigation ─────────────
@@ -200,6 +221,7 @@ model Menu {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, location])
+  @@index([tenantId])
 }
 
 model MenuItem {
@@ -243,7 +265,15 @@ model Popup {
   frequency            String @default("once_per_session") // always | once_per_session | once_per_days_after_dismiss
   hideDaysAfterDismiss Int    @default(7)
 
+  startDate   DateTime?
+  endDate     DateTime?
+  impressions Int @default(0)
+  clicks      Int @default(0)
+  dismissals  Int @default(0)
+
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
 }
 
 // ───────────── Leads ─────────────
@@ -268,6 +298,9 @@ model Lead {
   lastResponseChannel String?
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, createdAt])
 }
 
 // ───────────── Media ─────────────
@@ -283,6 +316,8 @@ model MediaItem {
   alt       String?
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
 }
 
 // ───────────── Site Settings (singleton per tenant) ─────────────
@@ -304,6 +339,60 @@ model SiteSettings {
   defaultSeoDesc     String  @default("")
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+// ───────────── Activity Log ─────────────
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String?
+  createdAt DateTime @default(now())
+
+  action   String // created | updated | deleted | published | duplicated | exported
+  entity   String // page | post | lead | popup | domain | menu | media | cpt | cpt_entry | settings
+  entityId String?
+  details  String  @default("{}") // JSON extra info
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([tenantId, createdAt])
+}
+
+// ───────────── Notifications ─────────────
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  tenantId  String
+  createdAt DateTime @default(now())
+
+  type    String  // new_lead | domain_verified | team_invite | publish | system
+  message String
+  link    String?
+  read    Boolean @default(false)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
+// ───────────── URL Redirects ─────────────
+
+model Redirect {
+  id       String @id @default(cuid())
+  tenantId String
+  fromPath String
+  toPath   String
+  type     Int    @default(301) // 301 | 302
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, fromPath])
+  @@index([tenantId])
 }
 
 // ───────────── Premium Inquiries (platform-level) ─────────────

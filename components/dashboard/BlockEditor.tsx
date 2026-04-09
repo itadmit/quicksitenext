@@ -134,23 +134,23 @@ export default function BlockEditor({ pageId, initialBlocks, pageMeta }: Props) 
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="flex items-center gap-3 border border-charcoal/10 bg-white px-4 py-3">
+      <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
         <button
           onClick={handleSave}
           disabled={isPending}
-          className="bg-primary px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="bg-ocean rounded-full px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-ocean/85 transition-colors disabled:opacity-50 cursor-pointer"
         >
           {saveLabel}
         </button>
         <button
           onClick={() => setShowMeta(!showMeta)}
-          className="border border-charcoal/20 px-4 py-2 text-xs font-bold uppercase tracking-widest text-charcoal hover:border-primary transition-colors"
+          className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold uppercase tracking-widest text-navy hover:border-ocean hover:text-ocean transition-colors cursor-pointer"
         >
           הגדרות עמוד
         </button>
         <button
           onClick={() => setShowDelete(!showDelete)}
-          className="mr-auto border border-red-200 px-4 py-2 text-xs font-bold uppercase tracking-widest text-red-600 hover:border-red-400 transition-colors"
+          className="mr-auto rounded-full border border-red-200 px-4 py-2 text-xs font-bold uppercase tracking-widest text-red-600 hover:border-red-400 transition-colors cursor-pointer"
         >
           מחיקה
         </button>
@@ -158,19 +158,19 @@ export default function BlockEditor({ pageId, initialBlocks, pageMeta }: Props) 
 
       {/* Delete confirmation */}
       {showDelete && (
-        <div className="border border-red-200 bg-red-50 p-4">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
           <p className="mb-3 text-sm text-red-700">האם למחוק את העמוד? פעולה זו אינה הפיכה.</p>
           <div className="flex gap-2">
             <button
               onClick={handleDelete}
               disabled={isPending}
-              className="bg-red-600 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 disabled:opacity-50"
+              className="bg-red-600 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-red-700 transition-colors disabled:opacity-50 cursor-pointer"
             >
               מחק סופית
             </button>
             <button
               onClick={() => setShowDelete(false)}
-              className="border border-charcoal/20 px-4 py-2 text-xs font-bold uppercase tracking-widest text-charcoal"
+              className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold uppercase tracking-widest text-navy cursor-pointer"
             >
               ביטול
             </button>
@@ -180,32 +180,32 @@ export default function BlockEditor({ pageId, initialBlocks, pageMeta }: Props) 
 
       {/* Meta editor */}
       {showMeta && (
-        <div className="space-y-4 border border-charcoal/10 bg-white p-5">
-          <h3 className="font-noto text-lg font-bold text-charcoal">הגדרות עמוד</h3>
+        <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
+          <h3 className="font-noto text-lg font-bold text-navy">הגדרות עמוד</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">כותרת</label>
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">כותרת</label>
               <input
                 value={meta.title}
                 onChange={(e) => setMeta({ ...meta, title: e.target.value })}
-                className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary"
+                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-navy outline-none focus:border-ocean focus:ring-1 focus:ring-ocean/20 transition-colors"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">נתיב</label>
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">נתיב</label>
               <input
                 value={meta.slug}
                 onChange={(e) => setMeta({ ...meta, slug: e.target.value })}
                 dir="ltr"
-                className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm font-mono text-charcoal outline-none focus:border-primary"
+                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-mono text-navy outline-none focus:border-ocean focus:ring-1 focus:ring-ocean/20 transition-colors"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">סטטוס</label>
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">סטטוס</label>
               <select
                 value={meta.status}
                 onChange={(e) => setMeta({ ...meta, status: e.target.value })}
-                className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary"
+                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-navy outline-none focus:border-ocean focus:ring-1 focus:ring-ocean/20 transition-colors cursor-pointer"
               >
                 <option value="draft">טיוטה</option>
                 <option value="published">פורסם</option>
@@ -213,27 +213,27 @@ export default function BlockEditor({ pageId, initialBlocks, pageMeta }: Props) 
             </div>
           </div>
           <div>
-            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">כותרת SEO</label>
+            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">כותרת SEO</label>
             <input
               value={meta.seoTitle}
               onChange={(e) => setMeta({ ...meta, seoTitle: e.target.value })}
-              className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary"
+              className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-navy outline-none focus:border-ocean focus:ring-1 focus:ring-ocean/20 transition-colors"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">תיאור SEO</label>
+            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">תיאור SEO</label>
             <textarea
               value={meta.seoDescription}
               onChange={(e) => setMeta({ ...meta, seoDescription: e.target.value })}
               rows={2}
-              className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary resize-none"
+              className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-navy outline-none focus:border-ocean focus:ring-1 focus:ring-ocean/20 transition-colors resize-none"
             />
           </div>
           {metaError && <p className="text-sm text-red-600">{metaError}</p>}
           <button
             onClick={handleMetaSave}
             disabled={isPending}
-            className="bg-primary px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 disabled:opacity-50"
+            className="bg-ocean rounded-full px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-ocean/85 transition-colors disabled:opacity-50 cursor-pointer"
           >
             שמור הגדרות
           </button>
@@ -245,16 +245,16 @@ export default function BlockEditor({ pageId, initialBlocks, pageMeta }: Props) 
         {blocks.map((block, index) => {
           const Editor = blockEditors[block.type];
           return (
-            <div key={block.id} className="border border-charcoal/10 bg-white">
-              <div className="flex items-center gap-2 border-b border-charcoal/5 bg-charcoal/[0.02] px-4 py-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-charcoal/60">
+            <div key={block.id} className="rounded-2xl border border-slate-200 bg-white">
+              <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-4 py-2 rounded-t-2xl">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
                   {blockLabels[block.type as BlockType] ?? block.type}
                 </span>
                 <div className="mr-auto flex items-center gap-1">
                   <button
                     onClick={() => moveBlock(index, -1)}
                     disabled={index === 0}
-                    className="flex h-7 w-7 items-center justify-center border border-charcoal/10 text-charcoal/40 hover:text-charcoal disabled:opacity-30 transition-colors"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:text-navy disabled:opacity-30 transition-colors cursor-pointer"
                     title="הזז למעלה"
                   >
                     <span className="material-symbols-outlined text-[16px]">arrow_upward</span>
@@ -262,14 +262,14 @@ export default function BlockEditor({ pageId, initialBlocks, pageMeta }: Props) 
                   <button
                     onClick={() => moveBlock(index, 1)}
                     disabled={index === blocks.length - 1}
-                    className="flex h-7 w-7 items-center justify-center border border-charcoal/10 text-charcoal/40 hover:text-charcoal disabled:opacity-30 transition-colors"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:text-navy disabled:opacity-30 transition-colors cursor-pointer"
                     title="הזז למטה"
                   >
                     <span className="material-symbols-outlined text-[16px]">arrow_downward</span>
                   </button>
                   <button
                     onClick={() => removeBlock(block.id)}
-                    className="flex h-7 w-7 items-center justify-center border border-red-100 text-red-400 hover:text-red-600 hover:border-red-300 transition-colors"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-red-100 text-red-400 hover:text-red-600 hover:border-red-300 transition-colors cursor-pointer"
                     title="הסר בלוק"
                   >
                     <span className="material-symbols-outlined text-[16px]">delete</span>
@@ -280,7 +280,7 @@ export default function BlockEditor({ pageId, initialBlocks, pageMeta }: Props) 
                 {Editor ? (
                   <Editor data={block.data} onChange={(data) => updateBlock(block.id, data)} />
                 ) : (
-                  <p className="text-sm text-charcoal/40">אין עורך לסוג בלוק זה</p>
+                  <p className="text-sm text-slate-400">אין עורך לסוג בלוק זה</p>
                 )}
               </div>
             </div>
@@ -292,18 +292,18 @@ export default function BlockEditor({ pageId, initialBlocks, pageMeta }: Props) 
       <div className="relative">
         <button
           onClick={() => setShowAddMenu(!showAddMenu)}
-          className="flex w-full items-center justify-center gap-2 border border-dashed border-charcoal/20 py-4 text-xs font-bold uppercase tracking-widest text-charcoal/50 hover:border-primary hover:text-primary transition-colors"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-200 py-4 text-xs font-bold uppercase tracking-widest text-slate-500 hover:border-ocean hover:text-ocean transition-colors cursor-pointer"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
           הוסף בלוק
         </button>
         {showAddMenu && (
-          <div className="absolute left-0 right-0 top-full z-10 mt-1 grid grid-cols-3 gap-1 border border-charcoal/10 bg-white p-2 shadow-lg">
+          <div className="absolute left-0 right-0 top-full z-10 mt-1 grid grid-cols-3 gap-1 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
             {blockTypes.map((type) => (
               <button
                 key={type}
                 onClick={() => addBlock(type)}
-                className="px-3 py-2.5 text-right text-sm text-charcoal hover:bg-primary/5 hover:text-primary transition-colors"
+                className="rounded-lg px-3 py-2.5 text-right text-sm text-navy hover:bg-ocean/[0.04] hover:text-ocean transition-colors cursor-pointer"
               >
                 {blockLabels[type]}
               </button>

@@ -26,6 +26,8 @@ export async function createPostAction(prev: PostActionState, fd: FormData): Pro
   const existing = await prisma.post.findUnique({ where: { tenantId_slug: { tenantId, slug } } });
   if (existing) return { error: 'סלאג זה כבר קיים' };
 
+  const tagIds = ((fd.get('tagIds') as string) || '').split(',').filter(Boolean);
+
   try {
     await prisma.post.create({
       data: {
@@ -38,6 +40,7 @@ export async function createPostAction(prev: PostActionState, fd: FormData): Pro
         status,
         categoryId: categoryId || undefined,
         publishedAt: status === 'published' ? new Date() : null,
+        postTags: tagIds.length > 0 ? { create: tagIds.map(tagId => ({ tagId })) } : undefined,
       },
     });
   } catch {

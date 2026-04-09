@@ -45,11 +45,20 @@ export const getSession = cache(async () => {
   const hashed = hashToken(raw);
   const session = await prisma.session.findUnique({
     where: { token: hashed },
-    include: {
+    select: {
+      id: true,
+      expiresAt: true,
       user: {
-        include: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
           memberships: {
-            include: { tenant: true },
+            select: {
+              tenantId: true,
+              role: true,
+              tenant: { select: { id: true, slug: true, name: true } },
+            },
           },
         },
       },

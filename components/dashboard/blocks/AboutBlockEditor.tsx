@@ -31,44 +31,44 @@ export default function AboutBlockEditor({ data, onChange }: Props) {
   return (
     <div className="space-y-4">
       {items.map((item, i) => (
-        <div key={i} className="space-y-3 border border-charcoal/10 bg-charcoal/[0.02] p-4">
+        <div key={i} className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-charcoal/60">פריט {i + 1}</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">פריט {i + 1}</span>
             <button
               type="button"
               onClick={() => removeItem(i)}
-              className="text-xs text-red-500 hover:text-red-700 transition-colors"
+              className="text-xs text-red-500 hover:text-red-700 transition-colors cursor-pointer"
             >
               הסר
             </button>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">אייקון</label>
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-navy/60">אייקון</label>
               <input
                 value={item.icon}
                 onChange={(e) => updateItem(i, 'icon', e.target.value)}
                 dir="ltr"
-                className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary transition-colors"
+                className="w-full rounded-lg border border-slate-200 bg-background-light px-3 py-2 text-sm text-navy outline-none focus:border-ocean transition-colors"
                 placeholder="material icon name"
               />
             </div>
             <div>
-              <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">כותרת</label>
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-navy/60">כותרת</label>
               <input
                 value={item.title}
                 onChange={(e) => updateItem(i, 'title', e.target.value)}
-                className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary transition-colors"
+                className="w-full rounded-lg border border-slate-200 bg-background-light px-3 py-2 text-sm text-navy outline-none focus:border-ocean transition-colors"
               />
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">תיאור</label>
+            <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-navy/60">תיאור</label>
             <textarea
               value={item.description}
               onChange={(e) => updateItem(i, 'description', e.target.value)}
               rows={2}
-              className="w-full border border-charcoal/10 bg-background-light px-3 py-2 text-sm text-charcoal outline-none focus:border-primary transition-colors resize-none"
+              className="w-full rounded-lg border border-slate-200 bg-background-light px-3 py-2 text-sm text-navy outline-none focus:border-ocean transition-colors resize-none"
             />
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function AboutBlockEditor({ data, onChange }: Props) {
       <button
         type="button"
         onClick={addItem}
-        className="flex w-full items-center justify-center gap-1 border border-dashed border-charcoal/20 py-2.5 text-xs font-bold uppercase tracking-widest text-charcoal/50 hover:border-primary hover:text-primary transition-colors"
+        className="flex w-full items-center justify-center gap-1 rounded-full border border-dashed border-slate-200 py-2.5 text-xs font-bold uppercase tracking-widest text-slate-500 hover:border-ocean hover:text-ocean transition-colors cursor-pointer"
       >
         <span className="material-symbols-outlined text-[16px]">add</span>
         הוסף פריט

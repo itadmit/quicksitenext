@@ -1,0 +1,88 @@
+'use client';
+
+import { useEffect, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { getUnreadNotifications, markNotificationReadAction, markAllNotificationsReadAction } from '@/app/actions/notifications';
+
+type Notification = {
+  id: string;
+  type: string;
+  message: string;
+  link: string | null;
+  read: boolean;
+  createdAt: Date | string;
+};
+
+export default function NotificationBell() {
+  const [open, setOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [, startTransition] = useTransition();
+  const router = useRouter();
+
+  useEffect(() => {
+    loadNotifications();
+    const interval = setInterval(loadNotifications, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  async function loadNotifications() {
+    try {
+      const res = await getUnreadNotifications();
+      setNotifications(res as Notification[]);
+    } catch { /* ignore */ }
+  }
+
+  function handleClick(n: Notification) {
+    startTransition(async () => {
+      await markNotificationReadAction(n.id);
+      setNotifications(prev => prev.filter(x => x.id !== n.id));
+      if (n.link) router.push(n.link);
+      setOpen(false);
+    });
+  }
+
+  function handleMarkAll() {
+    startTransition(async () => {
+      await markAllNotificationsReadAction();
+      setNotifications([]);
+      setOpen(false);
+    });
+  }
+
+  return (
+    <div className="relative">
+      <button onClick={() => setOpen(!open)} className="relative flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-ocean">
+        <span className="material-symbols-outlined text-[20px]">notifications</span>
+        {notifications.length > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">{notifications.length}</span>
+        )}
+      </button>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 top-10 z-50 w-72 rounded-2xl border border-slate-200 bg-white shadow-lg">
+            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+              <span className="text-sm font-semibold text-navy">התראות</span>
+              {notifications.length > 0 && (
+                <button onClick={handleMarkAll} className="text-xs text-ocean hover:underline">סמן הכל כנקרא</button>
+              )}
+            </div>
+            <div className="max-h-64 overflow-y-auto">
+              {notifications.length === 0 ? (
+                <p className="px-4 py-6 text-center text-xs text-slate-400">אין התראות חדשות</p>
+              ) : (
+                notifications.map(n => (
+                  <button key={n.id} onClick={() => handleClick(n)} className="block w-full border-b border-slate-50 px-4 py-3 text-right transition-colors last:border-b-0 hover:bg-slate-50">
+                    <p className="text-sm text-navy">{n.message}</p>
+                    <p className="text-[10px] text-slate-400">{new Date(n.createdAt).toLocaleString('he-IL')}</p>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

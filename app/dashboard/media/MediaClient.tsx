@@ -1,8 +1,8 @@
 'use client';
 
-import { useActionState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import { uploadMediaAction, deleteMediaAction } from './actions';
+import { useActionState, useState, useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { uploadMediaAction, deleteMediaAction, updateMediaAltAction } from './actions';
 
 type MediaItem = {
   id: string; filename: string; url: string; mimeType: string;
@@ -17,7 +17,11 @@ function formatSize(bytes: number) {
 
 export default function MediaClient({ items }: { items: MediaItem[] }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [deleting, startDelete] = useTransition();
+  const [search, setSearch] = useState(searchParams.get('q') ?? '');
+  const [editingAlt, setEditingAlt] = useState<string | null>(null);
+
   const [state, formAction, pending] = useActionState(
     async (prev: { error?: string; success?: boolean } | undefined, fd: FormData) => {
       const result = await uploadMediaAction(prev, fd);
@@ -32,65 +36,75 @@ export default function MediaClient({ items }: { items: MediaItem[] }) {
     startDelete(async () => { await deleteMediaAction(id); router.refresh(); });
   }
 
+  function handleSearch() {
+    const params = new URLSearchParams();
+    if (search) params.set('q', search);
+    router.push('/dashboard/media' + (params.toString() ? `?${params}` : ''));
+  }
+
+  function copyUrl(url: string) {
+    navigator.clipboard.writeText(url);
+  }
+
+  async function saveAlt(id: string, alt: string) {
+    await updateMediaAltAction(id, alt);
+    setEditingAlt(null);
+    router.refresh();
+  }
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-noto text-3xl font-black text-charcoal">ספריית מדיה</h1>
+    <div className="space-y-5">
+      {/* Search */}
+      <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-6 py-4">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-[18px] text-slate-400">search</span>
+          <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} placeholder="חיפוש לפי שם קובץ..." className="flex-1 border-none bg-transparent text-sm text-navy outline-none placeholder:text-slate-400" />
+        </div>
       </div>
 
-      <div className="border border-charcoal/10 bg-white p-6 mb-6 max-w-xl">
-        <h2 className="font-noto text-lg font-bold text-charcoal mb-4">העלאת קובץ</h2>
-        <form action={formAction} className="flex items-end gap-3">
-          <label className="flex-1">
-            <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-charcoal/60">בחר קובץ</span>
-            <input
-              name="file"
-              type="file"
-              accept="image/*"
-              required
-              className="w-full border border-charcoal/20 bg-white px-4 py-2 text-sm text-charcoal file:mr-3 file:border-0 file:bg-primary/10 file:px-3 file:py-1 file:text-xs file:font-bold file:text-primary"
-            />
-          </label>
-          <button
-            type="submit"
-            disabled={pending}
-            className="bg-primary px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 disabled:opacity-50 whitespace-nowrap"
-          >
-            {pending ? 'מעלה...' : 'העלה'}
-          </button>
-        </form>
-        {state?.error && <p className="text-sm text-red-600 mt-2">{state.error}</p>}
-        {state?.success && <p className="text-sm text-green-600 mt-2">הקובץ הועלה בהצלחה</p>}
-        <p className="text-xs text-charcoal/40 mt-2">מקסימום 5MB. תמונות בלבד (JPG, PNG, GIF, WebP, SVG).</p>
+      {/* Upload */}
+      <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <div className="border-b border-slate-100 px-6 py-4"><h2 className="font-noto text-base font-semibold text-navy">העלאת קובץ</h2></div>
+        <div className="px-6 py-5">
+          <form action={formAction} className="flex items-end gap-3">
+            <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">בחר קובץ</span>
+              <input name="file" type="file" accept="image/*" required multiple className="w-full rounded-xl border-0 bg-slate-50 px-4 py-2.5 text-sm text-navy ring-1 ring-slate-200/60 file:mr-3 file:border-0 file:bg-ocean/[0.08] file:px-3 file:py-1 file:text-xs file:font-semibold file:text-ocean file:rounded-full focus:outline-none focus:ring-2 focus:ring-ocean/20" />
+            </label>
+            <button type="submit" disabled={pending} className="whitespace-nowrap rounded-full bg-ocean shadow-sm px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">{pending ? 'מעלה...' : 'העלה'}</button>
+          </form>
+          {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
+          {state?.success && <p className="mt-2 text-sm text-green-600">הקובץ הועלה בהצלחה</p>}
+        </div>
       </div>
 
       {items.length === 0 ? (
-        <div className="border border-charcoal/10 bg-white p-12 text-center">
-          <span className="material-symbols-outlined text-4xl text-charcoal/20 mb-3 block">photo_library</span>
-          <p className="text-charcoal/50 text-sm">אין קבצי מדיה עדיין</p>
+        <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-6 py-12 text-center">
+          <span className="material-symbols-outlined mb-3 block text-4xl text-slate-300">photo_library</span>
+          <p className="text-sm text-slate-500">אין קבצי מדיה עדיין</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {items.map((item) => (
-            <div key={item.id} className="border border-charcoal/10 bg-white overflow-hidden group">
-              <div className="aspect-square bg-charcoal/5 relative">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          {items.map(item => (
+            <div key={item.id} className="group overflow-hidden rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+              <div className="relative aspect-square bg-slate-100">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={item.url}
-                  alt={item.alt || item.filename}
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  disabled={deleting}
-                  className="absolute top-2 left-2 bg-red-600 text-white w-7 h-7 flex items-center justify-center text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined text-sm">delete</span>
-                </button>
+                <img src={item.url} alt={item.alt || item.filename} className="h-full w-full object-cover" />
+                <div className="absolute inset-0 flex items-start justify-between p-2 opacity-0 transition-opacity group-hover:opacity-100">
+                  <button onClick={() => copyUrl(item.url)} className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-navy shadow"><span className="material-symbols-outlined text-sm">content_copy</span></button>
+                  <button onClick={() => handleDelete(item.id)} disabled={deleting} className="flex h-7 w-7 items-center justify-center rounded-full bg-red-600 text-white shadow disabled:opacity-50"><span className="material-symbols-outlined text-sm">delete</span></button>
+                </div>
               </div>
-              <div className="p-2">
-                <p className="text-xs text-charcoal truncate" title={item.filename}>{item.filename}</p>
-                <p className="text-[10px] text-charcoal/40">{formatSize(item.size)}</p>
+              <div className="p-2.5">
+                <p className="truncate text-xs font-medium text-navy" title={item.filename}>{item.filename}</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-slate-400">{formatSize(item.size)}</p>
+                  <button onClick={() => setEditingAlt(editingAlt === item.id ? null : item.id)} className="text-[10px] text-ocean hover:underline">alt</button>
+                </div>
+                {editingAlt === item.id && (
+                  <div className="mt-2">
+                    <input defaultValue={item.alt ?? ''} onBlur={e => saveAlt(item.id, e.target.value)} onKeyDown={e => { if (e.key === 'Enter') saveAlt(item.id, (e.target as HTMLInputElement).value); }} className="w-full rounded border border-slate-200 px-2 py-1 text-xs text-navy focus:border-ocean focus:outline-none" placeholder="טקסט חלופי..." autoFocus />
+                  </div>
+                )}
               </div>
             </div>
           ))}

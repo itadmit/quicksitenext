@@ -3,23 +3,18 @@
 import { useActionState, useState } from 'react';
 import { saveMenuAction, type MenuActionState } from './actions';
 
-type MenuItem = { id?: string; label: string; href: string; sortOrder: number };
+type MenuItem = { id?: string; label: string; href: string; sortOrder: number; target?: string };
 type Menu = { id: string; location: string; items: MenuItem[] };
 
-function MenuSection({
-  location,
-  title,
-  initialItems,
-}: {
-  location: string;
-  title: string;
-  initialItems: MenuItem[];
-}) {
+const inputCls = 'w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-sm text-navy ring-1 ring-slate-200/60 focus:outline-none focus:ring-2 focus:ring-ocean/20 transition-colors';
+const labelCls = 'mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-slate-400';
+
+function MenuSection({ location, title, initialItems }: { location: string; title: string; initialItems: MenuItem[] }) {
   const [items, setItems] = useState<MenuItem[]>(initialItems);
   const [state, formAction, pending] = useActionState<MenuActionState, FormData>(saveMenuAction, undefined);
 
   function addItem() {
-    setItems([...items, { label: '', href: '', sortOrder: items.length }]);
+    setItems([...items, { label: '', href: '', sortOrder: items.length, target: '_self' }]);
   }
 
   function removeItem(index: number) {
@@ -30,77 +25,96 @@ function MenuSection({
     setItems(items.map((item, i) => (i === index ? { ...item, [field]: value } : item)));
   }
 
+  function moveItem(from: number, to: number) {
+    if (to < 0 || to >= items.length) return;
+    const arr = [...items];
+    const [item] = arr.splice(from, 1);
+    arr.splice(to, 0, item);
+    setItems(arr.map((it, i) => ({ ...it, sortOrder: i })));
+  }
+
   return (
-    <div className="border border-charcoal/10 bg-white p-6">
-      <h2 className="font-noto text-lg font-bold text-charcoal mb-4">{title}</h2>
-
-      {state?.error && <p className="text-sm text-red-600 bg-red-50 p-3 border border-red-200 mb-4">{state.error}</p>}
-      {state?.success && <p className="text-sm text-green-600 bg-green-50 p-3 border border-green-200 mb-4">נשמר בהצלחה</p>}
-
-      <div className="space-y-3 mb-4">
-        {items.map((item, i) => (
-          <div key={i} className="flex gap-3 items-center">
-            <input
-              value={item.label}
-              onChange={(e) => updateItem(i, 'label', e.target.value)}
-              placeholder="תווית"
-              className="flex-1 border border-charcoal/20 bg-white px-3 py-2 text-sm text-charcoal focus:border-primary focus:outline-none"
-            />
-            <input
-              value={item.href}
-              onChange={(e) => updateItem(i, 'href', e.target.value)}
-              placeholder="קישור"
-              dir="ltr"
-              className="flex-1 border border-charcoal/20 bg-white px-3 py-2 text-sm text-charcoal focus:border-primary focus:outline-none font-mono"
-            />
-            <input
-              type="number"
-              value={item.sortOrder}
-              onChange={(e) => updateItem(i, 'sortOrder', parseInt(e.target.value) || 0)}
-              className="w-20 border border-charcoal/20 bg-white px-3 py-2 text-sm text-charcoal focus:border-primary focus:outline-none text-center"
-            />
-            <button
-              type="button"
-              onClick={() => removeItem(i)}
-              className="text-red-500 hover:text-red-700 text-sm font-bold px-2"
-            >
-              ✕
-            </button>
-          </div>
-        ))}
+    <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+      <div className="border-b border-slate-100 px-6 py-4">
+        <h2 className="font-noto text-[15px] font-semibold text-navy">{title}</h2>
+        <p className="mt-0.5 text-xs text-slate-400">{items.length} פריטים</p>
       </div>
+      <div className="px-6 py-5">
+        {state?.error && <p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">{state.error}</p>}
+        {state?.success && <p className="mb-4 rounded-xl bg-green-50 p-3 text-sm text-green-600">נשמר בהצלחה</p>}
 
-      <button
-        type="button"
-        onClick={addItem}
-        className="border border-dashed border-charcoal/20 px-4 py-2 text-xs font-bold text-charcoal/50 hover:border-primary hover:text-primary w-full mb-4"
-      >
-        + הוסף פריט
-      </button>
+        {items.length > 0 && (
+          <div className="mb-2 hidden grid-cols-[auto_1fr_1fr_120px_40px] items-end gap-3 px-1 sm:grid">
+            <div className="w-6" />
+            <span className={labelCls}>תווית</span>
+            <span className={labelCls}>קישור</span>
+            <span className={labelCls}>פתיחה</span>
+            <div />
+          </div>
+        )}
 
-      <form action={formAction}>
-        <input type="hidden" name="location" value={location} />
-        <input type="hidden" name="items" value={JSON.stringify(items)} />
-        <button
-          type="submit"
-          disabled={pending}
-          className="bg-primary px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 disabled:opacity-50"
-        >
-          {pending ? 'שומר...' : 'שמור תפריט'}
+        <div className="mb-5 space-y-3">
+          {items.map((item, i) => (
+            <div key={i} className="grid grid-cols-1 items-center gap-3 rounded-xl bg-slate-50/50 p-3 ring-1 ring-slate-100 sm:grid-cols-[auto_1fr_1fr_120px_40px] sm:bg-transparent sm:p-0 sm:ring-0">
+              <div className="hidden flex-col gap-0.5 sm:flex">
+                <button type="button" onClick={() => moveItem(i, i - 1)} disabled={i === 0} className="rounded p-0.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-navy disabled:opacity-20">
+                  <span className="material-symbols-outlined text-[16px]">expand_less</span>
+                </button>
+                <button type="button" onClick={() => moveItem(i, i + 1)} disabled={i === items.length - 1} className="rounded p-0.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-navy disabled:opacity-20">
+                  <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                </button>
+              </div>
+
+              <div>
+                <span className="mb-1.5 block text-xs font-medium text-slate-400 sm:hidden">תווית</span>
+                <input value={item.label} onChange={e => updateItem(i, 'label', e.target.value)} placeholder="שם הקישור" className={inputCls} />
+              </div>
+
+              <div>
+                <span className="mb-1.5 block text-xs font-medium text-slate-400 sm:hidden">קישור</span>
+                <input value={item.href} onChange={e => updateItem(i, 'href', e.target.value)} placeholder="/page-slug" dir="ltr" className={inputCls + ' font-mono'} />
+              </div>
+
+              <div>
+                <span className="mb-1.5 block text-xs font-medium text-slate-400 sm:hidden">פתיחה</span>
+                <select value={item.target || '_self'} onChange={e => updateItem(i, 'target', e.target.value)} className={inputCls + ' cursor-pointer'}>
+                  <option value="_self">רגיל</option>
+                  <option value="_blank">חלון חדש</option>
+                </select>
+              </div>
+
+              <button type="button" onClick={() => removeItem(i)} className="flex h-10 w-10 items-center justify-center self-end rounded-xl text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500">
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <button type="button" onClick={addItem} className="mb-5 w-full rounded-xl border border-dashed border-slate-200 px-4 py-3 text-sm font-medium text-slate-400 transition-colors hover:border-ocean hover:text-ocean">
+          <span className="material-symbols-outlined ml-1 align-middle text-[16px]">add</span>
+          הוסף פריט
         </button>
-      </form>
+
+        <form action={formAction}>
+          <input type="hidden" name="location" value={location} />
+          <input type="hidden" name="items" value={JSON.stringify(items)} />
+          <button type="submit" disabled={pending} className="rounded-full bg-ocean px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">{pending ? 'שומר...' : 'שמור תפריט'}</button>
+        </form>
+      </div>
     </div>
   );
 }
 
 export default function MenuEditor({ menus }: { menus: Menu[] }) {
-  const headerMenu = menus.find((m) => m.location === 'header');
-  const footerMenu = menus.find((m) => m.location === 'footer');
+  const headerMenu = menus.find(m => m.location === 'header');
+  const footerMenu = menus.find(m => m.location === 'footer');
+  const sidebarMenu = menus.find(m => m.location === 'sidebar');
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-5">
       <MenuSection location="header" title="תפריט עליון (Header)" initialItems={headerMenu?.items ?? []} />
       <MenuSection location="footer" title="תפריט תחתון (Footer)" initialItems={footerMenu?.items ?? []} />
+      <MenuSection location="sidebar" title="תפריט צדדי (Sidebar)" initialItems={sidebarMenu?.items ?? []} />
     </div>
   );
 }

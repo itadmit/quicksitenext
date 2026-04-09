@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { createSession } from '@/lib/auth';
 import { z } from 'zod';
+import { getTemplate, templates } from '@/lib/templates';
 
 const schema = z.object({
   name: z.string().min(1, 'שם נדרש').max(120),
@@ -15,6 +16,7 @@ const schema = z.object({
     .min(2, 'לפחות 2 תווים')
     .max(40)
     .regex(/^[a-z0-9-]+$/, 'רק אותיות קטנות באנגלית, מספרים ומקפים'),
+  templateId: z.string().min(1),
 });
 
 export type RegisterState = { error?: string; fieldErrors?: Record<string, string[]> } | undefined;
@@ -25,13 +27,14 @@ export async function registerAction(_prev: RegisterState, fd: FormData): Promis
     email: fd.get('email'),
     password: fd.get('password'),
     slug: fd.get('slug'),
+    templateId: fd.get('templateId'),
   });
 
   if (!parsed.success) {
     return { fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]> };
   }
 
-  const { name, email, password, slug } = parsed.data;
+  const { name, email, password, slug, templateId } = parsed.data;
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) return { error: 'אימייל זה כבר רשום' };
@@ -39,6 +42,7 @@ export async function registerAction(_prev: RegisterState, fd: FormData): Promis
   const slugTaken = await prisma.tenant.findUnique({ where: { slug } });
   if (slugTaken) return { error: 'כתובת האתר תפוסה, נסו אחרת' };
 
+  const template = getTemplate(templateId) ?? templates[0];
   const passwordHash = await bcrypt.hash(password, 12);
 
   const user = await prisma.user.create({
@@ -52,9 +56,16 @@ export async function registerAction(_prev: RegisterState, fd: FormData): Promis
   const tenant = await prisma.tenant.create({
     data: {
       slug,
-      name: name + ' Site',
+      name: name,
       members: { create: { userId: user.id, role: 'owner' } },
-      siteSettings: { create: { siteName: name + ' Site' } },
+      siteSettings: {
+        create: {
+          siteName: name,
+          primaryColor: template.primaryColor,
+          tagline: template.siteSettings.tagline,
+          footerText: template.siteSettings.footerText,
+        },
+      },
     },
   });
 
@@ -68,60 +79,64 @@ export async function registerAction(_prev: RegisterState, fd: FormData): Promis
     },
   });
 
-  await prisma.page.create({
-    data: {
-      tenantId: tenant.id,
-      title: 'דף הבית',
-      slug: 'home',
-      template: 'home',
-      isHome: true,
-      status: 'published',
-      blocks: JSON.stringify([
-        {
-          id: 'init-hero',
-          type: 'hero',
-          data: {
-            title: `ברוכים הבאים ל-${name}`,
-            subtitle: 'האתר החדש שלנו',
-            backgroundImage: '',
-            primaryBtnLabel: 'צרו קשר',
-            primaryBtnHref: '/contact',
-            secondaryBtnLabel: '',
-            secondaryBtnHref: '',
-          },
-        },
-      ]),
-    },
-  });
+  for (const page of template.pages) {
+    const heroBlock = page.blocks.find(b => b.type === 'hero');
+    if (heroBlock && page.isHome) {
+      heroBlock.data.title = `ברוכים הבאים ל-${name}`;
+    }
 
-  await prisma.page.create({
-    data: {
-      tenantId: tenant.id,
-      title: 'צור קשר',
-      slug: 'contact',
-      template: 'contact',
-      isHome: false,
-      status: 'published',
-      blocks: JSON.stringify([
-        { id: 'init-text', type: 'text', data: { content: '<h2 style="text-align:center">צרו קשר</h2><p style="text-align:center">נשמח לשמוע מכם</p>' } },
-        { id: 'init-form', type: 'contactForm', data: { title: 'השאירו פרטים', buttonLabel: 'שליחה' } },
-      ]),
-    },
-  });
+    await prisma.page.create({
+      data: {
+        tenantId: tenant.id,
+        title: page.title,
+        slug: page.slug,
+        template: page.template,
+        isHome: page.isHome,
+        status: 'published',
+        blocks: JSON.stringify(page.blocks),
+      },
+    });
+  }
 
-  const menu = await prisma.menu.create({
-    data: {
-      tenantId: tenant.id,
-      name: 'תפריט ראשי',
-      location: 'header',
-    },
-  });
-  await prisma.menuItem.createMany({
-    data: [
-      { menuId: menu.id, label: 'דף הבית', href: '/', sortOrder: 0 },
-      { menuId: menu.id, label: 'צור קשר', href: '/contact', sortOrder: 1 },
-    ],
-  });
+  for (const menuDef of template.menus) {
+    const menu = await prisma.menu.create({
+      data: {
+        tenantId: tenant.id,
+        name: menuDef.name,
+        location: menuDef.location,
+      },
+    });
+    await prisma.menuItem.createMany({
+      data: menuDef.items.map((item, i) => ({
+        menuId: menu.id,
+        label: item.label,
+        href: item.href,
+        sortOrder: i,
+      })),
+    });
+  }
+
+  for (const cptDef of template.cpts) {
+    const cpt = await prisma.customPostType.create({
+      data: {
+        tenantId: tenant.id,
+        name: cptDef.name,
+        slug: cptDef.slug,
+        fields: JSON.stringify(cptDef.fields),
+      },
+    });
+    if (cptDef.entries.length > 0) {
+      await prisma.customPostEntry.createMany({
+        data: cptDef.entries.map(entry => ({
+          cptId: cpt.id,
+          title: entry.title,
+          slug: entry.slug,
+          status: entry.status,
+          data: JSON.stringify(entry.data),
+        })),
+      });
+    }
+  }
 
   await createSession(user.id);
   redirect('/dashboard');

@@ -1,6 +1,9 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import PageHeader from '@/components/dashboard/PageHeader';
 import CptClient from './CptClient';
+
+export const metadata = { title: 'תוכן מותאם | דשבורד' };
 
 export default async function CptPage() {
   const user = await getCurrentUser();
@@ -11,5 +14,10 @@ export default async function CptPage() {
     orderBy: { name: 'asc' },
   });
 
-  return <CptClient cpts={JSON.parse(JSON.stringify(cpts))} />;
+  return (
+    <div className="space-y-5">
+      <PageHeader title="סוגי תוכן מותאמים" />
+      <CptClient cpts={JSON.parse(JSON.stringify(cpts))} />
+    </div>
+  );
 }

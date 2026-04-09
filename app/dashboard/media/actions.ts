@@ -56,3 +56,10 @@ export async function deleteMediaAction(mediaId: string) {
   await prisma.mediaItem.deleteMany({ where: { id: mediaId, tenantId } });
   revalidatePath('/dashboard/media');
 }
+
+export async function updateMediaAltAction(mediaId: string, alt: string) {
+  const user = await requireUser();
+  const tenantId = user.memberships[0].tenantId;
+  await prisma.mediaItem.updateMany({ where: { id: mediaId, tenantId }, data: { alt } });
+  revalidatePath('/dashboard/media');
+}
