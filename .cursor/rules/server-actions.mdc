@@ -1,10 +1,12 @@
 ---
-description: Server actions patterns for dashboard CRUD
-globs: app/dashboard/**/actions.ts
+description: Server actions patterns for dashboard CRUD and email triggers
+globs: "{app/dashboard/**/actions.ts,app/(auth)/**/actions.ts,app/actions/**}"
 alwaysApply: false
 ---
 
 # Server Actions
+
+## Structure
 
 - Always start with `'use server'`
 - Always authenticate with `requireUser()` from `@/lib/auth`
@@ -27,3 +29,31 @@ export async function updateAction(prev: State, fd: FormData): Promise<State> {
   // validate, mutate, revalidate
 }
 ```
+
+## Email Triggers
+
+After successful mutations, fire relevant emails from `lib/email.ts`. Always fire-and-forget:
+
+```typescript
+import { sendNewLeadEmail } from '@/lib/email';
+
+// After creating the lead:
+sendNewLeadEmail(owner.email, owner.name, leadData).catch(console.error);
+```
+
+| Action | Email Function |
+|--------|---------------|
+| User registration | `sendWelcomeEmail` |
+| Password reset request | `sendPasswordResetEmail` |
+| Lead submitted | `sendNewLeadEmail` + `sendLeadConfirmationEmail` |
+| Domain verified | `sendDomainVerifiedEmail` |
+| Team member added | `sendTeamInviteEmail` |
+| Site published | `sendSitePublishedEmail` |
+
+## Auth Actions (no `requireUser`)
+
+Auth actions in `app/(auth)/` don't call `requireUser()` — they handle unauthenticated users:
+- `loginAction` — validates credentials, creates session, redirects to `/dashboard`
+- `registerAction` — creates user + tenant + content, sends welcome email, redirects to `/onboarding`
+- `forgotPasswordAction` — generates reset token, sends email (always returns success to prevent enumeration)
+- `resetPasswordAction` — validates token, updates password, invalidates all sessions, redirects to `/login?reset=success`

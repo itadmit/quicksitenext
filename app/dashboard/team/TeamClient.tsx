@@ -4,6 +4,7 @@ import { useActionState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { inviteMemberAction, updateRoleAction, removeMemberAction, type TeamActionState } from './actions';
 import { DataTable, DataTableRow, DataTableCell } from '@/components/dashboard/DataTable';
+import { useCreateToggle } from '@/components/dashboard/CreateToggle';
 
 type Member = {
   id: string;
@@ -21,9 +22,10 @@ const inputCls = 'w-full rounded-xl border-0 bg-slate-50 px-4 py-2.5 text-sm tex
 
 export default function TeamClient({ members, currentUserId }: { members: Member[]; currentUserId: string }) {
   const router = useRouter();
+  const { isOpen: showInvite, close: closeInvite } = useCreateToggle();
   const [acting, startAction] = useTransition();
   const [state, formAction, pending] = useActionState<TeamActionState, FormData>(
-    async (prev, fd) => { const r = await inviteMemberAction(prev, fd); if (r?.success) router.refresh(); return r; },
+    async (prev, fd) => { const r = await inviteMemberAction(prev, fd); if (r?.success) { closeInvite(); router.refresh(); } return r; },
     undefined,
   );
 
@@ -38,24 +40,26 @@ export default function TeamClient({ members, currentUserId }: { members: Member
 
   return (
     <div className="space-y-5">
-      <div className="rounded-xl border border-slate-100 bg-white">
-        <div className="border-b border-slate-100 px-5 py-4">
-          <h2 className="text-[14px] font-semibold text-navy">הזמנת חבר צוות</h2>
+      {showInvite && (
+        <div className="rounded-2xl border border-slate-200 bg-white">
+          <div className="border-b border-slate-100 px-5 py-4">
+            <h2 className="text-[14px] font-semibold text-navy">הזמנת חבר צוות</h2>
+          </div>
+          <div className="px-5 py-4">
+            <form action={formAction} className="flex items-end gap-3">
+              <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">אימייל</span><input name="email" type="email" required dir="ltr" placeholder="user@example.com" className={inputCls + ' font-mono'} /></label>
+              <label className="w-32"><span className="mb-1 block text-xs font-medium text-slate-500">תפקיד</span>
+                <select name="role" className={inputCls + ' cursor-pointer'}>
+                  {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                </select>
+              </label>
+              <button type="submit" disabled={pending} className="cursor-pointer whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? '...' : 'הזמן'}</button>
+            </form>
+            {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
+            {state?.success && <p className="mt-2 text-sm text-green-600">חבר הצוות נוסף בהצלחה</p>}
+          </div>
         </div>
-        <div className="px-5 py-4">
-          <form action={formAction} className="flex items-end gap-3">
-            <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">אימייל</span><input name="email" type="email" required dir="ltr" placeholder="user@example.com" className={inputCls + ' font-mono'} /></label>
-            <label className="w-32"><span className="mb-1 block text-xs font-medium text-slate-500">תפקיד</span>
-              <select name="role" className={inputCls + ' cursor-pointer'}>
-                {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-              </select>
-            </label>
-            <button type="submit" disabled={pending} className="cursor-pointer whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? '...' : 'הזמן'}</button>
-          </form>
-          {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
-          {state?.success && <p className="mt-2 text-sm text-green-600">חבר הצוות נוסף בהצלחה</p>}
-        </div>
-      </div>
+      )}
 
       <DataTable headers={['שם', 'אימייל', 'תפקיד', { label: '', className: 'w-20' }]}>
         {members.map(m => (

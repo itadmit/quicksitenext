@@ -8,7 +8,7 @@ export default function DashboardLoading() {
       {/* KPI row */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="rounded-xl border border-slate-100 bg-white p-5">
+          <div key={i} className="rounded-2xl border border-slate-200 bg-white p-5">
             <div className="mb-4 h-9 w-9 rounded-xl bg-slate-50" />
             <div className="h-7 w-10 rounded-md bg-slate-200/70" />
             <div className="mt-1.5 h-3 w-14 rounded-md bg-slate-100" />

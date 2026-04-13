@@ -101,7 +101,7 @@ export default function GalleryBlockEditor({ data, onChange }: Props) {
 
         {/* Expanded image details */}
         {images.length > 0 && (
-          <div className="space-y-1.5 rounded-xl border border-slate-100 bg-slate-50/50 p-2">
+          <div className="space-y-1.5 rounded-2xl border border-slate-200 bg-slate-50/50 p-2">
             {images.map((img, i) => (
               <div key={i} className="flex items-center gap-2 rounded-lg bg-white px-2 py-1.5 text-[10px]">
                 <span className="flex-shrink-0 font-bold text-slate-400">#{i + 1}</span>

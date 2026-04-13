@@ -4,6 +4,7 @@ import { useActionState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { addDomainAction, removeDomainAction, verifyDomainAction, type DomainActionState } from './actions';
 import { DataTable, DataTableRow, DataTableCell, StatusBadge, DataTableEmpty } from '@/components/dashboard/DataTable';
+import { useCreateToggle } from '@/components/dashboard/CreateToggle';
 
 type Domain = {
   id: string; hostname: string; type: string;
@@ -22,9 +23,10 @@ const sslMap: Record<string, { label: string; color: string }> = {
 
 export default function DomainsClient({ domains }: { domains: Domain[] }) {
   const router = useRouter();
+  const { isOpen: showAdd, close: closeAdd } = useCreateToggle();
   const [acting, startAction] = useTransition();
   const [state, formAction, pending] = useActionState<DomainActionState, FormData>(
-    async (prev, fd) => { const result = await addDomainAction(prev, fd); if (result?.success) router.refresh(); return result; },
+    async (prev, fd) => { const result = await addDomainAction(prev, fd); if (result?.success) { closeAdd(); router.refresh(); } return result; },
     undefined,
   );
 
@@ -41,22 +43,23 @@ export default function DomainsClient({ domains }: { domains: Domain[] }) {
 
   return (
     <div className="space-y-5">
-      {/* Add Domain Form */}
-      <div className="rounded-xl border border-slate-100 bg-white">
-        <div className="border-b border-slate-100 px-5 py-4"><h2 className="text-[14px] font-semibold text-navy">הוסף דומיין מותאם</h2></div>
-        <div className="px-5 py-4">
-          <form action={formAction} className="flex items-end gap-3">
-            <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">שם דומיין</span>
-              <input name="hostname" required dir="ltr" placeholder="example.com" className={inputCls} />
-            </label>
-            <button type="submit" disabled={pending} className="whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? '...' : 'הוסף'}</button>
-          </form>
-          {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
-          {state?.success && <p className="mt-2 text-sm text-green-600">דומיין נוסף בהצלחה</p>}
-        </div>
-      </div>
+      {showAdd && (
+        <>
+          <div className="rounded-2xl border border-slate-200 bg-white">
+            <div className="border-b border-slate-100 px-5 py-4"><h2 className="text-[14px] font-semibold text-navy">הוסף דומיין מותאם</h2></div>
+            <div className="px-5 py-4">
+              <form action={formAction} className="flex items-end gap-3">
+                <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">שם דומיין</span>
+                  <input name="hostname" required dir="ltr" placeholder="example.com" className={inputCls} />
+                </label>
+                <button type="submit" disabled={pending} className="cursor-pointer whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? '...' : 'הוסף'}</button>
+              </form>
+              {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
+              {state?.success && <p className="mt-2 text-sm text-green-600">דומיין נוסף בהצלחה</p>}
+            </div>
+          </div>
 
-      {/* DNS Instructions */}
+          {/* DNS Instructions */}
       <div className="rounded-xl border border-blue-100 bg-blue-50/30">
         <div className="border-b border-blue-100 px-5 py-4"><h2 className="text-[14px] font-semibold text-navy">הוראות DNS</h2></div>
         <div className="space-y-3 px-5 py-4 text-sm text-navy">
@@ -80,6 +83,8 @@ export default function DomainsClient({ domains }: { domains: Domain[] }) {
           <p className="text-xs text-slate-500">לאחר הגדרת ה-DNS, לחצו &quot;אמת&quot; ליד הדומיין. האימות עלול לקחת עד 24 שעות.</p>
         </div>
       </div>
+        </>
+      )}
 
       {/* Domains Table */}
       {domains.length === 0 ? (

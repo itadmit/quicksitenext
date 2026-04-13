@@ -3,6 +3,7 @@
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { sendTeamInviteEmail } from '@/lib/email';
 
 export type TeamActionState = { error?: string; success?: boolean } | undefined;
 
@@ -20,7 +21,12 @@ export async function inviteMemberAction(prev: TeamActionState, fd: FormData): P
   const existing = await prisma.tenantMember.findUnique({ where: { tenantId_userId: { tenantId, userId: target.id } } });
   if (existing) return { error: 'המשתמש כבר חבר בצוות' };
 
+  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { name: true } });
+
   await prisma.tenantMember.create({ data: { tenantId, userId: target.id, role } });
+
+  sendTeamInviteEmail(target.email, user.name, tenant?.name || '', role).catch(console.error);
+
   revalidatePath('/dashboard/team');
   return { success: true };
 }

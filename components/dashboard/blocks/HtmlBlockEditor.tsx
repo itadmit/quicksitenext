@@ -14,7 +14,7 @@ export default function HtmlBlockEditor({ data, onChange }: Props) {
         <Code className="h-3 w-3 text-slate-400" />
         <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">קוד HTML</span>
       </div>
-      <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+      <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
         <textarea
           value={(data.code as string) ?? ''}
           onChange={(e) => onChange({ ...data, code: e.target.value })}

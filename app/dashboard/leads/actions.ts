@@ -6,6 +6,32 @@ import { revalidatePath } from 'next/cache';
 
 export type LeadActionState = { error?: string; success?: boolean } | undefined;
 
+export async function createLeadAction(prev: LeadActionState, fd: FormData): Promise<LeadActionState> {
+  const user = await requireUser();
+  const tenantId = user.memberships[0].tenantId;
+
+  const name = (fd.get('name') as string)?.trim();
+  const email = (fd.get('email') as string)?.trim();
+  const phone = (fd.get('phone') as string)?.trim() || null;
+  const company = (fd.get('company') as string)?.trim() || null;
+  const source = (fd.get('source') as string)?.trim() || 'manual';
+  const message = (fd.get('message') as string)?.trim() || null;
+  const status = (fd.get('status') as string) || 'NEW';
+
+  if (!name || !email) return { error: 'שם ואימייל הם שדות חובה' };
+
+  try {
+    await prisma.lead.create({
+      data: { tenantId, name, email, phone, company, source, message, status },
+    });
+  } catch {
+    return { error: 'שגיאה ביצירת הליד' };
+  }
+
+  revalidatePath('/dashboard/leads');
+  return { success: true };
+}
+
 export async function updateLeadAction(prev: LeadActionState, fd: FormData): Promise<LeadActionState> {
   const user = await requireUser();
   const tenantId = user.memberships[0].tenantId;

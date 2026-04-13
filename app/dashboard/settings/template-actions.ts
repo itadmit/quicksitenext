@@ -101,6 +101,7 @@ export async function applyTemplateAction(templateId: string): Promise<ApplyTemp
           primaryColor: template.primaryColor,
           tagline: template.siteSettings.tagline,
           footerText: template.siteSettings.footerText,
+          ...(template.siteSettings.themeJson ? { themeJson: template.siteSettings.themeJson } : {}),
         },
         create: {
           tenantId,
@@ -108,6 +109,7 @@ export async function applyTemplateAction(templateId: string): Promise<ApplyTemp
           primaryColor: template.primaryColor,
           tagline: template.siteSettings.tagline,
           footerText: template.siteSettings.footerText,
+          ...(template.siteSettings.themeJson ? { themeJson: template.siteSettings.themeJson } : {}),
         },
       });
     });

@@ -9,7 +9,7 @@ import { redirect } from 'next/navigation';
 const createPageSchema = z.object({
   title: z.string().min(1, 'חובה להזין כותרת'),
   slug: z.string().min(1, 'חובה להזין נתיב'),
-  template: z.enum(['blank', 'home', 'contact', 'landing', 'blog', 'agency']),
+  template: z.enum(['blank', 'home', 'contact', 'landing']),
   status: z.enum(['draft', 'published']),
 });
 

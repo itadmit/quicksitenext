@@ -8,15 +8,22 @@ export const metadata = { title: 'תפריט | דשבורד' };
 export default async function MenuPage() {
   const user = await getCurrentUser();
   const tenantId = user!.memberships[0].tenantId;
-  const menus = await prisma.menu.findMany({
-    where: { tenantId },
-    include: { items: { orderBy: { sortOrder: 'asc' } } },
-  });
+  const [menus, pages] = await Promise.all([
+    prisma.menu.findMany({
+      where: { tenantId },
+      include: { items: { orderBy: { sortOrder: 'asc' } } },
+    }),
+    prisma.page.findMany({
+      where: { tenantId },
+      select: { title: true, slug: true, isHome: true },
+      orderBy: { sortOrder: 'asc' },
+    }),
+  ]);
 
   return (
-    <div className="max-w-4xl space-y-5">
-      <PageHeader title="תפריטים" />
-      <MenuEditor menus={JSON.parse(JSON.stringify(menus))} />
+    <div className="space-y-5">
+      <PageHeader title="תפריטים" subtitle="ניהול תפריטי האתר" />
+      <MenuEditor menus={JSON.parse(JSON.stringify(menus))} pages={pages} />
     </div>
   );
 }

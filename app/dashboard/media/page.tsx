@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import ListPageLayout from '@/components/dashboard/ListPageLayout';
+import { CreateToggleProvider, CreateToggleButton } from '@/components/dashboard/CreateToggle';
 import MediaClient from './MediaClient';
 
 export const metadata = { title: 'מדיה | דשבורד' };
@@ -16,13 +17,16 @@ export default async function MediaPage({ searchParams }: { searchParams: Promis
   const items = await prisma.mediaItem.findMany({ where, orderBy: { createdAt: 'desc' } });
 
   return (
-    <ListPageLayout
-      title="ספריית מדיה"
-      subtitle={`${items.length} קבצים`}
-      searchBasePath="/dashboard/media"
-      searchPlaceholder="חיפוש לפי שם קובץ..."
-    >
-      <MediaClient items={JSON.parse(JSON.stringify(items))} />
-    </ListPageLayout>
+    <CreateToggleProvider>
+      <ListPageLayout
+        title="ספריית מדיה"
+        subtitle={`${items.length} קבצים`}
+        actionSlot={<CreateToggleButton label="+ העלאת קובץ" />}
+        searchBasePath="/dashboard/media"
+        searchPlaceholder="חיפוש לפי שם קובץ..."
+      >
+        <MediaClient items={JSON.parse(JSON.stringify(items))} />
+      </ListPageLayout>
+    </CreateToggleProvider>
   );
 }

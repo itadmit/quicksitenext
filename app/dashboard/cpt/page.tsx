@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import ListPageLayout from '@/components/dashboard/ListPageLayout';
+import { CreateToggleProvider, CreateToggleButton } from '@/components/dashboard/CreateToggle';
 import CptClient from './CptClient';
 
 export const metadata = { title: 'תוכן מותאם | דשבורד' };
@@ -15,13 +16,16 @@ export default async function CptPage() {
   });
 
   return (
-    <ListPageLayout
-      title="סוגי תוכן מותאמים"
-      subtitle={`${cpts.length} סוגים`}
-      searchBasePath="/dashboard/cpt"
-      searchPlaceholder="חיפוש סוג תוכן..."
-    >
-      <CptClient cpts={JSON.parse(JSON.stringify(cpts))} />
-    </ListPageLayout>
+    <CreateToggleProvider>
+      <ListPageLayout
+        title="סוגי תוכן מותאמים"
+        subtitle={`${cpts.length} סוגים`}
+        actionSlot={<CreateToggleButton label="+ סוג חדש" />}
+        searchBasePath="/dashboard/cpt"
+        searchPlaceholder="חיפוש סוג תוכן..."
+      >
+        <CptClient cpts={JSON.parse(JSON.stringify(cpts))} />
+      </ListPageLayout>
+    </CreateToggleProvider>
   );
 }

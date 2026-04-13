@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Pencil, Copy, Trash2 } from 'lucide-react';
 import { createPopupAction, updatePopupAction, deletePopupAction, duplicatePopupAction, type PopupActionState } from './actions';
 import { DataTable, DataTableRow, DataTableCell, StatusBadge } from '@/components/dashboard/DataTable';
+import { useCreateToggle } from '@/components/dashboard/CreateToggle';
 
 type Popup = {
   id: string; name: string; enabled: boolean; priority: number;
@@ -98,8 +99,8 @@ function PopupForm({ popup, onDone }: { popup?: Popup; onDone: () => void }) {
 
 export default function PopupsClient({ popups: initialPopups }: { popups: Popup[] }) {
   const router = useRouter();
+  const { isOpen: creating, close: closeCreate } = useCreateToggle();
   const [editing, setEditing] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
   const [deleting, startDelete] = useTransition();
 
   function handleDelete(id: string) {
@@ -108,31 +109,22 @@ export default function PopupsClient({ popups: initialPopups }: { popups: Popup[
   }
 
   function handleDone() {
-    setCreating(false);
+    closeCreate();
     setEditing(null);
     router.refresh();
   }
 
   return (
     <div className="space-y-5">
-      {!creating && !editing && (
-        <button
-          onClick={() => setCreating(true)}
-          className="cursor-pointer rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85"
-        >
-          + פופאפ חדש
-        </button>
-      )}
-
       {creating && (
-        <div className="rounded-xl border border-slate-100 bg-white">
+        <div className="rounded-2xl border border-slate-200 bg-white">
           <div className="border-b border-slate-100 px-6 py-4"><h2 className="text-[14px] font-semibold text-navy">פופאפ חדש</h2></div>
           <div className="px-6 py-5"><PopupForm onDone={handleDone} /></div>
         </div>
       )}
 
       {editing && (
-        <div className="rounded-xl border border-slate-100 bg-white">
+        <div className="rounded-2xl border border-slate-200 bg-white">
           <div className="border-b border-slate-100 px-6 py-4"><h2 className="text-[14px] font-semibold text-navy">עריכת פופאפ</h2></div>
           <div className="px-6 py-5">
             <PopupForm popup={initialPopups.find(p => p.id === editing)} onDone={handleDone} />
@@ -141,7 +133,7 @@ export default function PopupsClient({ popups: initialPopups }: { popups: Popup[
       )}
 
       {initialPopups.length === 0 ? (
-        <div className="rounded-xl border border-slate-100 bg-white py-16 text-center">
+        <div className="rounded-2xl border border-slate-200 bg-white py-16 text-center">
           <span className="material-symbols-outlined mb-3 block text-4xl text-slate-200">web_asset</span>
           <p className="text-[13px] text-slate-400">אין פופאפים עדיין</p>
         </div>

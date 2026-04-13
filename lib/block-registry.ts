@@ -46,13 +46,16 @@ export function defaultBlockData(type: BlockType): Record<string, unknown> {
   switch (type) {
     case 'hero':
       return {
+        variant: 'centered',
         title: 'כותרת ראשית',
         subtitle: 'תת כותרת',
         backgroundImage: '',
         primaryBtnLabel: 'התחילו עכשיו',
         primaryBtnHref: '#',
+        primaryBtnVariant: 'filled',
         secondaryBtnLabel: '',
         secondaryBtnHref: '',
+        secondaryBtnVariant: 'outline',
       };
     case 'text':
       return { content: '<p>טקסט חדש</p>' };
@@ -62,14 +65,14 @@ export function defaultBlockData(type: BlockType): Record<string, unknown> {
       return { images: [] };
     case 'cta':
       return {
+        variant: 'dark',
         title: 'קריאה לפעולה',
         description: '',
         buttonLabel: 'לחצו כאן',
         buttonHref: '#',
-        variant: 'primary',
       };
     case 'contactForm':
-      return { title: 'צור קשר', buttonLabel: 'שליחה' };
+      return { variant: 'standalone', title: 'צור קשר', buttonLabel: 'שליחה' };
     case 'spacer':
       return { height: 64 };
     case 'html':
@@ -78,6 +81,7 @@ export function defaultBlockData(type: BlockType): Record<string, unknown> {
       return { count: 6, columns: 3 };
     case 'about':
       return {
+        variant: 'grid',
         items: [
           { icon: 'star', title: 'רשת מובחרת', description: 'שיתופי פעולה עם המותגים והמשפיענים המובילים בתעשייה' },
           { icon: 'trending_up', title: 'אסטרטגיה דיגיטלית', description: 'בניית תכנית שיווק מותאמת אישית לכל מותג' },
@@ -86,12 +90,14 @@ export function defaultBlockData(type: BlockType): Record<string, unknown> {
       };
     case 'teamGrid':
       return {
+        variant: 'grid',
         members: [
           { name: 'שם מלא', role: 'תפקיד', image: '', link: '' },
         ],
       };
     case 'servicesGrid':
       return {
+        variant: 'cards',
         services: [
           { icon: 'campaign', title: 'קמפיינים', description: 'ניהול קמפיינים דיגיטליים בכל הפלטפורמות' },
           { icon: 'edit_note', title: 'תוכן', description: 'יצירת תוכן מקורי ואיכותי למותגים' },
@@ -124,79 +130,6 @@ export function templateBlocks(template: string): Block[] {
         { id: id(), type: 'text', data: { content: '<h2>מה אנחנו מציעים</h2>' } },
         { id: id(), type: 'gallery', data: { images: [] } },
         { id: id(), type: 'cta', data: defaultBlockData('cta') },
-      ];
-    case 'blog':
-      return [{ id: id(), type: 'postsGrid', data: defaultBlockData('postsGrid') }];
-    case 'agency':
-      return [
-        {
-          id: id(), type: 'hero',
-          data: {
-            title: 'סוכנות ניהול משפיענים',
-            subtitle: 'מחברים בין מותגים ליוצרי תוכן מובילים',
-            backgroundImage: '',
-            primaryBtnLabel: 'צרו קשר',
-            primaryBtnHref: '/contact',
-            secondaryBtnLabel: 'השירותים שלנו',
-            secondaryBtnHref: '#services',
-          },
-        },
-        {
-          id: id(), type: 'about',
-          data: {
-            items: [
-              { icon: 'star', title: 'רשת מובחרת', description: 'שיתופי פעולה עם המותגים והמשפיענים המובילים בתעשייה' },
-              { icon: 'trending_up', title: 'אסטרטגיה דיגיטלית', description: 'בניית תכנית שיווק מותאמת אישית לכל מותג' },
-              { icon: 'verified', title: 'סטנדרט חדש', description: 'הגדרת רף חדש בתעשיית השיווק הדיגיטלי' },
-            ],
-          },
-        },
-        {
-          id: id(), type: 'teamGrid',
-          data: {
-            members: [
-              { name: 'יעל כהן', role: 'אינפלואנסרית לייפסטייל', image: '', link: '' },
-              { name: 'מיכל לוי', role: 'יוצרת תוכן אופנה', image: '', link: '' },
-              { name: 'נועם ברק', role: 'בלוגר טכנולוגיה', image: '', link: '' },
-              { name: 'שירה אביב', role: 'אינפלואנסרית ביוטי', image: '', link: '' },
-              { name: 'דניאל רז', role: 'יוצר תוכן ספורט', image: '', link: '' },
-              { name: 'רונית גולד', role: 'אינפלואנסרית אוכל', image: '', link: '' },
-            ],
-          },
-        },
-        {
-          id: id(), type: 'servicesGrid',
-          data: {
-            services: [
-              { icon: 'campaign', title: 'ניהול קמפיינים', description: 'תכנון וביצוע קמפיינים דיגיטליים בכל הפלטפורמות המובילות' },
-              { icon: 'edit_note', title: 'יצירת תוכן', description: 'הפקת תוכן מקורי, מקצועי ומותאם לכל מותג ופלטפורמה' },
-              { icon: 'analytics', title: 'ניתוח ביצועים', description: 'דוחות מפורטים, ניתוח ROI ואופטימיזציה מתמדת' },
-              { icon: 'groups', title: 'ניהול משפיענים', description: 'ליווי אישי, ניהול חוזים ובניית קריירה דיגיטלית' },
-            ],
-          },
-        },
-        {
-          id: id(), type: 'quote',
-          data: {
-            text: 'אנחנו מאמינים שכל סיפור ראוי להישמע, וכל מותג ראוי לחיבור אמיתי עם הקהל שלו.',
-            author: '',
-            role: '',
-          },
-        },
-        {
-          id: id(), type: 'cta',
-          data: {
-            title: 'מוכנים להתחיל?',
-            description: 'בואו נבנה יחד את הנוכחות הדיגיטלית שלכם',
-            buttonLabel: 'דברו איתנו',
-            buttonHref: '/contact',
-            variant: 'primary',
-          },
-        },
-        {
-          id: id(), type: 'contactForm',
-          data: { title: 'צרו קשר', buttonLabel: 'שליחה' },
-        },
       ];
     default:
       return [];

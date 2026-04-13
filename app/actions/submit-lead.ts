@@ -2,6 +2,7 @@
 
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { sendNewLeadEmail, sendLeadConfirmationEmail } from '@/lib/email';
 
 const leadSchema = z.object({
   name: z.string().min(1, 'שם נדרש').max(120),
@@ -42,21 +43,84 @@ export async function submitLeadAction(
   try {
     const tenant = await prisma.tenant.findUnique({
       where: { id: data.tenantId },
-      select: { id: true },
+      select: {
+        id: true,
+        name: true,
+        members: {
+          where: { role: 'owner' },
+          select: { user: { select: { email: true, name: true } } },
+          take: 1,
+        },
+        siteSettings: {
+          select: {
+            leadNotifyEmail: true,
+            leadWebhookUrl: true,
+            leadAutoReply: true,
+            leadAutoReplyMsg: true,
+          },
+        },
+      },
     });
     if (!tenant) return { error: 'אתר לא נמצא' };
+
+    const leadName = data.name.trim();
+    const leadEmail = data.email.trim().toLowerCase();
+    const leadPhone = data.phone?.trim() || null;
+    const leadCompany = data.company?.trim() || null;
+    const leadMessage = data.message?.trim() || null;
+    const leadSource = data.source?.trim() || 'website_contact';
 
     await prisma.lead.create({
       data: {
         tenantId: data.tenantId,
-        name: data.name.trim(),
-        email: data.email.trim().toLowerCase(),
-        phone: data.phone?.trim() || null,
-        company: data.company?.trim() || null,
-        message: data.message?.trim() || null,
-        source: data.source?.trim() || 'website_contact',
+        name: leadName,
+        email: leadEmail,
+        phone: leadPhone,
+        company: leadCompany,
+        message: leadMessage,
+        source: leadSource,
       },
     });
+
+    const owner = tenant.members[0]?.user;
+    const settings = tenant.siteSettings;
+
+    // Notify email: custom address or fallback to owner
+    const notifyEmail = settings?.leadNotifyEmail?.trim() || owner?.email;
+    const notifyName = owner?.name || '';
+    if (notifyEmail) {
+      sendNewLeadEmail(notifyEmail, notifyName, {
+        name: leadName,
+        email: leadEmail,
+        phone: leadPhone || undefined,
+        message: leadMessage || undefined,
+      }).catch(console.error);
+    }
+
+    // Auto-reply to lead
+    if (settings?.leadAutoReply !== false) {
+      sendLeadConfirmationEmail(leadEmail, leadName, tenant.name).catch(console.error);
+    }
+
+    // Webhook
+    if (settings?.leadWebhookUrl) {
+      fetch(settings.leadWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'new_lead',
+          lead: {
+            name: leadName,
+            email: leadEmail,
+            phone: leadPhone,
+            company: leadCompany,
+            message: leadMessage,
+            source: leadSource,
+            created_at: new Date().toISOString(),
+          },
+        }),
+      }).catch(console.error);
+    }
 
     return { success: true };
   } catch (e) {

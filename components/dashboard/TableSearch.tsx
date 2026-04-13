@@ -31,7 +31,7 @@ export default function TableSearch({ placeholder = 'חיפוש...', basePath, f
   }
 
   return (
-    <div className="rounded-xl border border-slate-100 bg-white px-4 py-3">
+    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex min-w-[200px] flex-1 items-center gap-2">
           <Search className="h-4 w-4 text-slate-300" />

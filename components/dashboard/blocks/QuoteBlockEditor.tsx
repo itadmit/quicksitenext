@@ -20,7 +20,7 @@ export default function QuoteBlockEditor({ data, onChange }: Props) {
           <MessageSquareQuote className="h-3 w-3 text-slate-400" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">ציטוט</span>
         </div>
-        <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
           <textarea
             value={(data.text as string) ?? ''}
             onChange={(e) => update('text', e.target.value)}
@@ -36,7 +36,7 @@ export default function QuoteBlockEditor({ data, onChange }: Props) {
           <User className="h-3 w-3 text-slate-400" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">מחבר</span>
         </div>
-        <div className="grid grid-cols-2 gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+        <div className="grid grid-cols-2 gap-3 rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
           <div>
             <label className={label}>שם</label>
             <input value={(data.author as string) ?? ''} onChange={(e) => update('author', e.target.value)} className={input} />

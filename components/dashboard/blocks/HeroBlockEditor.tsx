@@ -1,8 +1,16 @@
 'use client';
 
-import { Type, MousePointer, Camera, ChevronDown } from 'lucide-react';
+import { Type, MousePointer, Camera, ChevronDown, AlignCenter, Columns, Maximize } from 'lucide-react';
 import ImagePickerField from './ImagePickerField';
 import LinkPicker from './LinkPicker';
+import VariantPicker from './VariantPicker';
+
+const HERO_VARIANTS = [
+  { id: 'centered', label: 'ממורכז', Icon: AlignCenter },
+  { id: 'split', label: 'מפוצל', Icon: Columns },
+  { id: 'fullscreen', label: 'מסך מלא', Icon: Maximize },
+  { id: 'minimal', label: 'מינימלי', Icon: Type },
+];
 
 type Props = {
   data: Record<string, unknown>;
@@ -22,6 +30,12 @@ export default function HeroBlockEditor({ data, onChange }: Props) {
 
   return (
     <div className="space-y-5">
+      <VariantPicker
+        options={HERO_VARIANTS}
+        value={(data.variant as string) ?? 'centered'}
+        onChange={(v) => update('variant', v)}
+      />
+
       <Section icon={<Type className="h-3 w-3" />} title="תוכן">
         <div>
           <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">כותרת</label>
@@ -118,7 +132,7 @@ function Section({ icon, title, children }: { icon: React.ReactNode; title: stri
         <span className="text-slate-400">{icon}</span>
         <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">{title}</span>
       </div>
-      <div className="space-y-3 rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+      <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
         {children}
       </div>
     </div>

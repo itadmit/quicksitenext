@@ -18,10 +18,11 @@ model User {
   name         String
   avatarUrl    String?
 
-  memberships   TenantMember[]
-  sessions      Session[]
-  activityLogs  ActivityLog[]
-  notifications Notification[]
+  memberships    TenantMember[]
+  sessions       Session[]
+  passwordResets PasswordReset[]
+  activityLogs   ActivityLog[]
+  notifications  Notification[]
 }
 
 model Session {
@@ -30,6 +31,18 @@ model Session {
   token     String   @unique
   expiresAt DateTime
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
 }
 
 model Tenant {
@@ -341,6 +354,12 @@ model SiteSettings {
   customHeadCode     String  @default("")
   defaultSeoTitle    String  @default("")
   defaultSeoDesc     String  @default("")
+
+  // Lead settings
+  leadNotifyEmail    String  @default("")
+  leadWebhookUrl     String  @default("")
+  leadAutoReply      Boolean @default(true)
+  leadAutoReplyMsg   String  @default("")
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }

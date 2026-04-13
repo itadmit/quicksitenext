@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUnreadNotifications, markNotificationReadAction, markAllNotificationsReadAction } from '@/app/actions/notifications';
+import { Bell } from 'lucide-react';
 
 type Notification = {
   id: string;
@@ -55,7 +56,7 @@ export default function NotificationBell() {
         onClick={() => setOpen(!open)}
         className="relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
       >
-        <span className="material-symbols-outlined text-[20px]">notifications</span>
+        <Bell className="h-[18px] w-[18px]" />
         {notifications.length > 0 && (
           <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
             {notifications.length}
@@ -66,7 +67,7 @@ export default function NotificationBell() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-10 z-50 w-72 rounded-2xl border border-slate-200/80 bg-white shadow-lg shadow-slate-200/50">
+          <div className="absolute bottom-10 left-0 z-50 w-72 rounded-2xl border border-slate-200/80 bg-white shadow-lg shadow-slate-200/50">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
               <span className="text-sm font-semibold text-navy">התראות</span>
               {notifications.length > 0 && (

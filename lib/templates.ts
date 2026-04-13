@@ -1,5 +1,4 @@
 import type { Block } from './block-registry';
-import { defaultBlockData } from './block-registry';
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -42,147 +41,19 @@ export type SiteTemplate = {
   pages: TemplatePage[];
   menus: TemplateMenu[];
   cpts: TemplateCpt[];
-  siteSettings: { tagline: string; footerText: string };
+  siteSettings: {
+    tagline: string;
+    footerText: string;
+    themeJson?: string;
+  };
 };
 
 export const templates: SiteTemplate[] = [
-  {
-    id: 'agency',
-    name: 'סוכנות',
-    description: 'אתר לסוכנות שיווק, ניהול משפיענים או חברת שירותים מקצועית',
-    category: 'עסקי',
-    icon: 'diversity_3',
-    primaryColor: '#a28b5d',
-    pages: [
-      {
-        title: 'דף הבית',
-        slug: 'home',
-        template: 'agency',
-        isHome: true,
-        blocks: [
-          {
-            id: uid(), type: 'hero',
-            data: {
-              title: 'סוכנות ניהול משפיענים',
-              subtitle: 'מחברים בין מותגים ליוצרי תוכן מובילים',
-              backgroundImage: '',
-              primaryBtnLabel: 'צרו קשר',
-              primaryBtnHref: '/contact',
-              secondaryBtnLabel: 'השירותים שלנו',
-              secondaryBtnHref: '#services',
-            },
-          },
-          {
-            id: uid(), type: 'about',
-            data: {
-              items: [
-                { icon: 'star', title: 'רשת מובחרת', description: 'שיתופי פעולה עם המותגים והמשפיענים המובילים בתעשייה' },
-                { icon: 'trending_up', title: 'אסטרטגיה דיגיטלית', description: 'בניית תכנית שיווק מותאמת אישית לכל מותג' },
-                { icon: 'verified', title: 'סטנדרט חדש', description: 'הגדרת רף חדש בתעשיית השיווק הדיגיטלי' },
-              ],
-            },
-          },
-          {
-            id: uid(), type: 'teamGrid',
-            data: {
-              members: [
-                { name: 'יעל כהן', role: 'אינפלואנסרית לייפסטייל', image: '', link: '' },
-                { name: 'מיכל לוי', role: 'יוצרת תוכן אופנה', image: '', link: '' },
-                { name: 'נועם ברק', role: 'בלוגר טכנולוגיה', image: '', link: '' },
-                { name: 'שירה אביב', role: 'אינפלואנסרית ביוטי', image: '', link: '' },
-                { name: 'דניאל רז', role: 'יוצר תוכן ספורט', image: '', link: '' },
-                { name: 'רונית גולד', role: 'אינפלואנסרית אוכל', image: '', link: '' },
-              ],
-            },
-          },
-          {
-            id: uid(), type: 'servicesGrid',
-            data: {
-              services: [
-                { icon: 'campaign', title: 'ניהול קמפיינים', description: 'תכנון וביצוע קמפיינים דיגיטליים בכל הפלטפורמות המובילות' },
-                { icon: 'edit_note', title: 'יצירת תוכן', description: 'הפקת תוכן מקורי, מקצועי ומותאם לכל מותג ופלטפורמה' },
-                { icon: 'analytics', title: 'ניתוח ביצועים', description: 'דוחות מפורטים, ניתוח ROI ואופטימיזציה מתמדת' },
-                { icon: 'groups', title: 'ניהול משפיענים', description: 'ליווי אישי, ניהול חוזים ובניית קריירה דיגיטלית' },
-              ],
-            },
-          },
-          {
-            id: uid(), type: 'quote',
-            data: {
-              text: 'אנחנו מאמינים שכל סיפור ראוי להישמע, וכל מותג ראוי לחיבור אמיתי עם הקהל שלו.',
-              author: '', role: '',
-            },
-          },
-          {
-            id: uid(), type: 'cta',
-            data: {
-              title: 'מוכנים להתחיל?',
-              description: 'בואו נבנה יחד את הנוכחות הדיגיטלית שלכם',
-              buttonLabel: 'דברו איתנו',
-              buttonHref: '/contact',
-              variant: 'primary',
-            },
-          },
-          { id: uid(), type: 'contactForm', data: { title: 'צרו קשר', buttonLabel: 'שליחה' } },
-        ],
-      },
-      {
-        title: 'צור קשר',
-        slug: 'contact',
-        template: 'contact',
-        isHome: false,
-        blocks: [
-          { id: uid(), type: 'text', data: { content: '<h2 style="text-align:center">צרו קשר</h2><p style="text-align:center">נשמח לשמוע מכם</p>' } },
-          { id: uid(), type: 'contactForm', data: { title: 'השאירו פרטים', buttonLabel: 'שליחה' } },
-        ],
-      },
-    ],
-    menus: [
-      {
-        name: 'תפריט ראשי',
-        location: 'header',
-        items: [
-          { label: 'דף הבית', href: '/' },
-          { label: 'הטאלנטים שלנו', href: '/talents' },
-          { label: 'צור קשר', href: '/contact' },
-        ],
-      },
-    ],
-    cpts: [
-      {
-        name: 'טאלנטים',
-        slug: 'talents',
-        fields: [
-          { name: 'full_name', label: 'שם מלא', type: 'text', required: true },
-          { name: 'role', label: 'תחום', type: 'select', required: true, options: ['לייפסטייל', 'אופנה', 'ביוטי', 'טכנולוגיה', 'ספורט', 'אוכל', 'נסיעות', 'משפחה'] },
-          { name: 'bio', label: 'ביוגרפיה', type: 'textarea', required: false },
-          { name: 'image', label: 'תמונה', type: 'image', required: false },
-          { name: 'instagram', label: 'אינסטגרם', type: 'url', required: false },
-          { name: 'tiktok', label: 'טיקטוק', type: 'url', required: false },
-          { name: 'youtube', label: 'יוטיוב', type: 'url', required: false },
-          { name: 'followers', label: 'עוקבים', type: 'text', required: false },
-          { name: 'featured', label: 'מומלץ', type: 'checkbox', required: false },
-        ],
-        entries: [
-          { title: 'יעל כהן', slug: 'yael-cohen', status: 'published', data: { full_name: 'יעל כהן', role: 'לייפסטייל', bio: 'יוצרת תוכן לייפסטייל עם למעלה מ-500K עוקבים. מתמחה בשיתופי פעולה עם מותגי אופנה וביוטי.', followers: '520K', featured: 'true' } },
-          { title: 'מיכל לוי', slug: 'michal-levi', status: 'published', data: { full_name: 'מיכל לוי', role: 'אופנה', bio: 'בלוגרית אופנה ויוצרת תוכן. עובדת עם מותגים בינלאומיים ומקומיים.', followers: '380K', featured: 'true' } },
-          { title: 'נועם ברק', slug: 'noam-barak', status: 'published', data: { full_name: 'נועם ברק', role: 'טכנולוגיה', bio: 'בלוגר טכנולוגיה עם ערוץ יוטיוב פופולרי. סוקר מוצרים וחדשות טק.', followers: '290K', featured: 'true' } },
-          { title: 'שירה אביב', slug: 'shira-aviv', status: 'published', data: { full_name: 'שירה אביב', role: 'ביוטי', bio: 'מומחית ביוטי ואיפור. משתפת טיפים, סקירות מוצרים וטוטוריאלים.', followers: '450K', featured: 'false' } },
-          { title: 'דניאל רז', slug: 'daniel-raz', status: 'published', data: { full_name: 'דניאל רז', role: 'ספורט', bio: 'יוצר תוכן ספורט וכושר. שגריר מותגים מובילים בתחום הספורט.', followers: '310K', featured: 'false' } },
-          { title: 'רונית גולד', slug: 'ronit-gold', status: 'published', data: { full_name: 'רונית גולד', role: 'אוכל', bio: 'פוד בלוגרית ויוצרת מתכונים. משתפת פעולה עם מסעדות ומותגי מזון.', followers: '270K', featured: 'true' } },
-        ],
-      },
-    ],
-    siteSettings: {
-      tagline: 'מחברים בין מותגים ליוצרי תוכן',
-      footerText: '© כל הזכויות שמורות',
-    },
-  },
-
+  /* ── 1. עסק (Business) — Clean Professional ── */
   {
     id: 'business',
     name: 'עסק',
-    description: 'אתר לעסק, חנות, מסעדה או כל עסק שרוצה נוכחות דיגיטלית',
+    description: 'אתר מקצועי לעסק, משרד או חברת שירותים',
     category: 'עסקי',
     icon: 'storefront',
     primaryColor: '#2563eb',
@@ -196,18 +67,22 @@ export const templates: SiteTemplate[] = [
           {
             id: uid(), type: 'hero',
             data: {
-              title: 'ברוכים הבאים',
-              subtitle: 'הפתרון המושלם לעסק שלכם',
+              variant: 'split',
+              title: 'הפתרון המקצועי לעסק שלכם',
+              subtitle: 'שירותים מותאמים אישית שיעזרו לעסק שלכם לצמוח ולהצליח',
               backgroundImage: '',
               primaryBtnLabel: 'צרו קשר',
               primaryBtnHref: '/contact',
+              primaryBtnVariant: 'filled',
               secondaryBtnLabel: 'השירותים שלנו',
               secondaryBtnHref: '#services',
+              secondaryBtnVariant: 'outline',
             },
           },
           {
             id: uid(), type: 'about',
             data: {
+              variant: 'horizontal',
               items: [
                 { icon: 'handshake', title: 'מקצועיות', description: 'שירות אמין ומקצועי ברמה הגבוהה ביותר' },
                 { icon: 'schedule', title: 'זמינות', description: 'אנחנו כאן בשבילכם בכל שעה ובכל יום' },
@@ -218,6 +93,7 @@ export const templates: SiteTemplate[] = [
           {
             id: uid(), type: 'servicesGrid',
             data: {
+              variant: 'cards',
               services: [
                 { icon: 'design_services', title: 'ייעוץ', description: 'ייעוץ מקצועי ומותאם אישית' },
                 { icon: 'build', title: 'ביצוע', description: 'ביצוע מהיר ואיכותי' },
@@ -229,12 +105,16 @@ export const templates: SiteTemplate[] = [
           {
             id: uid(), type: 'cta',
             data: {
+              variant: 'light',
               title: 'רוצים לשמוע עוד?',
               description: 'השאירו פרטים ונחזור אליכם בהקדם',
               buttonLabel: 'צרו קשר',
               buttonHref: '/contact',
-              variant: 'primary',
             },
+          },
+          {
+            id: uid(), type: 'contactForm',
+            data: { variant: 'split', title: 'דברו איתנו', subtitle: 'נשמח לענות על כל שאלה', buttonLabel: 'שליחה' },
           },
         ],
       },
@@ -253,8 +133,7 @@ export const templates: SiteTemplate[] = [
         template: 'contact',
         isHome: false,
         blocks: [
-          { id: uid(), type: 'text', data: { content: '<h2 style="text-align:center">צרו קשר</h2><p style="text-align:center">נשמח לשמוע מכם</p>' } },
-          { id: uid(), type: 'contactForm', data: { title: 'השאירו פרטים', buttonLabel: 'שליחה' } },
+          { id: uid(), type: 'contactForm', data: { variant: 'standalone', title: 'צרו קשר', buttonLabel: 'שליחה' } },
         ],
       },
     ],
@@ -273,36 +152,94 @@ export const templates: SiteTemplate[] = [
     siteSettings: {
       tagline: 'הפתרון המושלם לעסק שלכם',
       footerText: '© כל הזכויות שמורות',
+      themeJson: JSON.stringify({
+        heading: '#0A2540',
+        body: '#64748b',
+        btnText: '#ffffff',
+        background: '#ffffff',
+        overlay: 'rgba(0,0,0,0.5)',
+        gradFrom: '#2563eb',
+        gradTo: '#1e40af',
+      }),
     },
   },
 
+  /* ── 2. קליניקה / מרפאה (Clinic) — Calm Trust ── */
   {
-    id: 'blog',
-    name: 'בלוג',
-    description: 'אתר בלוג עם רשת פוסטים, מושלם לכותבים, בלוגרים ויוצרי תוכן',
-    category: 'תוכן',
-    icon: 'edit_note',
-    primaryColor: '#059669',
+    id: 'clinic',
+    name: 'קליניקה / מרפאה',
+    description: 'אתר לקליניקה, מרפאה או מטפל — עיצוב רגוע ומקצועי',
+    category: 'בריאות',
+    icon: 'local_hospital',
+    primaryColor: '#0d9488',
     pages: [
       {
         title: 'דף הבית',
         slug: 'home',
-        template: 'blog',
+        template: 'home',
         isHome: true,
         blocks: [
           {
             id: uid(), type: 'hero',
             data: {
-              title: 'הבלוג שלנו',
-              subtitle: 'מחשבות, רעיונות ותובנות',
+              variant: 'minimal',
+              title: 'בריאות ואיכות חיים',
+              subtitle: 'טיפול מקצועי בגישה אישית ומכבדת',
               backgroundImage: '',
-              primaryBtnLabel: 'לכל הפוסטים',
-              primaryBtnHref: '/blog',
+              primaryBtnLabel: 'קבעו תור',
+              primaryBtnHref: '/contact',
+              primaryBtnVariant: 'filled',
               secondaryBtnLabel: '',
               secondaryBtnHref: '',
+              secondaryBtnVariant: 'outline',
             },
           },
-          { id: uid(), type: 'postsGrid', data: { count: 6, columns: 3 } },
+          {
+            id: uid(), type: 'about',
+            data: {
+              variant: 'grid',
+              items: [
+                { icon: 'favorite', title: 'גישה אישית', description: 'כל מטופל מקבל תכנית טיפול מותאמת אישית' },
+                { icon: 'verified', title: 'ניסיון מוכח', description: 'למעלה מ-15 שנות ניסיון בתחום' },
+                { icon: 'psychology', title: 'טיפול הוליסטי', description: 'גישה מקיפה הכוללת גוף ונפש' },
+              ],
+            },
+          },
+          {
+            id: uid(), type: 'servicesGrid',
+            data: {
+              variant: 'minimal',
+              services: [
+                { icon: 'medical_services', title: 'ייעוץ רפואי', description: 'ייעוץ מקצועי ומקיף בתחום הבריאות' },
+                { icon: 'healing', title: 'טיפולים', description: 'מגוון רחב של טיפולים מתקדמים' },
+                { icon: 'monitor_heart', title: 'בדיקות', description: 'בדיקות מקיפות ומעקב שוטף' },
+                { icon: 'spa', title: 'שיקום', description: 'תכניות שיקום מותאמות אישית' },
+              ],
+            },
+          },
+          {
+            id: uid(), type: 'cta',
+            data: {
+              variant: 'light',
+              title: 'רוצים לקבוע פגישה?',
+              description: 'צרו קשר ונשמח לעזור',
+              buttonLabel: 'קבעו תור',
+              buttonHref: '/contact',
+            },
+          },
+          {
+            id: uid(), type: 'contactForm',
+            data: { variant: 'standalone', title: 'השאירו פרטים', buttonLabel: 'שליחה' },
+          },
+        ],
+      },
+      {
+        title: 'שירותים',
+        slug: 'services',
+        template: 'blank',
+        isHome: false,
+        blocks: [
+          { id: uid(), type: 'text', data: { content: '<h2 style="text-align:center">השירותים שלנו</h2><p style="text-align:center">מגוון טיפולים ושירותים מקצועיים</p>' } },
         ],
       },
       {
@@ -311,8 +248,7 @@ export const templates: SiteTemplate[] = [
         template: 'contact',
         isHome: false,
         blocks: [
-          { id: uid(), type: 'text', data: { content: '<h2 style="text-align:center">צרו קשר</h2><p style="text-align:center">רוצים לשתף פעולה? דברו איתנו</p>' } },
-          { id: uid(), type: 'contactForm', data: { title: 'כתבו לנו', buttonLabel: 'שליחה' } },
+          { id: uid(), type: 'contactForm', data: { variant: 'standalone', title: 'צרו קשר', buttonLabel: 'שליחה' } },
         ],
       },
     ],
@@ -322,18 +258,230 @@ export const templates: SiteTemplate[] = [
         location: 'header',
         items: [
           { label: 'דף הבית', href: '/' },
-          { label: 'בלוג', href: '/blog' },
+          { label: 'שירותים', href: '/services' },
           { label: 'צור קשר', href: '/contact' },
         ],
       },
     ],
     cpts: [],
     siteSettings: {
-      tagline: 'מחשבות, רעיונות ותובנות',
+      tagline: 'בריאות ואיכות חיים',
       footerText: '© כל הזכויות שמורות',
+      themeJson: JSON.stringify({
+        heading: '#0A2540',
+        body: '#64748b',
+        btnText: '#ffffff',
+        background: '#ffffff',
+        overlay: 'rgba(0,0,0,0.4)',
+        gradFrom: '#0d9488',
+        gradTo: '#065f46',
+      }),
     },
   },
 
+  /* ── 3. מסעדה / קפה (Restaurant) — Warm Inviting ── */
+  {
+    id: 'restaurant',
+    name: 'מסעדה / קפה',
+    description: 'אתר למסעדה, בית קפה או עסק בתחום הקולינריה',
+    category: 'אוכל',
+    icon: 'restaurant',
+    primaryColor: '#b45309',
+    pages: [
+      {
+        title: 'דף הבית',
+        slug: 'home',
+        template: 'home',
+        isHome: true,
+        blocks: [
+          {
+            id: uid(), type: 'hero',
+            data: {
+              variant: 'fullscreen',
+              title: 'חוויה קולינרית שלא תשכחו',
+              subtitle: 'מרכיבים טריים, שפים מוכשרים, ואווירה שאין כמוה',
+              backgroundImage: '',
+              primaryBtnLabel: 'לתפריט',
+              primaryBtnHref: '/menu',
+              primaryBtnVariant: 'filled',
+              secondaryBtnLabel: 'הזמינו שולחן',
+              secondaryBtnHref: '/contact',
+              secondaryBtnVariant: 'outline',
+            },
+          },
+          {
+            id: uid(), type: 'about',
+            data: {
+              variant: 'alternating',
+              items: [
+                { icon: 'restaurant_menu', title: 'תפריט עשיר', description: 'מנות ייחודיות המשלבות מסורת וחדשנות קולינרית' },
+                { icon: 'local_bar', title: 'בר משקאות', description: 'קוקטיילים מיוחדים, יינות נבחרים ומשקאות מרעננים' },
+                { icon: 'event_seat', title: 'אווירה מושלמת', description: 'עיצוב ייחודי ואווירה חמה לכל ארוחה' },
+              ],
+            },
+          },
+          {
+            id: uid(), type: 'gallery',
+            data: { images: [] },
+          },
+          {
+            id: uid(), type: 'cta',
+            data: {
+              variant: 'dark',
+              title: 'רוצים להזמין שולחן?',
+              description: 'צרו קשר ונשמח לארח אתכם',
+              buttonLabel: 'הזמנת מקום',
+              buttonHref: '/contact',
+            },
+          },
+          {
+            id: uid(), type: 'contactForm',
+            data: { variant: 'standalone', title: 'הזמנת שולחן', buttonLabel: 'שליחה' },
+          },
+        ],
+      },
+      {
+        title: 'תפריט',
+        slug: 'menu',
+        template: 'blank',
+        isHome: false,
+        blocks: [
+          { id: uid(), type: 'text', data: { content: '<h2 style="text-align:center">התפריט שלנו</h2><p style="text-align:center">מנות מיוחדות שיגרמו לכם לחזור שוב ושוב</p>' } },
+          { id: uid(), type: 'gallery', data: { images: [] } },
+        ],
+      },
+      {
+        title: 'צור קשר',
+        slug: 'contact',
+        template: 'contact',
+        isHome: false,
+        blocks: [
+          { id: uid(), type: 'contactForm', data: { variant: 'standalone', title: 'צרו קשר', buttonLabel: 'שליחה' } },
+        ],
+      },
+    ],
+    menus: [
+      {
+        name: 'תפריט ראשי',
+        location: 'header',
+        items: [
+          { label: 'דף הבית', href: '/' },
+          { label: 'תפריט', href: '/menu' },
+          { label: 'צור קשר', href: '/contact' },
+        ],
+      },
+    ],
+    cpts: [],
+    siteSettings: {
+      tagline: 'חוויה קולינרית שלא תשכחו',
+      footerText: '© כל הזכויות שמורות',
+      themeJson: JSON.stringify({
+        heading: '#ffffff',
+        body: 'rgba(255,255,255,0.7)',
+        btnText: '#ffffff',
+        background: '#ffffff',
+        overlay: 'rgba(0,0,0,0.55)',
+        gradFrom: '#b45309',
+        gradTo: '#78350f',
+      }),
+    },
+  },
+
+  /* ── 4. פורטפוליו (Portfolio) — Minimal Creative ── */
+  {
+    id: 'portfolio',
+    name: 'פורטפוליו',
+    description: 'תיק עבודות מינימלי ליוצרים, מעצבים וצלמים',
+    category: 'קריאייטיב',
+    icon: 'palette',
+    primaryColor: '#0A2540',
+    pages: [
+      {
+        title: 'דף הבית',
+        slug: 'home',
+        template: 'home',
+        isHome: true,
+        blocks: [
+          {
+            id: uid(), type: 'hero',
+            data: {
+              variant: 'minimal',
+              title: 'יצירתיות ללא גבולות',
+              subtitle: 'עיצוב, צילום ויצירה — הכל במקום אחד',
+              backgroundImage: '',
+              primaryBtnLabel: 'לעבודות',
+              primaryBtnHref: '#gallery',
+              primaryBtnVariant: 'filled',
+              secondaryBtnLabel: '',
+              secondaryBtnHref: '',
+              secondaryBtnVariant: 'outline',
+            },
+          },
+          {
+            id: uid(), type: 'gallery',
+            data: { images: [] },
+          },
+          {
+            id: uid(), type: 'quote',
+            data: {
+              text: 'עיצוב טוב הוא לא רק מה שנראה ומורגש — זה איך שזה עובד.',
+              author: '',
+              role: '',
+            },
+          },
+          {
+            id: uid(), type: 'cta',
+            data: {
+              variant: 'banner',
+              title: 'מעוניינים לעבוד יחד?',
+              description: '',
+              buttonLabel: 'צרו קשר',
+              buttonHref: '/contact',
+            },
+          },
+          {
+            id: uid(), type: 'contactForm',
+            data: { variant: 'split', title: 'בואו ניצור משהו מדהים', subtitle: 'ספרו לי על הפרויקט שלכם', buttonLabel: 'שליחה' },
+          },
+        ],
+      },
+      {
+        title: 'צור קשר',
+        slug: 'contact',
+        template: 'contact',
+        isHome: false,
+        blocks: [
+          { id: uid(), type: 'contactForm', data: { variant: 'standalone', title: 'צרו קשר', buttonLabel: 'שליחה' } },
+        ],
+      },
+    ],
+    menus: [
+      {
+        name: 'תפריט ראשי',
+        location: 'header',
+        items: [
+          { label: 'דף הבית', href: '/' },
+          { label: 'צור קשר', href: '/contact' },
+        ],
+      },
+    ],
+    cpts: [],
+    siteSettings: {
+      tagline: 'יצירתיות ללא גבולות',
+      footerText: '© כל הזכויות שמורות',
+      themeJson: JSON.stringify({
+        heading: '#0A2540',
+        body: '#64748b',
+        btnText: '#ffffff',
+        background: '#ffffff',
+        overlay: 'rgba(0,0,0,0.6)',
+        gradFrom: '#0A2540',
+        gradTo: '#1e293b',
+      }),
+    },
+  },
+
+  /* ── 5. דף נחיתה (Landing Page) — Bold Conversion ── */
   {
     id: 'landing',
     name: 'דף נחיתה',
@@ -351,31 +499,51 @@ export const templates: SiteTemplate[] = [
           {
             id: uid(), type: 'hero',
             data: {
-              title: 'המוצר החדש שלנו',
-              subtitle: 'הפתרון שחיכיתם לו',
+              variant: 'fullscreen',
+              title: 'המוצר שישנה לכם את החיים',
+              subtitle: 'הצטרפו לאלפים שכבר נהנים מהשירות שלנו',
               backgroundImage: '',
               primaryBtnLabel: 'הרשמו עכשיו',
               primaryBtnHref: '#signup',
+              primaryBtnVariant: 'filled',
               secondaryBtnLabel: 'למידע נוסף',
               secondaryBtnHref: '#info',
+              secondaryBtnVariant: 'outline',
             },
           },
-          { id: uid(), type: 'gallery', data: { images: [] } },
+          {
+            id: uid(), type: 'about',
+            data: {
+              variant: 'grid',
+              items: [
+                { icon: 'bolt', title: 'מהיר', description: 'תוצאות תוך דקות ספורות' },
+                { icon: 'security', title: 'מאובטח', description: 'הנתונים שלכם בטוחים אצלנו' },
+                { icon: 'auto_awesome', title: 'חכם', description: 'בינה מלאכותית שעובדת בשבילכם' },
+              ],
+            },
+          },
           {
             id: uid(), type: 'quote',
-            data: { text: 'המוצר הזה שינה לנו את החיים!', author: 'לקוח מרוצה', role: '' },
+            data: {
+              text: 'המוצר הזה שינה לנו את החיים! תוך שבוע ראינו תוצאות מדהימות.',
+              author: 'לקוח מרוצה',
+              role: 'מנכ״ל',
+            },
           },
           {
             id: uid(), type: 'cta',
             data: {
-              title: 'אל תפספסו',
-              description: 'הצטרפו עוד היום ותיהנו מהטבה מיוחדת',
+              variant: 'banner',
+              title: 'אל תפספסו — ההטבה מוגבלת!',
+              description: '',
               buttonLabel: 'הצטרפו עכשיו',
               buttonHref: '#signup',
-              variant: 'primary',
             },
           },
-          { id: uid(), type: 'contactForm', data: { title: 'השאירו פרטים', buttonLabel: 'שלחו לי' } },
+          {
+            id: uid(), type: 'contactForm',
+            data: { variant: 'standalone', title: 'השאירו פרטים', buttonLabel: 'שלחו לי' },
+          },
         ],
       },
     ],
@@ -390,16 +558,26 @@ export const templates: SiteTemplate[] = [
     siteSettings: {
       tagline: 'הפתרון שחיכיתם לו',
       footerText: '© כל הזכויות שמורות',
+      themeJson: JSON.stringify({
+        heading: '#ffffff',
+        body: 'rgba(255,255,255,0.7)',
+        btnText: '#ffffff',
+        background: '#ffffff',
+        overlay: 'rgba(0,0,0,0.5)',
+        gradFrom: '#7c3aed',
+        gradTo: '#4c1d95',
+      }),
     },
   },
 
+  /* ── ריק (Blank) — Start from scratch ── */
   {
     id: 'blank',
     name: 'ריק',
     description: 'התחילו מאפס ובנו את האתר בדיוק כמו שאתם רוצים',
     category: 'כללי',
     icon: 'draft',
-    primaryColor: '#a28b5d',
+    primaryColor: '#635BFF',
     pages: [
       {
         title: 'דף הבית',
@@ -407,7 +585,21 @@ export const templates: SiteTemplate[] = [
         template: 'blank',
         isHome: true,
         blocks: [
-          { id: uid(), type: 'hero', data: defaultBlockData('hero') },
+          {
+            id: uid(), type: 'hero',
+            data: {
+              variant: 'centered',
+              title: 'כותרת ראשית',
+              subtitle: 'תת כותרת',
+              backgroundImage: '',
+              primaryBtnLabel: 'התחילו עכשיו',
+              primaryBtnHref: '#',
+              primaryBtnVariant: 'filled',
+              secondaryBtnLabel: '',
+              secondaryBtnHref: '',
+              secondaryBtnVariant: 'outline',
+            },
+          },
         ],
       },
     ],

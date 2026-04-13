@@ -1,0 +1,89 @@
+---
+description: Auth pages design — login, register, forgot/reset password
+globs: "app/(auth)/**"
+alwaysApply: false
+---
+
+# Auth Pages — iBot-Inspired Flat Design
+
+All auth pages follow the same split-screen layout inspired by iBot (ibot-chat.com/user/login.php).
+
+## Layout Structure
+
+```
+┌─────────────────────────────────────────────────┐
+│  Decorative gradient circles (absolute, subtle)  │
+├────────────────────┬────────────────────────────┤
+│   Product Info     │      Form Area             │
+│   (white bg)       │      (#f6f7fb bg)          │
+│                    │                            │
+│   ⚡ Logo (float)  │      Heading               │
+│   Heading          │      Subheading            │
+│   Subheading       │      Form fields           │
+│   3 Features       │      CTA button            │
+│   w/ colored icons │      Links                 │
+│                    │                            │
+│   (lg:flex, hidden │      (always visible)      │
+│    on mobile)      │                            │
+└────────────────────┴────────────────────────────┘
+```
+
+## Design Tokens
+
+- Page background: `#f6f7fb`
+- Info panel: white (`bg-white`)
+- Border color: `#d0d4e4` (inputs, cards)
+- Input radius: `rounded-xl` (NOT `rounded-full`)
+- Button radius: `rounded-xl`
+- Focus ring: `focus:border-ocean focus:ring-[3px] focus:ring-ocean/10`
+- Input padding: `py-3 pr-4 pl-11` (with left icon)
+- Shadows: `shadow-[0_4px_20px_0_rgba(0,0,0,0.05)]`
+
+## Decorative Circles
+
+Subtle gradient circles positioned at page corners and inside the white panel:
+- Background circles: `from-ocean/5 to-purple-500/5`, `from-emerald-500/5 to-amber-500/5`
+- Panel circles: `from-ocean/[0.04] to-sky-300/[0.06]`, `from-emerald-400/[0.03] to-amber-300/[0.04]`
+- All circles: `pointer-events-none absolute rounded-full`
+
+## Feature Icons
+
+Three features with colored circle icons:
+- Emerald: `bg-emerald-500/10 text-emerald-500`
+- Purple: `bg-purple-500/10 text-purple-500`
+- Amber: `bg-amber-500/10 text-amber-500`
+
+## Input Fields
+
+Icons on the LEFT (in visual terms), using absolute positioning:
+```tsx
+<div className="relative">
+  <input className="... py-3 pr-4 pl-11 ..." />
+  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+    <Icon className="h-[18px] w-[18px] text-slate-400" />
+  </div>
+</div>
+```
+
+## Copy Guidelines
+
+Feature text must match homepage messaging:
+- עורך ויזואלי מלא
+- דומיין מותאם אישי
+- ניהול לידים מובנה
+
+## Auth Flow Pages
+
+| Route | Purpose |
+|-------|---------|
+| `/login` | Email + password login, "שכחת סיסמה?" link |
+| `/register` | 3-step wizard: details → template → creating |
+| `/forgot-password` | Email input → sends reset link via Resend |
+| `/reset-password?token=...` | New password + confirm → redirect to login with success |
+| `/logout` | GET route → destroys session → redirect to login |
+
+## Animations
+
+- Logo icon: `animate-[float_3s_ease-in-out_infinite]` (defined in globals.css)
+- Button hover: `hover:scale-[1.02]`
+- Input focus: smooth ring transition via `transition-all duration-200`

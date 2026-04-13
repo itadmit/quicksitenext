@@ -20,7 +20,7 @@ export default function PostsGridBlockEditor({ data, onChange }: Props) {
           <FileText className="h-3 w-3 text-slate-400" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">הגדרות תצוגה</span>
         </div>
-        <div className="space-y-3 rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+        <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
           <div>
             <label className={label}>מספר פוסטים</label>
             <input

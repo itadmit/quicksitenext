@@ -4,13 +4,15 @@ import { useActionState, useState, useCallback, useEffect, useTransition, useRef
 import { registerAction } from './actions';
 import { checkSlugAction } from './check-slug';
 import { templates } from '@/lib/templates';
+import { User, Palette, Rocket, Check, CheckCircle, XCircle, ArrowLeft, FileText } from 'lucide-react';
+import TemplatePreview from '@/app/dashboard/templates/TemplatePreview';
 
 type RegisterState = { error?: string; fieldErrors?: Record<string, string[]> } | undefined;
 
 const STEPS = [
-  { label: 'פרטים', icon: 'person' },
-  { label: 'תבנית', icon: 'palette' },
-  { label: 'יצירה', icon: 'rocket_launch' },
+  { label: 'פרטים', Icon: User },
+  { label: 'תבנית', Icon: Palette },
+  { label: 'יצירה', Icon: Rocket },
 ];
 
 export default function RegisterForm() {
@@ -21,7 +23,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [slug, setSlug] = useState('');
-  const [templateId, setTemplateId] = useState('agency');
+  const [templateId, setTemplateId] = useState('business');
 
   const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
   const [, startSlugCheck] = useTransition();
@@ -90,15 +92,15 @@ export default function RegisterForm() {
             <div key={s.label} className="flex items-center">
               <div className="flex flex-col items-center">
                 <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
-                  done ? 'bg-emerald-500 text-white' : active ? 'bg-ocean text-white shadow-lg shadow-ocean/30' : 'bg-slate-100 text-slate-400'
+                  done ? 'bg-emerald-500 text-white' : active ? 'bg-ocean text-white shadow-[0_4px_20px_0_rgba(99,91,255,0.25)]' : 'bg-slate-100 text-slate-400'
                 }`}>
                   {done ? (
-                    <span className="material-symbols-outlined text-[18px]">check</span>
+                    <Check className="h-[18px] w-[18px]" />
                   ) : (
-                    <span className="material-symbols-outlined text-[18px]">{s.icon}</span>
+                    <s.Icon className="h-[18px] w-[18px]" />
                   )}
                 </div>
-                <span className={`mt-2 text-[11px] font-semibold ${active ? 'text-navy' : 'text-slate-400'}`}>{s.label}</span>
+                <span className={`mt-2 text-[11px] font-semibold ${active ? 'text-slate-800' : 'text-slate-400'}`}>{s.label}</span>
               </div>
               {i < STEPS.length - 1 && (
                 <div className={`mx-3 mb-5 h-[2px] w-12 rounded-full transition-colors duration-300 ${done ? 'bg-emerald-500' : 'bg-slate-200'}`} />
@@ -111,31 +113,31 @@ export default function RegisterForm() {
       {/* Step 1: Details */}
       <div className={`transition-all duration-300 ${step === 0 ? 'block' : 'hidden'}`}>
         <div className="mb-6 text-center">
-          <h2 className="font-noto text-xl font-bold text-navy">יצירת חשבון</h2>
-          <p className="mt-1 text-sm text-slate-400">מלאו את הפרטים כדי להתחיל</p>
+          <h2 className="font-noto text-xl font-bold text-slate-800">יצירת חשבון</h2>
+          <p className="mt-1 text-sm text-slate-500">מלאו את הפרטים כדי להתחיל</p>
         </div>
 
         {state?.error && <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{state.error}</p>}
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           <Field label="שם" value={name} onChange={setName} error={step1Errors.name || state?.fieldErrors?.name?.[0]} />
           <Field label="אימייל" value={email} onChange={setEmail} type="email" error={step1Errors.email || state?.fieldErrors?.email?.[0]} />
           <Field label="סיסמה" value={password} onChange={setPassword} type="password" error={step1Errors.password || state?.fieldErrors?.password?.[0]} />
 
           <div>
-            <span className="mb-1.5 block text-[11px] font-bold uppercase tracking-widest text-slate-400">כתובת האתר</span>
+            <label className="mb-2 block text-sm font-medium text-slate-600">כתובת האתר</label>
             <div className="relative">
               <input
                 value={slug}
                 onChange={e => onSlugChange(e.target.value)}
                 placeholder="my-site"
                 dir="ltr"
-                className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 pl-10 text-sm text-navy ring-1 ring-slate-200/60 focus:outline-none focus:ring-2 focus:ring-ocean/20"
+                className="w-full rounded-xl border border-[#d0d4e4] bg-white px-4 py-3 pl-10 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-ocean focus:outline-none focus:ring-[3px] focus:ring-ocean/10"
               />
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
                 {slugStatus === 'checking' && <span className="block h-4 w-4 animate-spin rounded-full border-2 border-ocean/30 border-t-ocean" />}
-                {slugStatus === 'available' && <span className="material-symbols-outlined text-[18px] text-emerald-500">check_circle</span>}
-                {slugStatus === 'taken' && <span className="material-symbols-outlined text-[18px] text-red-500">cancel</span>}
+                {slugStatus === 'available' && <CheckCircle className="h-[18px] w-[18px] text-emerald-500" />}
+                {slugStatus === 'taken' && <XCircle className="h-[18px] w-[18px] text-red-500" />}
               </div>
             </div>
             <span className="mt-1.5 block text-[11px] text-slate-400" dir="ltr">{slug || 'my-site'}.quicksite.co.il</span>
@@ -147,8 +149,9 @@ export default function RegisterForm() {
         <button
           type="button"
           onClick={goToStep2}
-          className="mt-6 w-full rounded-full bg-ocean py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-ocean/90 hover:shadow-md"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-ocean py-3 px-4 font-semibold text-white shadow-[0_4px_20px_0_rgba(0,0,0,0.05)] transition-all duration-200 hover:bg-ocean/90 hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-ocean/20 cursor-pointer"
         >
+          <ArrowLeft className="h-4 w-4" />
           המשך לבחירת תבנית
         </button>
       </div>
@@ -156,8 +159,8 @@ export default function RegisterForm() {
       {/* Step 2: Template Selection */}
       <div className={`transition-all duration-300 ${step === 1 ? 'block' : 'hidden'}`}>
         <div className="mb-6 text-center">
-          <h2 className="font-noto text-xl font-bold text-navy">בחרו תבנית</h2>
-          <p className="mt-1 text-sm text-slate-400">בחרו את העיצוב שמתאים לכם, תמיד אפשר לשנות אחר כך</p>
+          <h2 className="font-noto text-xl font-bold text-slate-800">בחרו תבנית</h2>
+          <p className="mt-1 text-sm text-slate-500">בחרו את העיצוב שמתאים לכם, תמיד אפשר לשנות אחר כך</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -168,37 +171,27 @@ export default function RegisterForm() {
                 key={t.id}
                 type="button"
                 onClick={() => setTemplateId(t.id)}
-                className={`group relative flex flex-col overflow-hidden rounded-2xl border-2 bg-white text-right transition-all duration-200 ${
+                className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border bg-white text-right transition-all duration-200 ${
                   selected
-                    ? 'border-ocean shadow-lg shadow-ocean/10'
-                    : 'border-slate-100 hover:border-slate-200 hover:shadow-md'
+                    ? 'border-ocean shadow-[0_4px_20px_0_rgba(99,91,255,0.12)]'
+                    : 'border-[#d0d4e4] hover:border-slate-300 hover:shadow-[0_4px_20px_0_rgba(0,0,0,0.05)]'
                 }`}
               >
-                {/* Thumbnail area */}
-                <div
-                  className="flex h-32 items-center justify-center transition-transform duration-200 group-hover:scale-[1.02]"
-                  style={{ background: `linear-gradient(135deg, ${t.primaryColor}15, ${t.primaryColor}08)` }}
-                >
-                  <span
-                    className="material-symbols-outlined text-[48px] transition-transform duration-200 group-hover:scale-110"
-                    style={{ color: t.primaryColor }}
-                  >
-                    {t.icon}
-                  </span>
+                <div className="transition-transform duration-200 group-hover:scale-[1.02]">
+                  <TemplatePreview template={t} />
                 </div>
-                {/* Info */}
                 <div className="flex-1 p-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-noto text-sm font-bold text-navy">{t.name}</h3>
+                    <h3 className="font-noto text-sm font-bold text-slate-800">{t.name}</h3>
                     <span className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors ${
-                      selected ? 'border-ocean bg-ocean' : 'border-slate-200'
+                      selected ? 'border-ocean bg-ocean' : 'border-slate-300'
                     }`}>
-                      {selected && <span className="material-symbols-outlined text-[14px] text-white">check</span>}
+                      {selected && <Check className="h-3 w-3 text-white" />}
                     </span>
                   </div>
-                  <p className="mt-1 text-[12px] leading-relaxed text-slate-400">{t.description}</p>
-                  <div className="mt-2 flex items-center gap-1 text-[11px] text-slate-300">
-                    <span className="material-symbols-outlined text-[14px]">description</span>
+                  <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t.description}</p>
+                  <div className="mt-2 flex items-center gap-1 text-[11px] text-slate-400">
+                    <FileText className="h-3.5 w-3.5" />
                     {t.pages.length} {t.pages.length === 1 ? 'עמוד' : 'עמודים'}
                   </div>
                 </div>
@@ -206,7 +199,7 @@ export default function RegisterForm() {
                 {selected && (
                   <div className="absolute left-2 top-2">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-ocean text-white shadow-md">
-                      <span className="material-symbols-outlined text-[14px]">check</span>
+                      <Check className="h-3.5 w-3.5" />
                     </span>
                   </div>
                 )}
@@ -219,15 +212,16 @@ export default function RegisterForm() {
           <button
             type="button"
             onClick={() => setStep(0)}
-            className="rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-navy transition-colors hover:border-ocean hover:text-ocean"
+            className="rounded-xl border border-[#d0d4e4] bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 hover:text-ocean cursor-pointer"
           >
             חזרה
           </button>
           <button
             type="button"
             onClick={goToStep3}
-            className="flex-1 rounded-full bg-ocean py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-ocean/90 hover:shadow-md"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-ocean py-3 px-4 font-semibold text-white shadow-[0_4px_20px_0_rgba(0,0,0,0.05)] transition-all duration-200 hover:bg-ocean/90 hover:scale-[1.02] cursor-pointer"
           >
+            <Rocket className="h-4 w-4" />
             צרו לי את האתר
           </button>
         </div>
@@ -238,13 +232,11 @@ export default function RegisterForm() {
         <div className="flex flex-col items-center py-12 text-center">
           <div className="relative mb-6">
             <div className="h-16 w-16 animate-spin rounded-full border-4 border-slate-100 border-t-ocean" />
-            <span className="material-symbols-outlined absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[24px] text-ocean">
-              rocket_launch
-            </span>
+            <Rocket className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 text-ocean" />
           </div>
-          <h2 className="font-noto text-xl font-bold text-navy">מכינים את האתר שלכם...</h2>
-          <p className="mt-2 text-sm text-slate-400">יצירת דפים, תפריטים והגדרות — רק עוד רגע</p>
-          <div className="mt-6 flex items-center gap-2 text-[12px] text-slate-300">
+          <h2 className="font-noto text-xl font-bold text-slate-800">מכינים את האתר שלכם...</h2>
+          <p className="mt-2 text-sm text-slate-500">יצירת דפים, תפריטים והגדרות — רק עוד רגע</p>
+          <div className="mt-6 flex items-center gap-2 text-[12px] text-slate-400">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ocean" />
             <span>יוצר חשבון ומגדיר את האתר</span>
           </div>
@@ -259,15 +251,16 @@ function Field({ label, value, onChange, type = 'text', error }: {
   type?: string; error?: string;
 }) {
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-[11px] font-bold uppercase tracking-widest text-slate-400">{label}</span>
+    <div>
+      <label className="mb-2 block text-sm font-medium text-slate-600">{label}</label>
       <input
         value={value}
         onChange={e => onChange(e.target.value)}
         type={type}
-        className="w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-sm text-navy ring-1 ring-slate-200/60 focus:outline-none focus:ring-2 focus:ring-ocean/20 transition-colors"
+        dir={type === 'email' ? 'ltr' : undefined}
+        className="w-full rounded-xl border border-[#d0d4e4] bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-ocean focus:outline-none focus:ring-[3px] focus:ring-ocean/10"
       />
       {error && <span className="mt-1 block text-xs text-red-600">{error}</span>}
-    </label>
+    </div>
   );
 }

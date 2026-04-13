@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { requireUser } from '@/lib/auth';
 import { blockSchema } from '@/lib/block-registry';
 import { revalidatePath } from 'next/cache';
-import { writeFile, mkdir } from 'fs/promises';
+import { uploadToR2 } from '@/lib/r2';
 import path from 'path';
 
 async function verifyPageOwnership(pageId: string) {
@@ -85,17 +85,12 @@ export async function uploadMediaFromEditorAction(fd: FormData) {
   if (!allowed.includes(file.type)) return { error: 'סוג קובץ לא נתמך' };
 
   try {
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', tenantId);
-    await mkdir(uploadDir, { recursive: true });
-
     const ext = path.extname(file.name);
     const safeName = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext;
-    const filePath = path.join(uploadDir, safeName);
+    const key = `media/${tenantId}/${safeName}`;
 
     const bytes = await file.arrayBuffer();
-    await writeFile(filePath, Buffer.from(bytes));
-
-    const url = `/uploads/${tenantId}/${safeName}`;
+    const url = await uploadToR2(key, Buffer.from(bytes), file.type);
 
     const item = await prisma.mediaItem.create({
       data: {

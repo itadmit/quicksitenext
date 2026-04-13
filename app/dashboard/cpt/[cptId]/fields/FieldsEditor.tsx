@@ -72,7 +72,7 @@ export default function FieldsEditor({ cptId, initialFields }: { cptId: string; 
       {error && <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">{error}</p>}
 
       {fields.map((field, i) => (
-        <div key={i} className="rounded-xl border border-slate-100 bg-white">
+        <div key={i} className="rounded-2xl border border-slate-200 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
             <span className="text-sm font-medium text-navy">שדה #{i + 1}</span>
             <div className="flex gap-2">

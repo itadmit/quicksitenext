@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useActionState, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Pencil, Trash2, Download } from 'lucide-react';
-import { updateLeadAction, deleteLeadAction, bulkUpdateLeadStatusAction, exportLeadsCsvAction, type LeadActionState } from './actions';
+import { createLeadAction, updateLeadAction, deleteLeadAction, bulkUpdateLeadStatusAction, exportLeadsCsvAction, type LeadActionState } from './actions';
 import { DataTable, DataTableRow, DataTableCell, StatusBadge, DataTableEmpty } from '@/components/dashboard/DataTable';
+import { useCreateToggle } from '@/components/dashboard/CreateToggle';
 
 type Lead = {
   id: string; name: string; email: string; phone: string | null;
@@ -33,12 +34,25 @@ const STATUSES = [
   { value: 'LOST', label: 'הפסד' },
 ];
 
+const inputCls = 'w-full rounded-xl border-0 bg-slate-50 px-4 py-2.5 text-sm text-navy ring-1 ring-slate-200/60 focus:outline-none focus:ring-2 focus:ring-ocean/20 transition-colors';
+const labelCls = 'mb-1 block text-xs font-medium text-slate-500';
+
 export default function LeadsClient({ leads }: { leads: Lead[] }) {
   const router = useRouter();
+  const { isOpen: creating, close: closeCreate } = useCreateToggle();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulking, startBulk] = useTransition();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleting, startDelete] = useTransition();
+
+  const [createState, createFormAction, createPending] = useActionState<LeadActionState, FormData>(
+    async (prev, fd) => {
+      const result = await createLeadAction(prev, fd);
+      if (result?.success) { closeCreate(); router.refresh(); }
+      return result;
+    },
+    undefined,
+  );
 
   function toggleSelect(id: string) {
     setSelected(prev => {
@@ -80,12 +94,37 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
     URL.revokeObjectURL(url);
   }
 
-  if (leads.length === 0) {
-    return <DataTableEmpty icon="contact_mail" text="אין לידים" />;
-  }
-
   return (
     <div className="space-y-4">
+      {creating && (
+        <div className="rounded-2xl border border-slate-200 bg-white">
+          <div className="border-b border-slate-100 px-6 py-4"><h2 className="text-[14px] font-semibold text-navy">ליד חדש</h2></div>
+          <div className="px-6 py-5">
+            <form action={createFormAction} className="space-y-4">
+              {createState?.error && <p className="text-sm text-red-600">{createState.error}</p>}
+              <div className="grid grid-cols-2 gap-4">
+                <label className="block"><span className={labelCls}>שם *</span><input name="name" required className={inputCls} /></label>
+                <label className="block"><span className={labelCls}>אימייל *</span><input name="email" type="email" required dir="ltr" className={inputCls + ' font-mono'} /></label>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <label className="block"><span className={labelCls}>טלפון</span><input name="phone" dir="ltr" className={inputCls} /></label>
+                <label className="block"><span className={labelCls}>חברה</span><input name="company" className={inputCls} /></label>
+                <label className="block"><span className={labelCls}>מקור</span><input name="source" defaultValue="manual" className={inputCls} /></label>
+              </div>
+              <label className="block"><span className={labelCls}>הודעה</span><textarea name="message" rows={2} className={inputCls + ' resize-y'} /></label>
+              <div className="flex gap-3">
+                <button type="submit" disabled={createPending} className="cursor-pointer rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{createPending ? 'שומר...' : 'צור ליד'}</button>
+                <button type="button" onClick={closeCreate} className="cursor-pointer rounded-lg border border-slate-200 px-4 py-2 text-[13px] font-semibold text-slate-600 transition-colors duration-150 hover:border-slate-300 hover:text-navy">ביטול</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {leads.length === 0 && !creating ? (
+        <DataTableEmpty icon="contact_mail" text="אין לידים" />
+      ) : leads.length > 0 ? (
+      <>
       {/* Bulk actions bar */}
       {selected.size > 0 && (
         <div className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/50 px-4 py-3">
@@ -164,6 +203,8 @@ export default function LeadsClient({ leads }: { leads: Lead[] }) {
 
       {/* Inline edit panel */}
       {editingId && <LeadEditPanel lead={leads.find(l => l.id === editingId)!} onClose={() => setEditingId(null)} />}
+      </>
+      ) : null}
     </div>
   );
 }
@@ -188,7 +229,7 @@ function LeadEditPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-100 bg-white p-5">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-[14px] font-semibold text-navy">עריכת ליד — {lead.name}</h3>
         <button onClick={onClose} className="cursor-pointer text-[13px] text-slate-400 hover:text-slate-600">סגור</button>

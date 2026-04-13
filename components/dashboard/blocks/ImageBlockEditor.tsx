@@ -28,7 +28,7 @@ export default function ImageBlockEditor({ data, onChange }: Props) {
           <Tag className="h-3 w-3 text-slate-400" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">מטא-דאטה</span>
         </div>
-        <div className="grid grid-cols-2 gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+        <div className="grid grid-cols-2 gap-3 rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
           <div>
             <label className={label}>טקסט חלופי (Alt)</label>
             <input value={(data.alt as string) ?? ''} onChange={(e) => update('alt', e.target.value)} className={input} />

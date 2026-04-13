@@ -230,6 +230,24 @@ inline-flex h-10 w-10 items-center justify-center rounded-lg bg-ocean/[0.08]
 </div>
 ```
 
+## Auth Pages (Login / Register / Password Reset)
+
+iBot-inspired flat design. Split layout: white info panel (right in RTL) + form on `#f6f7fb` bg.
+- Inputs: `rounded-xl border-[#d0d4e4]`, focus ring `ring-ocean/10`
+- Buttons: `rounded-xl` (NOT `rounded-full` like dashboard)
+- Decorative circles: subtle gradient circles at corners (`from-ocean/5`, `from-emerald-500/5`)
+- Features: 3 items with colored round icons (emerald, purple, amber)
+- Logo icon floats with `animate-[float_3s_ease-in-out_infinite]`
+
+## Email Templates
+
+All emails use shared `layout()` from `lib/email.ts`:
+- Background: `#f6f7fb`, white card `border-radius: 16px`
+- Header: gradient bar `#635BFF → #7A73FF` with logo
+- Content: RTL, Hebrew, `Segoe UI` font
+- CTA buttons: `#635BFF`, `border-radius: 12px`
+- Fire-and-forget: always `.catch(console.error)`, never await in critical path
+
 ## Anti-Patterns
 
 - ❌ `bg-primary`, `text-charcoal`, `border-charcoal/10` → use `bg-ocean`, `text-navy`, `border-slate-200`
@@ -241,3 +259,5 @@ inline-flex h-10 w-10 items-center justify-center rounded-lg bg-ocean/[0.08]
 - ❌ `useEffect` for data fetching → server components
 - ❌ Loading spinners for page data → server-side fetch
 - ❌ `confirm()` for destructive actions → use a styled confirmation dialog
+- ❌ `await sendEmail(...)` in action critical path → use fire-and-forget `.catch(console.error)`
+- ❌ Blocking user flow on email failure → emails must never break the main action

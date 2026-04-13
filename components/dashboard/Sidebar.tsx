@@ -1,29 +1,16 @@
 import Link from 'next/link';
-import { ExternalLink, LogOut, Settings } from 'lucide-react';
+import { ExternalLink, LogOut, Paintbrush, Settings } from 'lucide-react';
 import SidebarNav from './SidebarNav';
 import NotificationBell from './NotificationBell';
-
-const navItems = [
-  { href: '/dashboard', label: 'ראשי', icon: 'dashboard' },
-  { href: '/dashboard/pages', label: 'עמודים', icon: 'description' },
-  { href: '/dashboard/posts', label: 'פוסטים', icon: 'article' },
-  { href: '/dashboard/cpt', label: 'תוכן מותאם', icon: 'extension' },
-  { href: '/dashboard/menu', label: 'תפריט', icon: 'menu' },
-  { href: '/dashboard/popups', label: 'פופאפים', icon: 'web_asset' },
-  { href: '/dashboard/leads', label: 'לידים', icon: 'contact_mail' },
-  { href: '/dashboard/media', label: 'מדיה', icon: 'image' },
-  { href: '/dashboard/domains', label: 'דומיינים', icon: 'language' },
-  { href: '/dashboard/team', label: 'צוות', icon: 'group' },
-  { href: '/dashboard/activity', label: 'לוג פעילות', icon: 'history' },
-];
 
 type Props = {
   tenantName: string;
   tenantSlug?: string;
   userName: string;
+  homePageId?: string;
 };
 
-export default function Sidebar({ tenantName, tenantSlug, userName }: Props) {
+export default function Sidebar({ tenantSlug, userName, homePageId }: Props) {
   const initials = userName.split(' ').map(w => w[0]).join('').slice(0, 2);
 
   const platformDomain = process.env.PLATFORM_DOMAIN ?? 'localhost:3000';
@@ -31,12 +18,13 @@ export default function Sidebar({ tenantName, tenantSlug, userName }: Props) {
   const protocol = isLocal ? 'http' : 'https';
   const siteUrl = tenantSlug ? `${protocol}://${tenantSlug}.${platformDomain}` : null;
 
+  const builderHref = homePageId ? `/dashboard/pages/${homePageId}/visual` : null;
+
   const header = (
     <div className="px-4 pb-2 pt-5">
-      {/* User profile row (Stratify-style: avatar + name at top) */}
       <div className="flex items-center gap-3">
         <Link href="/dashboard/account" className="group flex flex-1 cursor-pointer items-center gap-3 rounded-xl px-1 py-1 transition-colors hover:bg-slate-50">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 to-slate-600 text-xs font-bold text-white">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-ocean to-ocean-light text-xs font-bold text-white">
             {initials}
           </div>
           <span className="truncate text-[14px] font-semibold text-navy">{userName}</span>
@@ -53,8 +41,6 @@ export default function Sidebar({ tenantName, tenantSlug, userName }: Props) {
           </a>
         )}
       </div>
-
-      {/* Separator */}
       <div className="mt-4 border-b border-slate-100" />
     </div>
   );
@@ -85,6 +71,6 @@ export default function Sidebar({ tenantName, tenantSlug, userName }: Props) {
   );
 
   return (
-    <SidebarNav navItems={navItems} header={header} footer={footer} />
+    <SidebarNav header={header} footer={footer} builderHref={builderHref} />
   );
 }

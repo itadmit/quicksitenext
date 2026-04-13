@@ -3,6 +3,10 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import DashboardCard from '@/components/dashboard/DashboardCard';
 import PageHeader from '@/components/dashboard/PageHeader';
+import {
+  FileText, BookOpen, Mail, Zap, ArrowUpLeft, Settings,
+  Plus, Search, UserPlus, History, MailIcon,
+} from 'lucide-react';
 
 export default async function DashboardHome() {
   const user = await getCurrentUser();
@@ -51,7 +55,7 @@ export default async function DashboardHome() {
     duplicated: 'שכפל/ה', exported: 'ייצא/ה',
   };
   const statusColors: Record<string, string> = {
-    NEW: 'bg-blue-500', CONTACTED: 'bg-amber-500', QUALIFIED: 'bg-emerald-500',
+    NEW: 'bg-ocean', CONTACTED: 'bg-amber-500', QUALIFIED: 'bg-emerald-500',
     PROPOSAL_SENT: 'bg-purple-500', WON: 'bg-green-500', LOST: 'bg-red-400',
   };
   const statusLabels: Record<string, string> = {
@@ -59,24 +63,34 @@ export default async function DashboardHome() {
     PROPOSAL_SENT: 'הצעה נשלחה', WON: 'זכייה', LOST: 'הפסד',
   };
 
+  const kpiItems = [
+    { label: 'עמודים', value: pageCount, Icon: FileText, bg: 'bg-ocean/[0.08]', iconColor: 'text-ocean', href: '/dashboard/pages' },
+    { label: 'פוסטים', value: postCount, Icon: BookOpen, bg: 'bg-emerald-500/[0.08]', iconColor: 'text-emerald-500', href: '/dashboard/posts' },
+    { label: 'לידים חדשים', value: newLeadCount, Icon: Mail, bg: 'bg-amber-500/[0.08]', iconColor: 'text-amber-500', href: '/dashboard/leads' },
+    { label: 'פופאפים', value: popupCount, Icon: Zap, bg: 'bg-purple-500/[0.08]', iconColor: 'text-purple-500', href: '/dashboard/popups' },
+  ];
+
+  const quickActions = [
+    { label: 'עמוד חדש', href: '/dashboard/pages/new', Icon: FileText, desc: 'צור עמוד תוכן חדש' },
+    { label: 'פוסט חדש', href: '/dashboard/posts/new', Icon: BookOpen, desc: 'כתוב פוסט חדש' },
+    { label: 'ניהול לידים', href: '/dashboard/leads', Icon: MailIcon, desc: 'צפה וטפל בלידים' },
+    { label: 'הגדרות SEO', href: '/dashboard/settings', Icon: Search, desc: 'עדכן הגדרות SEO' },
+    { label: 'הזמנת חבר', href: '/dashboard/team', Icon: UserPlus, desc: 'הזמן חבר צוות' },
+  ];
+
   return (
     <div className="space-y-6">
       <PageHeader title={`שלום, ${user!.name}`} subtitle="ניהול וסקירת האתר שלך" />
 
       {/* KPI Row */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {[
-          { label: 'עמודים', value: pageCount, icon: 'description', color: 'from-blue-500/10 to-blue-500/5', iconColor: 'text-blue-500', href: '/dashboard/pages' },
-          { label: 'פוסטים', value: postCount, icon: 'article', color: 'from-emerald-500/10 to-emerald-500/5', iconColor: 'text-emerald-500', href: '/dashboard/posts' },
-          { label: 'לידים חדשים', value: newLeadCount, icon: 'contact_mail', color: 'from-amber-500/10 to-amber-500/5', iconColor: 'text-amber-500', href: '/dashboard/leads' },
-          { label: 'פופאפים', value: popupCount, icon: 'web_asset', color: 'from-purple-500/10 to-purple-500/5', iconColor: 'text-purple-500', href: '/dashboard/popups' },
-        ].map(c => (
-          <Link key={c.href} href={c.href} className="group rounded-xl border border-slate-100 bg-white p-5 transition-all duration-200 hover:border-slate-200 hover:shadow-sm">
+        {kpiItems.map(c => (
+          <Link key={c.href} href={c.href} className="group rounded-2xl border border-slate-200 bg-white p-5 transition-all duration-200 hover:border-ocean/25 hover:shadow-lg hover:shadow-ocean/[0.06]">
             <div className="mb-4 flex items-center justify-between">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br ${c.color}`}>
-                <span className={`material-symbols-outlined text-[20px] ${c.iconColor}`}>{c.icon}</span>
+              <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${c.bg}`}>
+                <c.Icon className={`h-[18px] w-[18px] ${c.iconColor}`} />
               </div>
-              <span className="material-symbols-outlined text-[16px] text-slate-300 opacity-0 transition-opacity group-hover:opacity-100">north_east</span>
+              <ArrowUpLeft className="h-4 w-4 text-slate-300 opacity-0 transition-opacity group-hover:opacity-100" />
             </div>
             <p className="font-noto text-3xl font-black text-navy">{c.value}</p>
             <p className="mt-1 text-xs font-medium text-slate-400">{c.label}</p>
@@ -88,20 +102,18 @@ export default async function DashboardHome() {
       <div className="grid gap-5 lg:grid-cols-3">
         {/* Left Column - spans 2 */}
         <div className="space-y-5 lg:col-span-2">
-          {/* Content Overview - like "Projects Overview" in reference */}
           <div className="grid gap-5 sm:grid-cols-2">
-            {/* Site Health - donut style */}
+            {/* Site Health */}
             <DashboardCard title="בריאות האתר" headerAction={
-              <Link href="/dashboard/settings" className="flex h-8 w-8 items-center justify-center rounded-xl transition-colors hover:bg-slate-100">
-                <span className="material-symbols-outlined text-[16px] text-slate-400">settings</span>
+              <Link href="/dashboard/settings" className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-slate-100">
+                <Settings className="h-4 w-4 text-slate-400" />
               </Link>
             }>
               <div className="flex items-center gap-6">
-                {/* Progress Ring */}
                 <div className="relative h-24 w-24 shrink-0">
                   <svg className="h-24 w-24 -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#F1F0ED" strokeWidth="10" />
-                    <circle cx="50" cy="50" r="40" fill="none" stroke={healthPct === 100 ? '#22C55E' : '#F59E0B'} strokeWidth="10" strokeLinecap="round" strokeDasharray={`${healthPct * 2.51} 251`} />
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#F1F5F9" strokeWidth="10" />
+                    <circle cx="50" cy="50" r="40" fill="none" stroke={healthPct === 100 ? '#22C55E' : '#635BFF'} strokeWidth="10" strokeLinecap="round" strokeDasharray={`${healthPct * 2.51} 251`} />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="font-noto text-lg font-bold text-navy">{healthPct}%</span>
@@ -110,7 +122,7 @@ export default async function DashboardHome() {
                 <div className="space-y-2">
                   {healthChecks.map(h => (
                     <div key={h.label} className="flex items-center gap-2">
-                      <div className={`h-2 w-2 rounded-full ${h.ok ? 'bg-green-500' : 'bg-slate-200'}`} />
+                      <div className={`h-2 w-2 rounded-full ${h.ok ? 'bg-emerald-500' : 'bg-slate-200'}`} />
                       <span className={`text-xs ${h.ok ? 'text-navy' : 'text-slate-400'}`}>{h.label}</span>
                     </div>
                   ))}
@@ -120,8 +132,8 @@ export default async function DashboardHome() {
 
             {/* Content Stats */}
             <DashboardCard title="סקירת תוכן" headerAction={
-              <Link href="/dashboard/pages" className="flex h-8 w-8 items-center justify-center rounded-xl transition-colors hover:bg-slate-100">
-                <span className="material-symbols-outlined text-[16px] text-slate-400">north_east</span>
+              <Link href="/dashboard/pages" className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-slate-100">
+                <ArrowUpLeft className="h-4 w-4 text-slate-400" />
               </Link>
             }>
               <div className="space-y-4">
@@ -131,7 +143,7 @@ export default async function DashboardHome() {
                     <span className="font-semibold text-navy">{publishedPages}/{pageCount}</span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full rounded-full bg-blue-500 transition-all" style={{ width: `${pageCount ? (publishedPages / pageCount) * 100 : 0}%` }} />
+                    <div className="h-full rounded-full bg-ocean transition-all" style={{ width: `${pageCount ? (publishedPages / pageCount) * 100 : 0}%` }} />
                   </div>
                 </div>
                 <div>
@@ -156,15 +168,15 @@ export default async function DashboardHome() {
             </DashboardCard>
           </div>
 
-          {/* Leads Overview - like "Invoice Overview" in reference */}
+          {/* Leads Overview */}
           <DashboardCard title="לידים אחרונים" headerAction={
-            <Link href="/dashboard/leads" className="flex h-8 w-8 items-center justify-center rounded-xl transition-colors hover:bg-slate-100">
-              <span className="material-symbols-outlined text-[16px] text-slate-400">north_east</span>
+            <Link href="/dashboard/leads" className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-slate-100">
+              <ArrowUpLeft className="h-4 w-4 text-slate-400" />
             </Link>
           }>
             {recentLeads.length === 0 ? (
-              <div className="py-6 text-center">
-                <span className="material-symbols-outlined mb-2 block text-3xl text-slate-200">contact_mail</span>
+              <div className="py-8 text-center">
+                <Mail className="mx-auto mb-2 h-8 w-8 text-slate-200" />
                 <p className="text-xs text-slate-400">אין לידים עדיין</p>
               </div>
             ) : (
@@ -174,7 +186,7 @@ export default async function DashboardHome() {
                     <div className={`h-2 w-2 shrink-0 rounded-full ${statusColors[lead.status] ?? 'bg-slate-300'}`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className="text-[13px] font-medium text-navy">{lead.name}</p>
+                        <p className="text-sm font-medium text-navy">{lead.name}</p>
                         <span className="text-[11px] text-slate-400">{new Date(lead.createdAt).toLocaleDateString('he-IL')}</span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -191,26 +203,20 @@ export default async function DashboardHome() {
 
         {/* Right Column */}
         <div className="space-y-5">
-          {/* Quick Actions - like "My Tasks" in reference */}
+          {/* Quick Actions */}
           <DashboardCard title="פעולות מהירות" headerAction={
-            <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-navy text-white">
-              <span className="material-symbols-outlined text-[16px]">add</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ocean text-white">
+              <Plus className="h-4 w-4" />
             </span>
           }>
-            <div className="space-y-2">
-              {[
-                { label: 'עמוד חדש', href: '/dashboard/pages/new', icon: 'description', desc: 'צור עמוד תוכן חדש' },
-                { label: 'פוסט חדש', href: '/dashboard/posts/new', icon: 'article', desc: 'כתוב פוסט חדש' },
-                { label: 'ניהול לידים', href: '/dashboard/leads', icon: 'contact_mail', desc: 'צפה וטפל בלידים' },
-                { label: 'הגדרות SEO', href: '/dashboard/settings', icon: 'search', desc: 'עדכן הגדרות SEO' },
-                { label: 'הזמנת חבר', href: '/dashboard/team', icon: 'person_add', desc: 'הזמן חבר צוות' },
-              ].map(a => (
-                <Link key={a.href} href={a.href} className="flex items-center gap-3 rounded-2xl p-2.5 transition-all hover:bg-slate-50 group">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 transition-colors group-hover:bg-navy group-hover:text-white">
-                    <span className="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-white">{a.icon}</span>
+            <div className="space-y-1">
+              {quickActions.map(a => (
+                <Link key={a.href} href={a.href} className="flex cursor-pointer items-center gap-3 rounded-xl p-2.5 transition-all hover:bg-ocean-bg group">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 transition-colors group-hover:bg-ocean group-hover:text-white">
+                    <a.Icon className="h-4 w-4 text-slate-400 group-hover:text-white" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-semibold text-navy">{a.label}</p>
+                    <p className="text-sm font-semibold text-navy">{a.label}</p>
                     <p className="text-[11px] text-slate-400">{a.desc}</p>
                   </div>
                 </Link>
@@ -218,26 +224,26 @@ export default async function DashboardHome() {
             </div>
           </DashboardCard>
 
-          {/* Activity Feed - like "Open Tickets" */}
+          {/* Activity Feed */}
           <DashboardCard title="פעילות אחרונה" headerAction={
-            <Link href="/dashboard/activity" className="flex h-8 w-8 items-center justify-center rounded-xl transition-colors hover:bg-slate-100">
-              <span className="material-symbols-outlined text-[16px] text-slate-400">north_east</span>
+            <Link href="/dashboard/activity" className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-slate-100">
+              <ArrowUpLeft className="h-4 w-4 text-slate-400" />
             </Link>
           }>
             {recentActivity.length === 0 ? (
-              <div className="py-6 text-center">
-                <span className="material-symbols-outlined mb-2 block text-3xl text-slate-200">history</span>
+              <div className="py-8 text-center">
+                <History className="mx-auto mb-2 h-8 w-8 text-slate-200" />
                 <p className="text-xs text-slate-400">אין פעילות עדיין</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {recentActivity.slice(0, 5).map(log => (
                   <div key={log.id} className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-100">
-                      <span className="text-[11px] font-bold text-navy">{(log.user?.name ?? '?')[0]}</span>
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ocean/[0.08]">
+                      <span className="text-[11px] font-bold text-ocean">{(log.user?.name ?? '?')[0]}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="truncate text-[12px] text-navy">
+                      <p className="truncate text-xs text-navy">
                         <span className="font-semibold">{log.user?.name ?? 'מערכת'}</span>{' '}
                         {actionLabels[log.action] ?? log.action} {entityLabels[log.entity] ?? log.entity}
                       </p>
@@ -252,16 +258,16 @@ export default async function DashboardHome() {
           {/* Drafts */}
           {drafts.length > 0 && (
             <DashboardCard title="טיוטות" headerAction={
-              <Link href="/dashboard/pages" className="text-[11px] font-medium text-ocean hover:underline">הכל</Link>
+              <Link href="/dashboard/pages" className="cursor-pointer text-xs font-medium text-ocean hover:underline">הכל</Link>
             }>
               <div className="space-y-2.5">
                 {drafts.map(page => (
-                  <Link key={page.id} href={`/dashboard/pages/${page.id}`} className="flex items-center justify-between rounded-xl p-2 transition-all hover:bg-slate-50 group">
+                  <Link key={page.id} href={`/dashboard/pages/${page.id}`} className="flex cursor-pointer items-center justify-between rounded-xl p-2 transition-all hover:bg-ocean-bg group">
                     <div className="min-w-0">
-                      <p className="truncate text-[13px] font-medium text-navy group-hover:text-ocean transition-colors">{page.title}</p>
+                      <p className="truncate text-sm font-medium text-navy group-hover:text-ocean transition-colors">{page.title}</p>
                       <p className="text-[11px] text-slate-400">/{page.slug}</p>
                     </div>
-                    <span className="shrink-0 rounded-lg bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">טיוטה</span>
+                    <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-500">טיוטה</span>
                   </Link>
                 ))}
               </div>

@@ -32,7 +32,7 @@ export default function EntriesClient({ cpt }: { cpt: Cpt }) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-xl border border-slate-100 bg-white">
+      <div className="rounded-2xl border border-slate-200 bg-white">
         <div className="border-b border-slate-100 px-5 py-4">
           <h2 className="text-[14px] font-semibold text-navy">רשומה חדשה</h2>
         </div>

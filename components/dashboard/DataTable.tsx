@@ -7,7 +7,7 @@ type Props = {
 
 export function DataTable({ headers, children }: Props) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-100 bg-white">
+    <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
       <table className="w-full text-right">
         <thead>
           <tr className="border-b border-slate-100 bg-slate-50/50">
@@ -54,7 +54,7 @@ export function StatusBadge({ status, map }: { status: string; map: Record<strin
 
 export function DataTableEmpty({ icon = 'inbox', text = 'אין נתונים' }: { icon?: string; text?: string }) {
   return (
-    <div className="rounded-xl border border-slate-100 bg-white py-16 text-center">
+    <div className="rounded-2xl border border-slate-200 bg-white py-16 text-center">
       <span className="material-symbols-outlined mb-3 block text-4xl text-slate-200">{icon}</span>
       <p className="text-[13px] text-slate-400">{text}</p>
     </div>

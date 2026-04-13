@@ -1,6 +1,8 @@
 'use client';
 
-import { Plus, X, Star, Type } from 'lucide-react';
+import { Plus, X, Star } from 'lucide-react';
+import { LayoutGrid, ArrowLeftRight, Rows3 } from 'lucide-react';
+import VariantPicker from './VariantPicker';
 
 type Item = { icon: string; title: string; description: string };
 
@@ -8,6 +10,12 @@ type Props = {
   data: Record<string, unknown>;
   onChange: (data: Record<string, unknown>) => void;
 };
+
+const ABOUT_VARIANTS = [
+  { id: 'grid', label: 'רשת', Icon: LayoutGrid },
+  { id: 'horizontal', label: 'אופקי', Icon: ArrowLeftRight },
+  { id: 'alternating', label: 'לסירוגין', Icon: Rows3 },
+];
 
 const input = 'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-navy placeholder:text-slate-300 outline-none focus:border-ocean focus:ring-1 focus:ring-ocean/30 transition-colors';
 const label = 'mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60';
@@ -30,8 +38,13 @@ export default function AboutBlockEditor({ data, onChange }: Props) {
 
   return (
     <div className="space-y-3">
+      <VariantPicker
+        options={ABOUT_VARIANTS}
+        value={(data.variant as string) ?? 'grid'}
+        onChange={(id) => onChange({ ...data, variant: id })}
+      />
       {items.map((item, i) => (
-        <div key={i} className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+        <div key={i} className="rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
           <div className="mb-2.5 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Star className="h-3 w-3 text-slate-400" />

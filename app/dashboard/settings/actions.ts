@@ -20,6 +20,9 @@ export async function updateSettingsAction(prev: SettingsActionState, fd: FormDa
     socialLinks: (fd.get('socialLinks') as string)?.trim() || '[]',
     customCss: (fd.get('customCss') as string) || '',
     analyticsId: (fd.get('analyticsId') as string)?.trim() || '',
+    fbPixelId: (fd.get('fbPixelId') as string)?.trim() || '',
+    gtmId: (fd.get('gtmId') as string)?.trim() || '',
+    customHeadCode: (fd.get('customHeadCode') as string) || '',
     defaultSeoTitle: (fd.get('defaultSeoTitle') as string)?.trim() || '',
     defaultSeoDesc: (fd.get('defaultSeoDesc') as string)?.trim() || '',
   };

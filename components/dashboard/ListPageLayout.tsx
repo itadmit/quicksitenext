@@ -10,6 +10,7 @@ type Props = {
   backHref?: string;
   actionHref?: string;
   actionLabel?: string;
+  actionSlot?: React.ReactNode;
   secondaryActions?: React.ReactNode;
   searchPlaceholder?: string;
   searchBasePath?: string;
@@ -23,6 +24,7 @@ export default function ListPageLayout({
   backHref,
   actionHref,
   actionLabel,
+  actionSlot,
   secondaryActions,
   searchPlaceholder,
   searchBasePath,
@@ -33,7 +35,8 @@ export default function ListPageLayout({
     <div className="space-y-5">
       <PageHeader title={title} subtitle={subtitle} backHref={backHref}>
         {secondaryActions}
-        {actionHref && actionLabel && (
+        {actionSlot}
+        {!actionSlot && actionHref && actionLabel && (
           <Link
             href={actionHref}
             className="cursor-pointer rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85"

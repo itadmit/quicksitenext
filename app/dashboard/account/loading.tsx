@@ -6,7 +6,7 @@ export default function AccountLoading() {
       <SkeletonPageHeader />
 
       {/* Plan card */}
-      <div className="rounded-xl border border-slate-100 bg-white p-5">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5">
         <div className="mb-4 flex items-center justify-between">
           <SkeletonBar className="h-4 w-28" />
           <SkeletonBar className="h-6 w-16 rounded-full" />

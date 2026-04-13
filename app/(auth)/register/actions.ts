@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { createSession } from '@/lib/auth';
+import { sendWelcomeEmail } from '@/lib/email';
 import { z } from 'zod';
 import { getTemplate, templates } from '@/lib/templates';
 
@@ -64,6 +65,7 @@ export async function registerAction(_prev: RegisterState, fd: FormData): Promis
           primaryColor: template.primaryColor,
           tagline: template.siteSettings.tagline,
           footerText: template.siteSettings.footerText,
+          ...(template.siteSettings.themeJson ? { themeJson: template.siteSettings.themeJson } : {}),
         },
       },
     },
@@ -137,6 +139,8 @@ export async function registerAction(_prev: RegisterState, fd: FormData): Promis
       });
     }
   }
+
+  sendWelcomeEmail(user.email, name, slug).catch(console.error);
 
   await createSession(user.id);
   redirect('/onboarding');

@@ -1,10 +1,11 @@
 'use client';
 
-import { useActionState, useTransition } from 'react';
+import { useActionState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createCptAction, deleteCptAction, type CptActionState } from './actions';
 import { DataTable, DataTableRow, DataTableCell, DataTableEmpty } from '@/components/dashboard/DataTable';
+import { useCreateToggle } from '@/components/dashboard/CreateToggle';
 
 type Cpt = { id: string; name: string; slug: string; _count: { entries: number } };
 
@@ -12,11 +13,12 @@ const inputCls = 'w-full rounded-xl border-0 bg-slate-50 px-4 py-2.5 text-sm tex
 
 export default function CptClient({ cpts }: { cpts: Cpt[] }) {
   const router = useRouter();
+  const { isOpen, close } = useCreateToggle();
   const [deleting, startDelete] = useTransition();
   const [state, formAction, pending] = useActionState<CptActionState, FormData>(
     async (prev, fd) => {
       const result = await createCptAction(prev, fd);
-      if (!result?.error) router.refresh();
+      if (!result?.error) { close(); router.refresh(); }
       return result;
     },
     undefined,
@@ -29,19 +31,21 @@ export default function CptClient({ cpts }: { cpts: Cpt[] }) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-xl border border-slate-100 bg-white">
-        <div className="border-b border-slate-100 px-5 py-4">
-          <h2 className="text-[14px] font-semibold text-navy">סוג חדש</h2>
+      {isOpen && (
+        <div className="rounded-2xl border border-slate-200 bg-white">
+          <div className="border-b border-slate-100 px-5 py-4">
+            <h2 className="text-[14px] font-semibold text-navy">סוג חדש</h2>
+          </div>
+          <div className="px-5 py-4">
+            <form action={formAction} className="flex items-end gap-3">
+              <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">שם</span><input name="name" required className={inputCls} /></label>
+              <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">סלאג</span><input name="slug" required dir="ltr" className={inputCls + ' font-mono'} /></label>
+              <button type="submit" disabled={pending} className="cursor-pointer whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? '...' : 'צור'}</button>
+            </form>
+            {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
+          </div>
         </div>
-        <div className="px-5 py-4">
-          <form action={formAction} className="flex items-end gap-3">
-            <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">שם</span><input name="name" required className={inputCls} /></label>
-            <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">סלאג</span><input name="slug" required dir="ltr" className={inputCls + ' font-mono'} /></label>
-            <button type="submit" disabled={pending} className="cursor-pointer whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? '...' : 'צור'}</button>
-          </form>
-          {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
-        </div>
-      </div>
+      )}
 
       {cpts.length === 0 ? (
         <DataTableEmpty icon="extension" text="אין סוגי תוכן עדיין" />

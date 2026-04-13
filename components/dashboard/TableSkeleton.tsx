@@ -5,7 +5,7 @@ export default function TableSkeleton({ rows = 5, cols = 4 }: { rows?: number; c
         <div className="h-6 w-36 rounded-md bg-slate-200/70" />
         <div className="h-9 w-24 rounded-lg bg-slate-100" />
       </div>
-      <div className="overflow-hidden rounded-xl border border-slate-100 bg-white">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="flex gap-12 border-b border-slate-100 bg-slate-50/50 px-4 py-3">
           {[...Array(cols)].map((_, i) => (
             <div key={i} className="h-3 w-16 rounded-md bg-slate-200/50" />

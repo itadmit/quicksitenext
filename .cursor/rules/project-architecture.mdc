@@ -3,15 +3,29 @@ description: SaaS CMS Platform architecture and conventions
 alwaysApply: true
 ---
 
-# SaaS CMS Platform — Architecture
+# QuickSite — SaaS CMS Platform Architecture
 
-Multi-tenant CMS platform. Next.js 15 App Router + Prisma + PostgreSQL + Tailwind.
+Multi-tenant website builder. Next.js 15 App Router + Prisma + PostgreSQL + Tailwind + Resend.
+
+## Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 15 (App Router, Server Components) |
+| Database | PostgreSQL (Neon) via Prisma ORM |
+| Auth | Custom sessions — bcrypt + HMAC-SHA256 tokens + httpOnly cookies |
+| Email | Resend (`lib/email.ts`) |
+| Styling | Tailwind CSS — Ocean design system (`#635BFF`) |
+| Icons | Lucide React (never Material Symbols) |
+| Validation | Zod |
+| Language | Hebrew RTL (`dir="rtl"`) |
 
 ## Core Principles
 
-1. **Server-First** — Pages are Server Components. Data fetched at server level. No `useEffect` for data loading. No "loading..." spinners.
-2. **Client components only for interactivity** — Forms, modals, drag-and-drop. Always receive data via props from parent Server Component.
-3. **Hebrew RTL** — All UI is `dir="rtl"` in Hebrew. Use `font-noto` for headings, `font-sans` for body.
+1. **Server-First** — Pages are Server Components. Data fetched at server level. No `useEffect` for data loading.
+2. **Client components only for interactivity** — Forms, modals, drag-and-drop. Receive data via props from parent Server Component.
+3. **Hebrew RTL** — All UI is `dir="rtl"`. Use `font-noto` for headings, `font-sans` for body.
+4. **Email on events** — Every significant user action triggers an email via `lib/email.ts`. Fire-and-forget with `.catch(console.error)`.
 
 ## Multi-Tenancy
 
@@ -20,31 +34,43 @@ Multi-tenant CMS platform. Next.js 15 App Router + Prisma + PostgreSQL + Tailwin
 - Tenant host = public site (rewritten to `/site/...`)
 - TenantId always from `user.memberships[0].tenantId` in dashboard
 
-## Data Flow Pattern
+## Auth Flow
+
+- Custom auth in `lib/auth.ts` — no NextAuth/Supabase/Clerk
+- `createSession(userId)` → random token → HMAC hashed → DB + httpOnly cookie (`saas_session`)
+- `getCurrentUser()` / `getSession()` — cached per-request via React `cache()`
+- `destroySession()` — deletes session from DB + clears cookie
+- Password reset: `PasswordReset` model with hashed tokens, 60-min expiry, single-use
+
+## Data Flow
 
 ```
-// ✅ CORRECT — Server Component fetches, Client Component interacts
-// page.tsx (Server Component)
+// ✅ Server Component fetches → Client Component interacts
 export default async function Page() {
   const data = await prisma.xxx.findMany({ where: { tenantId } });
   return <ClientForm data={data} />;
 }
 
-// ❌ WRONG — Client Component fetches on mount
+// ❌ NEVER — Client Component fetches on mount
 'use client'
-export default function Page() {
-  useEffect(() => { fetchData().then(setData) }, []);
-}
+useEffect(() => { fetchData().then(setData) }, []);
 ```
 
 ## After Mutations
 
-Server actions call `revalidatePath()` — page auto-refreshes with fresh data. For redirects use `redirect()`.
+Server actions call `revalidatePath()` — page auto-refreshes. For redirects use `redirect()`.
 
-## Styling
+## Key Directories
 
-- Primary: `#a28b5d`, Charcoal: `#151513`, Nude: `#EFEBE6`, Background: `#fbfaf9`
-- Labels: `text-[10px] font-bold uppercase tracking-widest text-charcoal/60`
-- Inputs: `border border-charcoal/20 bg-white px-4 py-3 focus:border-primary focus:outline-none`
-- Primary buttons: `bg-primary text-white text-xs font-bold uppercase tracking-widest`
-- Secondary buttons: `border border-charcoal/20 text-charcoal`
+```
+app/(auth)/          — login, register, forgot-password, reset-password
+app/dashboard/       — admin panel (protected by layout auth check)
+app/site/            — public tenant site (resolved via middleware)
+app/onboarding/      — post-registration wizard
+lib/auth.ts          — session management
+lib/email.ts         — all email functions (Resend)
+lib/prisma.ts        — Prisma client singleton
+lib/templates.ts     — site templates for registration
+components/dashboard/ — dashboard UI components
+components/tenant/   — public site block components
+```

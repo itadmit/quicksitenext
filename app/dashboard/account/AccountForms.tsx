@@ -15,7 +15,7 @@ export default function AccountForms({ name, email }: { name: string; email: str
 
   return (
     <div className="space-y-5">
-      <form action={profileAction} className="rounded-xl border border-slate-100 bg-white">
+      <form action={profileAction} className="rounded-2xl border border-slate-200 bg-white">
         <div className="border-b border-slate-100 px-5 py-4">
           <h2 className="text-[14px] font-semibold text-navy">פרטים אישיים</h2>
         </div>
@@ -43,7 +43,7 @@ export default function AccountForms({ name, email }: { name: string; email: str
         </div>
       </form>
 
-      <form action={passwordAction} className="rounded-xl border border-slate-100 bg-white">
+      <form action={passwordAction} className="rounded-2xl border border-slate-200 bg-white">
         <div className="border-b border-slate-100 px-5 py-4">
           <h2 className="text-[14px] font-semibold text-navy">שינוי סיסמה</h2>
         </div>

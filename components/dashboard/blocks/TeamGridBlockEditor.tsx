@@ -1,8 +1,9 @@
 'use client';
 
-import { Plus, X, User } from 'lucide-react';
+import { Plus, X, User, LayoutGrid, Grid2x2 } from 'lucide-react';
 import ImagePickerField from './ImagePickerField';
 import LinkPicker from './LinkPicker';
+import VariantPicker from './VariantPicker';
 
 type Member = { name: string; role: string; image: string; link: string };
 
@@ -11,11 +12,17 @@ type Props = {
   onChange: (data: Record<string, unknown>) => void;
 };
 
+const VARIANTS = [
+  { id: 'grid', label: 'רשת', Icon: LayoutGrid },
+  { id: 'compact', label: 'קומפקטי', Icon: Grid2x2 },
+];
+
 const input = 'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-navy placeholder:text-slate-300 outline-none focus:border-ocean focus:ring-1 focus:ring-ocean/30 transition-colors';
 const label = 'mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60';
 
 export default function TeamGridBlockEditor({ data, onChange }: Props) {
   const members = (data.members as Member[]) ?? [];
+  const variant = (data.variant as string) || 'grid';
 
   const updateMember = (index: number, field: keyof Member, value: string) => {
     const next = members.map((m, i) => (i === index ? { ...m, [field]: value } : m));
@@ -32,8 +39,14 @@ export default function TeamGridBlockEditor({ data, onChange }: Props) {
 
   return (
     <div className="space-y-3">
+      <VariantPicker
+        options={VARIANTS}
+        value={variant}
+        onChange={(id) => onChange({ ...data, variant: id })}
+      />
+
       {members.map((member, i) => (
-        <div key={i} className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+        <div key={i} className="rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
           <div className="mb-2.5 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <User className="h-3 w-3 text-slate-400" />

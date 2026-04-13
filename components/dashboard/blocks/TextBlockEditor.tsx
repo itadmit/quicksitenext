@@ -14,7 +14,7 @@ export default function TextBlockEditor({ data, onChange }: Props) {
         <FileText className="h-3 w-3 text-slate-400" />
         <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">תוכן</span>
       </div>
-      <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+      <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
         <p className="mb-2 text-[10px] text-slate-400">ניתן להשתמש ב-HTML לעיצוב הטקסט</p>
         <textarea
           value={(data.content as string) ?? ''}

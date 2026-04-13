@@ -9,8 +9,6 @@ const templateOptions = [
   { value: 'home', label: 'דף הבית' },
   { value: 'contact', label: 'צור קשר' },
   { value: 'landing', label: 'דף נחיתה' },
-  { value: 'blog', label: 'בלוג' },
-  { value: 'agency', label: 'סוכנות' },
 ];
 
 function slugify(text: string): string {
@@ -47,7 +45,7 @@ export default function NewPageForm() {
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{state.error}</div>
       )}
 
-      <form action={formAction} className="space-y-5 rounded-xl border border-slate-100 bg-white p-6">
+      <form action={formAction} className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6">
         <div>
           <label className={labelCls}>כותרת</label>
           <input

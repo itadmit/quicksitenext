@@ -1,6 +1,7 @@
 'use client';
 
-import { Plus, X, Zap } from 'lucide-react';
+import { Plus, X, Zap, LayoutGrid, List } from 'lucide-react';
+import VariantPicker from './VariantPicker';
 
 type Service = { icon: string; title: string; description: string };
 
@@ -9,11 +10,17 @@ type Props = {
   onChange: (data: Record<string, unknown>) => void;
 };
 
+const VARIANTS = [
+  { id: 'cards', label: 'כרטיסים', Icon: LayoutGrid },
+  { id: 'minimal', label: 'מינימלי', Icon: List },
+];
+
 const input = 'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-navy placeholder:text-slate-300 outline-none focus:border-ocean focus:ring-1 focus:ring-ocean/30 transition-colors';
 const label = 'mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60';
 
 export default function ServicesGridBlockEditor({ data, onChange }: Props) {
   const services = (data.services as Service[]) ?? [];
+  const variant = (data.variant as string) || 'cards';
 
   const updateService = (index: number, field: keyof Service, value: string) => {
     const next = services.map((s, i) => (i === index ? { ...s, [field]: value } : s));
@@ -30,8 +37,14 @@ export default function ServicesGridBlockEditor({ data, onChange }: Props) {
 
   return (
     <div className="space-y-3">
+      <VariantPicker
+        options={VARIANTS}
+        value={variant}
+        onChange={(id) => onChange({ ...data, variant: id })}
+      />
+
       {services.map((service, i) => (
-        <div key={i} className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+        <div key={i} className="rounded-2xl border border-slate-200 bg-slate-50/50 p-3">
           <div className="mb-2.5 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Zap className="h-3 w-3 text-slate-400" />

@@ -1,0 +1,58 @@
+---
+description: Email system — Resend integration and conventions
+globs: "{lib/email.ts,app/**/actions.ts,app/actions/**}"
+alwaysApply: false
+---
+
+# Email System — Resend
+
+All emails sent via `lib/email.ts` using Resend SDK. Hebrew RTL, modern design matching the login page style.
+
+## Setup
+
+- **Provider:** Resend (3,000 emails/month free tier)
+- **API Key:** `RESEND_API_KEY` in `.env.local`
+- **From address:** `EMAIL_FROM` env var, defaults to `QuickSite <onboarding@resend.dev>`
+- **Custom domain:** Configure in Resend dashboard, then set `EMAIL_FROM="QuickSite <noreply@yourdomain.com>"`
+
+## Email Template Structure
+
+All emails use `layout()` wrapper:
+- Background: `#f6f7fb` (matches login page)
+- White card with `border-radius: 16px` and subtle shadow
+- Header bar: gradient `#635BFF → #7A73FF` with QuickSite logo
+- Content: RTL, right-aligned, Segoe UI / Arial font
+- Footer: copyright line
+
+Helper functions: `heading()`, `paragraph()`, `button()`, `featureRow()`, `muted()`
+
+## Available Email Functions
+
+| Function | Event | Recipient |
+|----------|-------|-----------|
+| `sendPasswordResetEmail(to, resetUrl)` | Forgot password request | User |
+| `sendWelcomeEmail(to, name, siteSlug)` | Registration complete | New user |
+| `sendNewLeadEmail(to, ownerName, lead)` | Contact form submitted | Site owner |
+| `sendLeadConfirmationEmail(to, leadName, siteName)` | Contact form submitted | Lead (person who submitted) |
+| `sendSitePublishedEmail(to, name, siteUrl)` | Site published | Site owner |
+| `sendDomainVerifiedEmail(to, name, domain)` | Domain verification complete | Site owner |
+| `sendTeamInviteEmail(to, inviterName, siteName, role)` | Team member added | Invited user |
+
+## Conventions
+
+1. **Fire-and-forget** — Never `await` emails in the critical path. Use `.catch(console.error)`:
+   ```typescript
+   sendWelcomeEmail(user.email, name, slug).catch(console.error);
+   ```
+2. **Never block the user** — Email failures should not break the main action.
+3. **All content in Hebrew** — Subject lines, body text, button labels.
+4. **RTL layout** — `dir="rtl"` on root element, `text-align: right` for content.
+5. **Brand colors** — Ocean `#635BFF`, Navy `#0A2540`, muted text `#64748b` / `#94a3b8`.
+6. **Consistent CTA** — Use `button(label, href)` helper for all action buttons.
+
+## Adding a New Email
+
+1. Add function to `lib/email.ts` using `layout()` + helpers
+2. Call it from the relevant server action with `.catch(console.error)`
+3. Use Hebrew subject line with emoji where appropriate
+4. Include a clear CTA button linking to the relevant dashboard page

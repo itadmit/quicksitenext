@@ -24,7 +24,7 @@ export default function EditPostForm({ post, categories }: Props) {
 
   return (
     <div>
-      <form action={formAction} className="rounded-xl border border-slate-100 bg-white p-6 space-y-5">
+      <form action={formAction} className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5">
         <input type="hidden" name="id" value={post.id} />
         {state?.error && <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{state.error}</p>}
 

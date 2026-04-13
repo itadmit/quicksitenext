@@ -3,6 +3,7 @@
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { sendDomainVerifiedEmail } from '@/lib/email';
 
 export type DomainActionState = { error?: string; success?: boolean } | undefined;
 
@@ -40,9 +41,19 @@ export async function verifyDomainAction(domainId: string) {
   const user = await requireUser();
   const tenantId = user.memberships[0].tenantId;
 
+  const domain = await prisma.domain.findFirst({
+    where: { id: domainId, tenantId },
+    select: { hostname: true },
+  });
+
   await prisma.domain.updateMany({
     where: { id: domainId, tenantId },
     data: { verified: true, verifiedAt: new Date() },
   });
+
+  if (domain) {
+    sendDomainVerifiedEmail(user.email, user.name, domain.hostname).catch(console.error);
+  }
+
   revalidatePath('/dashboard/domains');
 }
