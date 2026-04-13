@@ -4,15 +4,19 @@ export default function DashboardLoading() {
   return (
     <div className="animate-pulse space-y-6">
       <SkeletonPageHeader />
+
+      {/* KPI row */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="rounded-2xl bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-            <div className="mb-4 h-10 w-10 rounded-2xl bg-slate-100" />
-            <div className="h-8 w-12 rounded bg-slate-200/70" />
-            <div className="mt-1 h-3 w-16 rounded bg-slate-100" />
+          <div key={i} className="rounded-xl border border-slate-100 bg-white p-5">
+            <div className="mb-4 h-9 w-9 rounded-xl bg-slate-50" />
+            <div className="h-7 w-10 rounded-md bg-slate-200/70" />
+            <div className="mt-1.5 h-3 w-14 rounded-md bg-slate-100" />
           </div>
         ))}
       </div>
+
+      {/* Main grid */}
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
           <div className="grid gap-5 sm:grid-cols-2">

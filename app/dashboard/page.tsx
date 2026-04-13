@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import DashboardCard from '@/components/dashboard/DashboardCard';
+import PageHeader from '@/components/dashboard/PageHeader';
 
 export default async function DashboardHome() {
   const user = await getCurrentUser();
@@ -60,18 +61,7 @@ export default async function DashboardHome() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="mb-1 text-[13px] font-medium text-slate-400">ניהול וסקירת האתר שלך</p>
-          <h1 className="font-noto text-2xl font-bold tracking-tight text-navy">שלום, {user!.name}</h1>
-        </div>
-        <div className="hidden items-center gap-2 rounded-2xl bg-white px-4 py-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] sm:flex">
-          <span className="material-symbols-outlined text-[18px] text-slate-400">search</span>
-          <span className="text-[13px] text-slate-400">חיפוש...</span>
-          <kbd className="mr-4 rounded-lg bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-400">⌘K</kbd>
-        </div>
-      </div>
+      <PageHeader title={`שלום, ${user!.name}`} subtitle="ניהול וסקירת האתר שלך" />
 
       {/* KPI Row */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -81,7 +71,7 @@ export default async function DashboardHome() {
           { label: 'לידים חדשים', value: newLeadCount, icon: 'contact_mail', color: 'from-amber-500/10 to-amber-500/5', iconColor: 'text-amber-500', href: '/dashboard/leads' },
           { label: 'פופאפים', value: popupCount, icon: 'web_asset', color: 'from-purple-500/10 to-purple-500/5', iconColor: 'text-purple-500', href: '/dashboard/popups' },
         ].map(c => (
-          <Link key={c.href} href={c.href} className="group rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-5 transition-all duration-200 hover:border-slate-200 hover:shadow-sm">
+          <Link key={c.href} href={c.href} className="group rounded-xl border border-slate-100 bg-white p-5 transition-all duration-200 hover:border-slate-200 hover:shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <div className={`flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br ${c.color}`}>
                 <span className={`material-symbols-outlined text-[20px] ${c.iconColor}`}>{c.icon}</span>

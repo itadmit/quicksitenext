@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, LogOut, Settings } from 'lucide-react';
 import SidebarNav from './SidebarNav';
 import NotificationBell from './NotificationBell';
 
@@ -12,7 +12,6 @@ const navItems = [
   { href: '/dashboard/popups', label: 'פופאפים', icon: 'web_asset' },
   { href: '/dashboard/leads', label: 'לידים', icon: 'contact_mail' },
   { href: '/dashboard/media', label: 'מדיה', icon: 'image' },
-  { href: '/dashboard/settings', label: 'הגדרות', icon: 'settings' },
   { href: '/dashboard/domains', label: 'דומיינים', icon: 'language' },
   { href: '/dashboard/team', label: 'צוות', icon: 'group' },
   { href: '/dashboard/activity', label: 'לוג פעילות', icon: 'history' },
@@ -33,47 +32,52 @@ export default function Sidebar({ tenantName, tenantSlug, userName }: Props) {
   const siteUrl = tenantSlug ? `${protocol}://${tenantSlug}.${platformDomain}` : null;
 
   const header = (
-    <div className="px-5 pb-4 pt-6">
-      <div className="flex items-center justify-between">
-        <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-navy">
-            <span className="font-logo text-sm font-bold leading-none text-white">Q</span>
+    <div className="px-4 pb-2 pt-5">
+      {/* User profile row (Stratify-style: avatar + name at top) */}
+      <div className="flex items-center gap-3">
+        <Link href="/dashboard/account" className="group flex flex-1 cursor-pointer items-center gap-3 rounded-xl px-1 py-1 transition-colors hover:bg-slate-50">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 to-slate-600 text-xs font-bold text-white">
+            {initials}
           </div>
-          <span className="font-logo text-lg font-bold text-navy" style={{ letterSpacing: '-0.02em' }}>
-            Quick<span className="text-ocean">Site</span>
-          </span>
+          <span className="truncate text-[14px] font-semibold text-navy">{userName}</span>
         </Link>
         {siteUrl && (
           <a
             href={siteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-slate-400 transition-colors hover:bg-ocean/10 hover:text-ocean"
+            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
+            title="צפייה באתר"
           >
-            <span className="text-[11px] font-medium">צפייה באתר</span>
-            <ExternalLink className="h-3.5 w-3.5" />
+            <ExternalLink className="h-4 w-4" />
           </a>
         )}
       </div>
+
+      {/* Separator */}
+      <div className="mt-4 border-b border-slate-100" />
     </div>
   );
 
   const footer = (
-    <div className="border-t border-slate-100/80 px-4 py-4">
+    <div className="border-t border-slate-100 px-3 py-3">
       <div className="flex items-center justify-between">
-        <Link href="/dashboard/account" className="flex items-center gap-3 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-ocean/20 to-ocean/5 text-xs font-bold text-ocean">
-            {initials}
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-[13px] font-semibold text-navy group-hover:text-ocean transition-colors">{userName}</p>
-            <p className="truncate text-[11px] text-slate-400">{tenantName}</p>
-          </div>
+        <Link
+          href="/dashboard/settings"
+          className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-[13.5px] text-slate-500 transition-colors duration-150 hover:bg-slate-50 hover:text-slate-700"
+        >
+          <Settings className="h-[18px] w-[18px] text-slate-400" />
+          <span>הגדרות</span>
         </Link>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <NotificationBell />
-          <a href="/logout" className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 transition-colors hover:text-red-500">
-            <span className="material-symbols-outlined text-[18px]">logout</span>
+          <a
+            href="/logout"
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors duration-150 hover:bg-red-50 hover:text-red-500"
+            aria-label="התנתקות"
+            title="התנתקות"
+          >
+            <LogOut className="h-4 w-4" />
           </a>
         </div>
       </div>

@@ -15,11 +15,11 @@ export default function AccountForms({ name, email }: { name: string; email: str
 
   return (
     <div className="space-y-5">
-      <form action={profileAction} className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="font-noto text-base font-semibold text-navy">פרטים אישיים</h2>
+      <form action={profileAction} className="rounded-xl border border-slate-100 bg-white">
+        <div className="border-b border-slate-100 px-5 py-4">
+          <h2 className="text-[14px] font-semibold text-navy">פרטים אישיים</h2>
         </div>
-        <div className="space-y-4 px-6 py-5">
+        <div className="space-y-4 px-5 py-4">
           {profileState?.error && <p className="text-sm text-red-600">{profileState.error}</p>}
           {profileState?.success && <p className="text-sm text-green-600">הפרופיל עודכן בהצלחה</p>}
 
@@ -36,18 +36,18 @@ export default function AccountForms({ name, email }: { name: string; email: str
           <button
             type="submit"
             disabled={profilePending}
-            className="rounded-full bg-ocean shadow-sm px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50"
+            className="rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50"
           >
             {profilePending ? 'שומר...' : 'עדכן פרופיל'}
           </button>
         </div>
       </form>
 
-      <form action={passwordAction} className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="font-noto text-base font-semibold text-navy">שינוי סיסמה</h2>
+      <form action={passwordAction} className="rounded-xl border border-slate-100 bg-white">
+        <div className="border-b border-slate-100 px-5 py-4">
+          <h2 className="text-[14px] font-semibold text-navy">שינוי סיסמה</h2>
         </div>
-        <div className="space-y-4 px-6 py-5">
+        <div className="space-y-4 px-5 py-4">
           {passwordState?.error && <p className="text-sm text-red-600">{passwordState.error}</p>}
           {passwordState?.success && <p className="text-sm text-green-600">הסיסמה שונתה בהצלחה</p>}
 
@@ -69,7 +69,7 @@ export default function AccountForms({ name, email }: { name: string; email: str
           <button
             type="submit"
             disabled={passwordPending}
-            className="rounded-full bg-ocean shadow-sm px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50"
+            className="rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50"
           >
             {passwordPending ? 'שומר...' : 'שנה סיסמה'}
           </button>

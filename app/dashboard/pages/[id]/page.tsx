@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import type { Block } from '@/lib/block-registry';
+import Link from 'next/link';
 import BlockEditor from '@/components/dashboard/BlockEditor';
 import PageHeader from '@/components/dashboard/PageHeader';
 
@@ -27,8 +28,14 @@ export default async function EditPagePage({ params }: Props) {
   }
 
   return (
-    <div>
+    <div className="space-y-5">
       <PageHeader title={page.title} subtitle={`/${page.slug}`} backHref="/dashboard/pages">
+        <Link
+          href={`/dashboard/pages/${page.id}/visual`}
+          className="rounded-full bg-ocean px-5 py-2 text-xs font-bold text-white hover:bg-ocean/85 transition-colors cursor-pointer"
+        >
+          עורך ויזואלי
+        </Link>
         <span
           className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
             page.status === 'published'

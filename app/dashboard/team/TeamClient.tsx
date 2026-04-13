@@ -38,11 +38,11 @@ export default function TeamClient({ members, currentUserId }: { members: Member
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="font-noto text-[15px] font-semibold text-navy">הזמנת חבר צוות</h2>
+      <div className="rounded-xl border border-slate-100 bg-white">
+        <div className="border-b border-slate-100 px-5 py-4">
+          <h2 className="text-[14px] font-semibold text-navy">הזמנת חבר צוות</h2>
         </div>
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           <form action={formAction} className="flex items-end gap-3">
             <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">אימייל</span><input name="email" type="email" required dir="ltr" placeholder="user@example.com" className={inputCls + ' font-mono'} /></label>
             <label className="w-32"><span className="mb-1 block text-xs font-medium text-slate-500">תפקיד</span>
@@ -50,7 +50,7 @@ export default function TeamClient({ members, currentUserId }: { members: Member
                 {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
               </select>
             </label>
-            <button type="submit" disabled={pending} className="whitespace-nowrap rounded-full bg-ocean px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">{pending ? '...' : 'הזמן'}</button>
+            <button type="submit" disabled={pending} className="cursor-pointer whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? '...' : 'הזמן'}</button>
           </form>
           {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
           {state?.success && <p className="mt-2 text-sm text-green-600">חבר הצוות נוסף בהצלחה</p>}
@@ -80,7 +80,7 @@ export default function TeamClient({ members, currentUserId }: { members: Member
             </DataTableCell>
             <DataTableCell className="text-left">
               {m.user.id !== currentUserId && (
-                <button onClick={() => handleRemove(m.id)} disabled={acting} className="text-[13px] font-medium text-red-600 hover:underline disabled:opacity-50">הסר</button>
+                <button onClick={() => handleRemove(m.id)} disabled={acting} className="cursor-pointer text-[13px] font-medium text-slate-400 hover:text-red-500 disabled:opacity-50">הסר</button>
               )}
             </DataTableCell>
           </DataTableRow>

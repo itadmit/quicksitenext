@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { Search } from 'lucide-react';
 
 type Props = {
   placeholder?: string;
@@ -30,10 +31,10 @@ export default function TableSearch({ placeholder = 'חיפוש...', basePath, f
   }
 
   return (
-    <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-5 py-3.5">
+    <div className="rounded-xl border border-slate-100 bg-white px-4 py-3">
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-          <span className="material-symbols-outlined text-[18px] text-slate-300">search</span>
+        <div className="flex min-w-[200px] flex-1 items-center gap-2">
+          <Search className="h-4 w-4 text-slate-300" />
           <input
             value={q}
             onChange={e => setQ(e.target.value)}
@@ -47,7 +48,7 @@ export default function TableSearch({ placeholder = 'חיפוש...', basePath, f
             key={f.name}
             value={searchParams.get(f.name) ?? ''}
             onChange={e => navigate({ [f.name]: e.target.value })}
-            className="cursor-pointer rounded-xl border-0 bg-slate-100 px-3 py-2 text-[12px] font-medium text-navy focus:outline-none focus:ring-2 focus:ring-ocean/20"
+            className="cursor-pointer rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5 text-[12px] font-medium text-navy focus:outline-none focus:ring-1 focus:ring-slate-200"
           >
             <option value="">{f.label}</option>
             {f.options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}

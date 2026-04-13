@@ -42,14 +42,14 @@ export default function DomainsClient({ domains }: { domains: Domain[] }) {
   return (
     <div className="space-y-5">
       {/* Add Domain Form */}
-      <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-        <div className="border-b border-slate-100 px-6 py-4"><h2 className="font-noto text-[15px] font-semibold text-navy">הוסף דומיין מותאם</h2></div>
-        <div className="px-6 py-5">
+      <div className="rounded-xl border border-slate-100 bg-white">
+        <div className="border-b border-slate-100 px-5 py-4"><h2 className="text-[14px] font-semibold text-navy">הוסף דומיין מותאם</h2></div>
+        <div className="px-5 py-4">
           <form action={formAction} className="flex items-end gap-3">
             <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">שם דומיין</span>
               <input name="hostname" required dir="ltr" placeholder="example.com" className={inputCls} />
             </label>
-            <button type="submit" disabled={pending} className="whitespace-nowrap rounded-full bg-ocean px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">{pending ? '...' : 'הוסף'}</button>
+            <button type="submit" disabled={pending} className="whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? '...' : 'הוסף'}</button>
           </form>
           {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
           {state?.success && <p className="mt-2 text-sm text-green-600">דומיין נוסף בהצלחה</p>}
@@ -57,9 +57,9 @@ export default function DomainsClient({ domains }: { domains: Domain[] }) {
       </div>
 
       {/* DNS Instructions */}
-      <div className="rounded-2xl bg-ocean/[0.03] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-        <div className="border-b border-ocean/10 px-6 py-4"><h2 className="font-noto text-[15px] font-semibold text-navy">הוראות DNS</h2></div>
-        <div className="space-y-3 px-6 py-5 text-sm text-navy">
+      <div className="rounded-xl border border-blue-100 bg-blue-50/30">
+        <div className="border-b border-blue-100 px-5 py-4"><h2 className="text-[14px] font-semibold text-navy">הוראות DNS</h2></div>
+        <div className="space-y-3 px-5 py-4 text-sm text-navy">
           <p>כדי לחבר דומיין מותאם, הגדרו את רשומות ה-DNS הבאות:</p>
           <DataTable headers={[
             { label: 'Type', className: 'text-left' },
@@ -94,8 +94,8 @@ export default function DomainsClient({ domains }: { domains: Domain[] }) {
               <DataTableCell><StatusBadge status={String(domain.verified)} map={sslMap} /></DataTableCell>
               <DataTableCell>
                 <div className="flex justify-end gap-3">
-                  {!domain.verified && <button onClick={() => handleVerify(domain.id)} disabled={acting} className="text-[13px] font-medium text-ocean hover:underline disabled:opacity-50">אמת</button>}
-                  {domain.type === 'custom' && <button onClick={() => handleRemove(domain.id)} disabled={acting} className="text-[13px] font-medium text-red-600 hover:underline disabled:opacity-50">הסר</button>}
+                  {!domain.verified && <button onClick={() => handleVerify(domain.id)} disabled={acting} className="cursor-pointer text-[13px] font-medium text-navy hover:underline disabled:opacity-50">אמת</button>}
+                  {domain.type === 'custom' && <button onClick={() => handleRemove(domain.id)} disabled={acting} className="cursor-pointer text-[13px] font-medium text-slate-400 hover:text-red-500 disabled:opacity-50">הסר</button>}
                 </div>
               </DataTableCell>
             </DataTableRow>

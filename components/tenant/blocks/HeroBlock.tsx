@@ -3,14 +3,33 @@ type Props = {
   tenantId: string;
 };
 
+function btnClasses(variant: string) {
+  const base = 'inline-block px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.15em] text-white transition';
+  switch (variant) {
+    case 'outline':
+      return `${base} border border-white/30 hover:border-white/60`;
+    case 'underline':
+      return `${base} border-b-2 border-white/50 hover:border-white`;
+    default:
+      return `${base} hover:opacity-90`;
+  }
+}
+
+function btnStyle(variant: string) {
+  if (variant === 'filled' || !variant) return { backgroundColor: 'var(--tenant-primary)' };
+  return undefined;
+}
+
 export default function HeroBlock({ data }: Props) {
   const title = (data.title as string) ?? '';
   const subtitle = (data.subtitle as string) ?? '';
   const bg = (data.backgroundImage as string) ?? '';
   const btn1Label = (data.primaryBtnLabel as string) ?? '';
   const btn1Href = (data.primaryBtnHref as string) ?? '#';
+  const btn1Variant = (data.primaryBtnVariant as string) ?? 'filled';
   const btn2Label = (data.secondaryBtnLabel as string) ?? '';
   const btn2Href = (data.secondaryBtnHref as string) ?? '#';
+  const btn2Variant = (data.secondaryBtnVariant as string) ?? 'outline';
 
   return (
     <section
@@ -30,19 +49,12 @@ export default function HeroBlock({ data }: Props) {
         {(btn1Label || btn2Label) && (
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             {btn1Label && (
-              <a
-                href={btn1Href}
-                className="inline-block px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.15em] text-white transition hover:opacity-90"
-                style={{ backgroundColor: 'var(--tenant-primary)' }}
-              >
+              <a href={btn1Href} className={btnClasses(btn1Variant)} style={btnStyle(btn1Variant)}>
                 {btn1Label}
               </a>
             )}
             {btn2Label && (
-              <a
-                href={btn2Href}
-                className="inline-block border border-white/30 px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.15em] text-white transition hover:border-white/60"
-              >
+              <a href={btn2Href} className={btnClasses(btn2Variant)} style={btnStyle(btn2Variant)}>
                 {btn2Label}
               </a>
             )}

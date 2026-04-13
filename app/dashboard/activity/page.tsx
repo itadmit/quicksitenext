@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import PageHeader from '@/components/dashboard/PageHeader';
+import ListPageLayout from '@/components/dashboard/ListPageLayout';
 import { DataTable, DataTableRow, DataTableCell, DataTableEmpty } from '@/components/dashboard/DataTable';
 
 export const metadata = { title: 'לוג פעילות | דשבורד' };
@@ -27,9 +27,12 @@ export default async function ActivityPage() {
   });
 
   return (
-    <div className="space-y-5">
-      <PageHeader title="לוג פעילות" subtitle={`${logs.length} פעולות אחרונות`} />
-
+    <ListPageLayout
+      title="לוג פעילות"
+      subtitle={`${logs.length} פעולות אחרונות`}
+      searchBasePath="/dashboard/activity"
+      searchPlaceholder="חיפוש..."
+    >
       {logs.length === 0 ? (
         <DataTableEmpty icon="history" text="אין פעילות עדיין" />
       ) : (
@@ -45,6 +48,6 @@ export default async function ActivityPage() {
           ))}
         </DataTable>
       )}
-    </div>
+    </ListPageLayout>
   );
 }

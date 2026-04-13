@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import PageHeader from '@/components/dashboard/PageHeader';
+import ListPageLayout from '@/components/dashboard/ListPageLayout';
 import PopupsClient from './PopupsClient';
 
 export const metadata = { title: 'פופאפים | דשבורד' };
@@ -11,9 +11,13 @@ export default async function PopupsPage() {
   const popups = await prisma.popup.findMany({ where: { tenantId }, orderBy: { priority: 'asc' } });
 
   return (
-    <div className="space-y-5">
-      <PageHeader title="פופאפים" subtitle={`${popups.length} פופאפים`} />
+    <ListPageLayout
+      title="פופאפים"
+      subtitle={`${popups.length} פופאפים`}
+      searchBasePath="/dashboard/popups"
+      searchPlaceholder="חיפוש לפי שם..."
+    >
       <PopupsClient popups={JSON.parse(JSON.stringify(popups))} />
-    </div>
+    </ListPageLayout>
   );
 }

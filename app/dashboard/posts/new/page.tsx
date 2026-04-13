@@ -15,7 +15,7 @@ export default async function NewPostPage() {
   ]);
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl space-y-5">
       <PageHeader title="פוסט חדש" backHref="/dashboard/posts" />
       <DashboardCard>
         <PostForm categories={JSON.parse(JSON.stringify(categories))} tags={JSON.parse(JSON.stringify(tags))} />

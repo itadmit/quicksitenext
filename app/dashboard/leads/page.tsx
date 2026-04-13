@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import PageHeader from '@/components/dashboard/PageHeader';
+import ListPageLayout from '@/components/dashboard/ListPageLayout';
 import LeadsClient from './LeadsClient';
 
 export const metadata = { title: 'לידים | דשבורד' };
@@ -26,9 +26,27 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
   ]);
 
   return (
-    <div className="space-y-5">
-      <PageHeader title="לידים" subtitle={`${totalCount} לידים סה״כ`} />
-      <LeadsClient leads={JSON.parse(JSON.stringify(leads))} currentStatus={status || 'ALL'} currentSearch={q || ''} />
-    </div>
+    <ListPageLayout
+      title="לידים"
+      subtitle={`${totalCount} לידים סה״כ`}
+      searchPlaceholder="חיפוש שם, אימייל, חברה..."
+      searchBasePath="/dashboard/leads"
+      searchFilters={[
+        {
+          name: 'status',
+          label: 'כל הסטטוסים',
+          options: [
+            { value: 'NEW', label: 'חדש' },
+            { value: 'CONTACTED', label: 'נוצר קשר' },
+            { value: 'QUALIFIED', label: 'מתאים' },
+            { value: 'PROPOSAL_SENT', label: 'הצעה נשלחה' },
+            { value: 'WON', label: 'זכייה' },
+            { value: 'LOST', label: 'הפסד' },
+          ],
+        },
+      ]}
+    >
+      <LeadsClient leads={JSON.parse(JSON.stringify(leads))} />
+    </ListPageLayout>
   );
 }

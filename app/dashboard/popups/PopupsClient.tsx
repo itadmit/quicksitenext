@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { Pencil, Copy, Trash2 } from 'lucide-react';
 import { createPopupAction, updatePopupAction, deletePopupAction, duplicatePopupAction, type PopupActionState } from './actions';
 import { DataTable, DataTableRow, DataTableCell, StatusBadge } from '@/components/dashboard/DataTable';
 
@@ -88,8 +89,8 @@ function PopupForm({ popup, onDone }: { popup?: Popup; onDone: () => void }) {
       </div>
 
       <div className="flex gap-3">
-        <button type="submit" disabled={pending} className="rounded-full bg-ocean px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">{pending ? 'שומר...' : popup ? 'עדכן' : 'צור פופאפ'}</button>
-        <button type="button" onClick={onDone} className="rounded-full border border-slate-200 px-6 py-2.5 text-sm font-semibold text-navy transition-colors hover:border-ocean hover:text-ocean">ביטול</button>
+        <button type="submit" disabled={pending} className="cursor-pointer rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? 'שומר...' : popup ? 'עדכן' : 'צור פופאפ'}</button>
+        <button type="button" onClick={onDone} className="cursor-pointer rounded-lg border border-slate-200 px-4 py-2 text-[13px] font-semibold text-slate-600 transition-colors duration-150 hover:border-slate-300 hover:text-navy">ביטול</button>
       </div>
     </form>
   );
@@ -117,22 +118,22 @@ export default function PopupsClient({ popups: initialPopups }: { popups: Popup[
       {!creating && !editing && (
         <button
           onClick={() => setCreating(true)}
-          className="rounded-full bg-ocean px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ocean/85"
+          className="cursor-pointer rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85"
         >
           + פופאפ חדש
         </button>
       )}
 
       {creating && (
-        <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <div className="border-b border-slate-100 px-6 py-4"><h2 className="font-noto text-[15px] font-semibold text-navy">פופאפ חדש</h2></div>
+        <div className="rounded-xl border border-slate-100 bg-white">
+          <div className="border-b border-slate-100 px-6 py-4"><h2 className="text-[14px] font-semibold text-navy">פופאפ חדש</h2></div>
           <div className="px-6 py-5"><PopupForm onDone={handleDone} /></div>
         </div>
       )}
 
       {editing && (
-        <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <div className="border-b border-slate-100 px-6 py-4"><h2 className="font-noto text-[15px] font-semibold text-navy">עריכת פופאפ</h2></div>
+        <div className="rounded-xl border border-slate-100 bg-white">
+          <div className="border-b border-slate-100 px-6 py-4"><h2 className="text-[14px] font-semibold text-navy">עריכת פופאפ</h2></div>
           <div className="px-6 py-5">
             <PopupForm popup={initialPopups.find(p => p.id === editing)} onDone={handleDone} />
           </div>
@@ -140,7 +141,7 @@ export default function PopupsClient({ popups: initialPopups }: { popups: Popup[
       )}
 
       {initialPopups.length === 0 ? (
-        <div className="rounded-2xl bg-white py-16 text-center shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <div className="rounded-xl border border-slate-100 bg-white py-16 text-center">
           <span className="material-symbols-outlined mb-3 block text-4xl text-slate-200">web_asset</span>
           <p className="text-[13px] text-slate-400">אין פופאפים עדיין</p>
         </div>
@@ -155,10 +156,30 @@ export default function PopupsClient({ popups: initialPopups }: { popups: Popup[
               <DataTableCell className="text-slate-500">{popup.clicks}</DataTableCell>
               <DataTableCell className="text-slate-500">{popup.dismissals}</DataTableCell>
               <DataTableCell>
-                <div className="flex justify-end gap-3">
-                  <button onClick={() => setEditing(editing === popup.id ? null : popup.id)} className="text-[13px] font-medium text-ocean hover:underline">עריכה</button>
-                  <button onClick={() => { startDelete(async () => { await duplicatePopupAction(popup.id); router.refresh(); }); }} disabled={deleting} className="text-[13px] font-medium text-slate-500 hover:text-ocean hover:underline disabled:opacity-50">שכפול</button>
-                  <button onClick={() => handleDelete(popup.id)} disabled={deleting} className="text-[13px] font-medium text-red-600 hover:underline disabled:opacity-50">מחק</button>
+                <div className="flex items-center justify-end gap-0.5">
+                  <button
+                    onClick={() => setEditing(editing === popup.id ? null : popup.id)}
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-navy"
+                    title="עריכה"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => { startDelete(async () => { await duplicatePopupAction(popup.id); router.refresh(); }); }}
+                    disabled={deleting}
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-navy disabled:opacity-40"
+                    title="שכפול"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(popup.id)}
+                    disabled={deleting}
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors duration-150 hover:bg-red-50 hover:text-red-500 disabled:opacity-40"
+                    title="מחק"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </DataTableCell>
             </DataTableRow>

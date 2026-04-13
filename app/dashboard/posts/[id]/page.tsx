@@ -19,7 +19,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   if (!post) notFound();
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl space-y-5">
       <PageHeader title="עריכת פוסט" backHref="/dashboard/posts" />
       <DashboardCard>
         <EditPostForm post={JSON.parse(JSON.stringify(post))} categories={JSON.parse(JSON.stringify(categories))} />

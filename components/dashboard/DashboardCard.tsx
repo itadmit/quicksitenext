@@ -9,17 +9,17 @@ type Props = {
 
 export default function DashboardCard({ title, description, headerAction, noPadding, children, className = '' }: Props) {
   return (
-    <div className={`rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${className}`}>
+    <div className={`rounded-xl border border-slate-100 bg-white ${className}`}>
       {(title || description || headerAction) && (
-        <div className="flex items-center justify-between px-6 pb-0 pt-5">
+        <div className="flex items-center justify-between px-5 pb-0 pt-4">
           <div>
-            {title && <h2 className="font-noto text-[15px] font-semibold text-navy">{title}</h2>}
-            {description && <p className="mt-0.5 text-xs text-slate-400">{description}</p>}
+            {title && <h2 className="text-[14px] font-semibold text-navy">{title}</h2>}
+            {description && <p className="mt-0.5 text-[12px] text-slate-400">{description}</p>}
           </div>
           {headerAction}
         </div>
       )}
-      <div className={noPadding ? '' : 'px-6 py-5'}>{children}</div>
+      <div className={noPadding ? '' : 'px-5 py-4'}>{children}</div>
     </div>
   );
 }

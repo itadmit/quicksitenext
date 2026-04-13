@@ -1,11 +1,5 @@
-import { SkeletonPageHeader, SkeletonSearch, SkeletonTable } from '@/components/dashboard/Skeleton';
+import ListPageSkeleton from '@/components/dashboard/ListPageSkeleton';
 
 export default function PostsLoading() {
-  return (
-    <div className="animate-pulse space-y-5">
-      <SkeletonPageHeader hasButton />
-      <SkeletonSearch />
-      <SkeletonTable cols={4} rows={5} />
-    </div>
-  );
+  return <ListPageSkeleton hasButton cols={4} rows={5} />;
 }

@@ -1,10 +1,5 @@
-import { SkeletonPageHeader, SkeletonTable } from '@/components/dashboard/Skeleton';
+import ListPageSkeleton from '@/components/dashboard/ListPageSkeleton';
 
 export default function ActivityLoading() {
-  return (
-    <div className="animate-pulse space-y-5">
-      <SkeletonPageHeader />
-      <SkeletonTable cols={5} rows={8} />
-    </div>
-  );
+  return <ListPageSkeleton cols={5} rows={8} />;
 }

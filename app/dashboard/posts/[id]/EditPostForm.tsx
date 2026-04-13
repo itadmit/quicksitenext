@@ -24,7 +24,7 @@ export default function EditPostForm({ post, categories }: Props) {
 
   return (
     <div>
-      <form action={formAction} className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-6 space-y-5">
+      <form action={formAction} className="rounded-xl border border-slate-100 bg-white p-6 space-y-5">
         <input type="hidden" name="id" value={post.id} />
         {state?.error && <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{state.error}</p>}
 
@@ -77,11 +77,11 @@ export default function EditPostForm({ post, categories }: Props) {
           <button
             type="submit"
             disabled={pending}
-            className="bg-ocean rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:bg-ocean/85 transition-colors disabled:opacity-50 cursor-pointer"
+            className="bg-navy rounded-lg px-4 py-2 text-[13px] font-semibold text-white hover:bg-navy/85 transition-colors duration-150 disabled:opacity-50 cursor-pointer"
           >
             {pending ? 'שומר...' : 'שמור שינויים'}
           </button>
-          <Link href="/dashboard/posts" className="rounded-full border border-slate-200 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-navy hover:border-ocean hover:text-ocean transition-colors">
+          <Link href="/dashboard/posts" className="rounded-lg border border-slate-200 px-4 py-2 text-[13px] font-semibold text-slate-600 hover:border-slate-300 hover:text-navy transition-colors duration-150">
             ביטול
           </Link>
         </div>
@@ -92,7 +92,7 @@ export default function EditPostForm({ post, categories }: Props) {
         <button
           type="submit"
           onClick={(e) => { if (!confirm('למחוק את הפוסט?')) e.preventDefault(); }}
-          className="bg-red-600 rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white hover:bg-red-700 transition-colors cursor-pointer"
+          className="bg-red-600 rounded-lg px-4 py-2 text-[13px] font-semibold text-white hover:bg-red-700 transition-colors duration-150 cursor-pointer"
         >
           מחק פוסט
         </button>

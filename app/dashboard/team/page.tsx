@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import PageHeader from '@/components/dashboard/PageHeader';
+import ListPageLayout from '@/components/dashboard/ListPageLayout';
 import TeamClient from './TeamClient';
 
 export const metadata = { title: 'צוות | דשבורד' };
@@ -16,12 +16,16 @@ export default async function TeamPage() {
   });
 
   return (
-    <div className="max-w-4xl space-y-5">
-      <PageHeader title="ניהול צוות" subtitle={`${members.length} חברים`} />
+    <ListPageLayout
+      title="ניהול צוות"
+      subtitle={`${members.length} חברים`}
+      searchBasePath="/dashboard/team"
+      searchPlaceholder="חיפוש לפי שם או אימייל..."
+    >
       <TeamClient
         members={JSON.parse(JSON.stringify(members))}
         currentUserId={user!.id}
       />
-    </div>
+    </ListPageLayout>
   );
 }

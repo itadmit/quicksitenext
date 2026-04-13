@@ -72,8 +72,8 @@ export default function FieldsEditor({ cptId, initialFields }: { cptId: string; 
       {error && <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">{error}</p>}
 
       {fields.map((field, i) => (
-        <div key={i} className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <div className="flex items-center justify-between border-b border-slate-100 px-6 py-3">
+        <div key={i} className="rounded-xl border border-slate-100 bg-white">
+          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
             <span className="text-sm font-medium text-navy">שדה #{i + 1}</span>
             <div className="flex gap-2">
               <button onClick={() => moveField(i, i - 1)} disabled={i === 0} className="text-slate-400 hover:text-navy disabled:opacity-30">↑</button>
@@ -81,7 +81,7 @@ export default function FieldsEditor({ cptId, initialFields }: { cptId: string; 
               <button onClick={() => removeField(i)} className="text-red-500 hover:text-red-700 text-sm">✕</button>
             </div>
           </div>
-          <div className="space-y-3 px-6 py-4">
+          <div className="space-y-3 px-5 py-4">
             <div className="grid grid-cols-2 gap-3">
               <label className="block"><span className="mb-1 block text-xs font-medium text-slate-500">שם שדה (באנגלית)</span>
                 <input value={field.name} onChange={e => updateField(i, 'name', e.target.value)} dir="ltr" className={inputCls + ' font-mono'} placeholder="field_name" />
@@ -114,7 +114,7 @@ export default function FieldsEditor({ cptId, initialFields }: { cptId: string; 
         + הוסף שדה
       </button>
 
-      <button onClick={handleSave} disabled={saving} className="rounded-full bg-ocean shadow-sm px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">
+      <button onClick={handleSave} disabled={saving} className="rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">
         {saving ? 'שומר...' : 'שמור שדות'}
       </button>
     </div>

@@ -1,11 +1,5 @@
-import { SkeletonPageHeader, SkeletonForm, SkeletonTable } from '@/components/dashboard/Skeleton';
+import ListPageSkeleton from '@/components/dashboard/ListPageSkeleton';
 
 export default function CptLoading() {
-  return (
-    <div className="animate-pulse space-y-5">
-      <SkeletonPageHeader />
-      <SkeletonForm fields={2} />
-      <SkeletonTable cols={3} rows={3} />
-    </div>
-  );
+  return <ListPageSkeleton cols={3} rows={3} />;
 }

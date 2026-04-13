@@ -1,8 +1,7 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import Link from 'next/link';
-import PageHeader from '@/components/dashboard/PageHeader';
-import TableSearch from '@/components/dashboard/TableSearch';
+import { ExternalLink } from 'lucide-react';
+import ListPageLayout from '@/components/dashboard/ListPageLayout';
 import { DataTable, DataTableRow, DataTableCell, StatusBadge, DataTableEmpty } from '@/components/dashboard/DataTable';
 import PageActions from './PageActions';
 
@@ -23,24 +22,30 @@ export default async function PagesListPage({ searchParams }: { searchParams: Pr
   if (q) where.title = { contains: q, mode: 'insensitive' };
   if (status) where.status = status;
 
-  const pages = await prisma.page.findMany({
-    where,
-    orderBy: { sortOrder: 'asc' },
-    select: { id: true, title: true, slug: true, status: true, isHome: true, updatedAt: true },
-  });
+  const [pages, tenant] = await Promise.all([
+    prisma.page.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+      select: { id: true, title: true, slug: true, status: true, isHome: true, updatedAt: true },
+    }),
+    prisma.tenant.findUnique({ where: { id: tenantId }, select: { slug: true } }),
+  ]);
+
+  const platformDomain = process.env.PLATFORM_DOMAIN ?? 'localhost:3000';
+  const isLocal = platformDomain.includes('localhost') || platformDomain.includes('127.');
+  const protocol = isLocal ? 'http' : 'https';
+  const siteBase = tenant?.slug ? `${protocol}://${tenant.slug}.${platformDomain}` : null;
 
   return (
-    <div className="space-y-5">
-      <PageHeader title="עמודים" subtitle={`${pages.length} עמודים`}>
-        <Link href="/dashboard/pages/new" className="rounded-full bg-ocean px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-ocean/85">עמוד חדש</Link>
-      </PageHeader>
-
-      <TableSearch
-        placeholder="חיפוש לפי כותרת..."
-        basePath="/dashboard/pages"
-        filters={[{ name: 'status', label: 'כל הסטטוסים', options: [{ value: 'draft', label: 'טיוטה' }, { value: 'published', label: 'פורסם' }] }]}
-      />
-
+    <ListPageLayout
+      title="עמודים"
+      subtitle={`${pages.length} עמודים`}
+      actionHref="/dashboard/pages/new"
+      actionLabel="+ עמוד חדש"
+      searchPlaceholder="חיפוש לפי כותרת..."
+      searchBasePath="/dashboard/pages"
+      searchFilters={[{ name: 'status', label: 'כל הסטטוסים', options: [{ value: 'draft', label: 'טיוטה' }, { value: 'published', label: 'פורסם' }] }]}
+    >
       {pages.length === 0 ? (
         <DataTableEmpty icon="description" text={`אין עמודים${q ? ' תואמים לחיפוש' : ' עדיין'}`} />
       ) : (
@@ -48,7 +53,22 @@ export default async function PagesListPage({ searchParams }: { searchParams: Pr
           {pages.map(page => (
             <DataTableRow key={page.id}>
               <DataTableCell className="font-medium text-navy">{page.title}</DataTableCell>
-              <DataTableCell className="font-mono text-slate-500">/{page.slug}</DataTableCell>
+              <DataTableCell>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-mono text-slate-500" dir="ltr">/{page.slug}</span>
+                  {siteBase && page.status === 'published' && (
+                    <a
+                      href={`${siteBase}/${page.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-slate-300 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
+                      title="פתח בכרטיסייה חדשה"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  )}
+                </div>
+              </DataTableCell>
               <DataTableCell><StatusBadge status={page.status} map={statusMap} /></DataTableCell>
               <DataTableCell className="text-[11px] text-slate-400">{new Date(page.updatedAt).toLocaleDateString('he-IL')}</DataTableCell>
               <DataTableCell>
@@ -59,6 +79,6 @@ export default async function PagesListPage({ searchParams }: { searchParams: Pr
           ))}
         </DataTable>
       )}
-    </div>
+    </ListPageLayout>
   );
 }

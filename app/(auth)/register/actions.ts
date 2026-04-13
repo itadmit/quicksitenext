@@ -139,5 +139,5 @@ export async function registerAction(_prev: RegisterState, fd: FormData): Promis
   }
 
   await createSession(user.id);
-  redirect('/dashboard');
+  redirect('/onboarding');
 }

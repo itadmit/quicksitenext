@@ -95,7 +95,7 @@ export default async function AccountPage() {
           {plan === 'free' && (
             <div className="flex items-center justify-between rounded-xl bg-ocean/[0.04] px-4 py-3">
               <p className="text-sm text-navy">שדרגו לחבילת <strong>סטארטר</strong> לקבל יותר עמודים, אחסון וחברי צוות</p>
-              <button className="shrink-0 rounded-full bg-ocean px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-ocean/85">שדרוג</button>
+              <button className="shrink-0 rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85">שדרוג</button>
             </div>
           )}
         </div>

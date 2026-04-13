@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getCurrentUser } from '@/lib/auth';
 import PremiumContactForm from '@/components/PremiumContactForm';
+import WizardDemo from '@/components/home/WizardDemo';
 import {
   FileText,
   BookOpen,
@@ -16,16 +17,12 @@ import {
   Rocket,
   ArrowLeft,
   Star,
-  GripVertical,
-  LayoutTemplate,
-  Type,
-  Images,
-  MousePointerClick,
-  PenLine,
   Check,
   HardDrive,
   Shield,
   Headphones,
+  MessageCircle,
+  Send,
 } from 'lucide-react';
 
 const features = [
@@ -73,6 +70,16 @@ const features = [
     icon: Image,
     title: 'ספריית מדיה',
     desc: 'העלו, נהלו ואגרו את כל התמונות והקבצים במקום אחד מסודר.',
+  },
+  {
+    icon: MessageCircle,
+    title: 'צ׳אט בוט לאתר',
+    desc: 'הוסיפו צ׳אט בוט חכם לאתר — ענו ללקוחות אוטומטית, אספו לידים ותנו שירות 24/7.',
+  },
+  {
+    icon: Send,
+    title: 'התראות WhatsApp ו-SMS',
+    desc: 'שלחו הודעת WhatsApp או SMS אוטומטית לכל ליד שנרשם — תגובה מיידית שמגדילה סגירות.',
   },
 ];
 
@@ -191,13 +198,6 @@ const pricingPlans = [
   },
 ];
 
-const editorBlocks = [
-  { type: 'Hero Block', icon: LayoutTemplate, color: 'bg-amber-50 text-amber-600' },
-  { type: 'Text Block', icon: Type, color: 'bg-sky-50 text-sky-600' },
-  { type: 'Gallery Block', icon: Images, color: 'bg-violet-50 text-violet-600' },
-  { type: 'CTA Block', icon: MousePointerClick, color: 'bg-emerald-50 text-emerald-600' },
-  { type: 'Contact Form', icon: Mail, color: 'bg-rose-50 text-rose-600' },
-];
 
 export default async function PlatformHomePage() {
   const user = await getCurrentUser();
@@ -249,17 +249,17 @@ export default async function PlatformHomePage() {
             className="hp-enter font-noto text-[2.75rem] font-black leading-[1.1] text-navy md:text-6xl lg:text-7xl"
             style={{ animationDelay: '0.1s' }}
           >
-            <span className="hp-gradient-text">תשתית לבניית אתרים</span>
+            בנו אתר מקצועי
             {' '}
-            שמאיצה את הנוכחות הדיגיטלית שלכם.
+            <span className="hp-gradient-text">בקלות ובמהירות.</span>
           </h1>
 
           <p
             className="hp-enter mx-auto mt-8 max-w-2xl text-xl leading-relaxed text-slate-500 md:text-[1.35rem]"
             style={{ animationDelay: '0.25s' }}
           >
-            עורך ויזואלי, בלוג, ניהול לידים, דומיין מותאם — הכל בעברית, הכל במקום אחד.
-            מהאתר הראשון ועד החמישי.
+            בחרו תבנית, ערכו את התוכן, ותפרסמו — בלי קוד, בלי מתכנת.
+            הכל בעברית, הכל במקום אחד.
           </p>
 
           <div
@@ -329,58 +329,21 @@ export default async function PlatformHomePage() {
         </div>
       </section>
 
-      {/* ── Editor Showcase — Split ── */}
+      {/* ── Wizard Demo — Interactive ── */}
       <section className="bg-navy px-6 py-24 text-white md:py-32">
         <div className="mx-auto max-w-7xl">
-          <div className="grid items-center gap-16 lg:grid-cols-2">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-ocean-light">עורך חזותי</p>
-              <h2 className="mt-4 font-noto text-3xl font-black md:text-[2.75rem] md:leading-[1.15]">
-                בנו כל עמוד שתדמיינו.
-                <br />
-                <span className="text-ocean-light">בלוק אחרי בלוק.</span>
-              </h2>
-              <p className="mt-6 max-w-md text-white/50 leading-relaxed">
-                העורך הוויזואלי שלנו מאפשר לכם לבנות כל עמוד — גיבור ראשי, גלריה, טופס, טקסט חופשי, CTA ועוד. פשוט בחרו בלוק, ערכו את התוכן, וזהו.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-2">
-                {['Hero', 'טקסט', 'תמונה', 'גלריה', 'CTA', 'טופס', 'ספייסר', 'HTML', 'פוסטים'].map((block) => (
-                  <span
-                    key={block}
-                    className="cursor-pointer rounded-full border border-white/10 px-3.5 py-1.5 text-xs font-medium text-white/40 transition-colors duration-200 hover:border-ocean-light/30 hover:text-ocean-light"
-                  >
-                    {block}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-sm">
-                <div className="mb-5 flex items-center gap-2 border-b border-white/[0.06] pb-4">
-                  <PenLine className="h-4 w-4 text-ocean-light" />
-                  <span className="text-sm font-semibold text-white/50">עורך עמודים</span>
-                </div>
-                <div className="space-y-2.5">
-                  {editorBlocks.map((block) => {
-                    const Icon = block.icon;
-                    return (
-                      <div
-                        key={block.type}
-                        className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3.5 transition-colors duration-200 hover:border-ocean-light/20 hover:bg-white/[0.06]"
-                      >
-                        <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${block.color}`}>
-                          <Icon className="h-4 w-4" />
-                        </div>
-                        <span className="text-sm font-medium text-white/70">{block.type}</span>
-                        <GripVertical className="mr-auto h-4 w-4 text-white/20" />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-widest text-ocean-light">נסו בעצמכם</p>
+            <h2 className="mt-4 font-noto text-3xl font-black md:text-[2.75rem] md:leading-[1.15]">
+              ככה בונים אתר.
+              <br />
+              <span className="text-ocean-light">תוך דקות.</span>
+            </h2>
+            <p className="mt-4 text-white/40">
+              עברו על השלבים וראו איך האתר שלכם נוצר בזמן אמת
+            </p>
           </div>
+          <WizardDemo />
         </div>
       </section>
 

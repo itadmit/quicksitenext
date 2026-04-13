@@ -27,7 +27,7 @@ const tabs = [
 
 const inputCls = 'w-full rounded-xl border-0 bg-slate-50 px-4 py-2.5 text-sm text-navy ring-1 ring-slate-200/60 focus:outline-none focus:ring-2 focus:ring-ocean/20 transition-colors';
 const labelCls = 'mb-1 block text-xs font-medium text-slate-500';
-const btnCls = 'rounded-full bg-ocean shadow-sm px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50';
+const btnCls = 'rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50';
 
 export default function SettingsTabs({ settings, redirects }: { settings: Settings | null; redirects: RedirectItem[] }) {
   const [activeTab, setActiveTab] = useState('general');
@@ -40,7 +40,7 @@ export default function SettingsTabs({ settings, redirects }: { settings: Settin
 
   return (
     <div>
-      <div className="mb-5 flex gap-1 overflow-x-auto rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-1.5">
+      <div className="mb-5 flex gap-1 overflow-x-auto rounded-xl border border-slate-100 bg-white p-1.5">
         {tabs.map(t => (
           <button
             key={t.id}
@@ -59,11 +59,11 @@ export default function SettingsTabs({ settings, redirects }: { settings: Settin
       <form action={formAction} className="space-y-5">
         {/* General Tab */}
         <div className={activeTab === 'general' ? '' : 'hidden'}>
-          <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-            <div className="border-b border-slate-100 px-6 py-4">
-              <h2 className="font-noto text-base font-semibold text-navy">הגדרות כלליות</h2>
+          <div className="rounded-xl border border-slate-100 bg-white">
+            <div className="border-b border-slate-100 px-5 py-4">
+              <h2 className="text-[14px] font-semibold text-navy">הגדרות כלליות</h2>
             </div>
-            <div className="space-y-4 px-6 py-5">
+            <div className="space-y-4 px-5 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <label className="block"><span className={labelCls}>שם האתר</span><input name="siteName" defaultValue={s.siteName} className={inputCls} /></label>
                 <label className="block"><span className={labelCls}>תיאור קצר (Tagline)</span><input name="tagline" defaultValue={s.tagline} className={inputCls} /></label>
@@ -79,11 +79,11 @@ export default function SettingsTabs({ settings, redirects }: { settings: Settin
 
         {/* SEO Tab */}
         <div className={activeTab === 'seo' ? '' : 'hidden'}>
-          <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-            <div className="border-b border-slate-100 px-6 py-4">
-              <h2 className="font-noto text-base font-semibold text-navy">SEO ברירת מחדל</h2>
+          <div className="rounded-xl border border-slate-100 bg-white">
+            <div className="border-b border-slate-100 px-5 py-4">
+              <h2 className="text-[14px] font-semibold text-navy">SEO ברירת מחדל</h2>
             </div>
-            <div className="space-y-4 px-6 py-5">
+            <div className="space-y-4 px-5 py-4">
               <label className="block"><span className={labelCls}>כותרת SEO</span><input name="defaultSeoTitle" defaultValue={s.defaultSeoTitle} className={inputCls} /></label>
               <label className="block"><span className={labelCls}>תיאור SEO</span><textarea name="defaultSeoDesc" rows={3} defaultValue={s.defaultSeoDesc} className={inputCls + ' resize-y'} /></label>
             </div>
@@ -92,11 +92,11 @@ export default function SettingsTabs({ settings, redirects }: { settings: Settin
 
         {/* Code Tab */}
         <div className={activeTab === 'code' ? '' : 'hidden'}>
-          <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-            <div className="border-b border-slate-100 px-6 py-4">
-              <h2 className="font-noto text-base font-semibold text-navy">קוד מותאם</h2>
+          <div className="rounded-xl border border-slate-100 bg-white">
+            <div className="border-b border-slate-100 px-5 py-4">
+              <h2 className="text-[14px] font-semibold text-navy">קוד מותאם</h2>
             </div>
-            <div className="space-y-4 px-6 py-5">
+            <div className="space-y-4 px-5 py-4">
               <label className="block"><span className={labelCls}>Analytics ID</span><input name="analyticsId" defaultValue={s.analyticsId} dir="ltr" className={inputCls + ' font-mono'} /></label>
               <label className="block"><span className={labelCls}>CSS מותאם</span><textarea name="customCss" rows={6} defaultValue={s.customCss} dir="ltr" className={inputCls + ' font-mono resize-y'} /></label>
             </div>
@@ -105,11 +105,11 @@ export default function SettingsTabs({ settings, redirects }: { settings: Settin
 
         {/* Social Tab */}
         <div className={activeTab === 'social' ? '' : 'hidden'}>
-          <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-            <div className="border-b border-slate-100 px-6 py-4">
-              <h2 className="font-noto text-base font-semibold text-navy">שיתופי</h2>
+          <div className="rounded-xl border border-slate-100 bg-white">
+            <div className="border-b border-slate-100 px-5 py-4">
+              <h2 className="text-[14px] font-semibold text-navy">שיתופי</h2>
             </div>
-            <div className="space-y-4 px-6 py-5">
+            <div className="space-y-4 px-5 py-4">
               <label className="block"><span className={labelCls}>טקסט פוטר</span><input name="footerText" defaultValue={s.footerText} className={inputCls} /></label>
               <label className="block"><span className={labelCls}>קישורים חברתיים (JSON)</span><textarea name="socialLinks" rows={4} defaultValue={s.socialLinks} dir="ltr" className={inputCls + ' font-mono resize-y'} /></label>
             </div>
@@ -157,12 +157,12 @@ function TemplateSection() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="font-noto text-base font-semibold text-navy">החלפת תבנית</h2>
+      <div className="rounded-xl border border-slate-100 bg-white">
+        <div className="border-b border-slate-100 px-5 py-4">
+          <h2 className="text-[14px] font-semibold text-navy">החלפת תבנית</h2>
           <p className="mt-1 text-xs text-slate-400">בחרו תבנית חדשה — העמודים, התפריטים והגדרות העיצוב יוחלפו בהתאם</p>
         </div>
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           {result?.error && <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{result.error}</p>}
           {result?.success && <p className="mb-4 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-600">התבנית הוחלה בהצלחה! העמודים והתפריטים עודכנו.</p>}
 
@@ -229,7 +229,7 @@ function TemplateSection() {
                 type="button"
                 onClick={handleApply}
                 disabled={applying}
-                className="shrink-0 rounded-full bg-ocean px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50"
+                className="shrink-0 rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50"
               >
                 {applying ? 'מחיל...' : 'החל תבנית'}
               </button>
@@ -260,18 +260,18 @@ function RedirectsSection({ redirects }: { redirects: RedirectItem[] }) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="font-noto text-base font-semibold text-navy">הוסף הפנייה</h2>
+      <div className="rounded-xl border border-slate-100 bg-white">
+        <div className="border-b border-slate-100 px-5 py-4">
+          <h2 className="text-[14px] font-semibold text-navy">הוסף הפנייה</h2>
         </div>
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           <form action={formAction} className="flex items-end gap-3">
             <label className="flex-1"><span className={labelCls}>מנתיב</span><input name="fromPath" required dir="ltr" placeholder="/old-page" className={inputCls + ' font-mono'} /></label>
             <label className="flex-1"><span className={labelCls}>לנתיב</span><input name="toPath" required dir="ltr" placeholder="/new-page" className={inputCls + ' font-mono'} /></label>
             <label className="w-24"><span className={labelCls}>סוג</span>
               <select name="type" className={inputCls}><option value="301">301</option><option value="302">302</option></select>
             </label>
-            <button type="submit" disabled={pending} className="whitespace-nowrap rounded-full bg-ocean shadow-sm px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">
+            <button type="submit" disabled={pending} className="whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">
               {pending ? '...' : 'הוסף'}
             </button>
           </form>

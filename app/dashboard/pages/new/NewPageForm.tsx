@@ -47,7 +47,7 @@ export default function NewPageForm() {
         <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{state.error}</div>
       )}
 
-      <form action={formAction} className="space-y-5 rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-6">
+      <form action={formAction} className="space-y-5 rounded-xl border border-slate-100 bg-white p-6">
         <div>
           <label className={labelCls}>כותרת</label>
           <input
@@ -105,13 +105,13 @@ export default function NewPageForm() {
           <button
             type="submit"
             disabled={isPending}
-            className="cursor-pointer rounded-full bg-ocean px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-ocean/85 disabled:opacity-50"
+            className="cursor-pointer rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50"
           >
             {isPending ? 'יוצר...' : 'צור עמוד'}
           </button>
           <Link
             href="/dashboard/pages"
-            className="rounded-full border border-slate-200 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-navy transition-colors hover:border-ocean hover:text-ocean"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-[13px] font-semibold text-slate-600 transition-colors duration-150 hover:border-slate-300 hover:text-navy"
           >
             ביטול
           </Link>

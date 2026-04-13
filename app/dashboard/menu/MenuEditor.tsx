@@ -34,12 +34,12 @@ function MenuSection({ location, title, initialItems }: { location: string; titl
   }
 
   return (
-    <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-      <div className="border-b border-slate-100 px-6 py-4">
-        <h2 className="font-noto text-[15px] font-semibold text-navy">{title}</h2>
+    <div className="rounded-xl border border-slate-100 bg-white">
+      <div className="border-b border-slate-100 px-5 py-4">
+        <h2 className="text-[14px] font-semibold text-navy">{title}</h2>
         <p className="mt-0.5 text-xs text-slate-400">{items.length} פריטים</p>
       </div>
-      <div className="px-6 py-5">
+      <div className="px-5 py-4">
         {state?.error && <p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">{state.error}</p>}
         {state?.success && <p className="mb-4 rounded-xl bg-green-50 p-3 text-sm text-green-600">נשמר בהצלחה</p>}
 
@@ -98,7 +98,7 @@ function MenuSection({ location, title, initialItems }: { location: string; titl
         <form action={formAction}>
           <input type="hidden" name="location" value={location} />
           <input type="hidden" name="items" value={JSON.stringify(items)} />
-          <button type="submit" disabled={pending} className="rounded-full bg-ocean px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">{pending ? 'שומר...' : 'שמור תפריט'}</button>
+          <button type="submit" disabled={pending} className="rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? 'שומר...' : 'שמור תפריט'}</button>
         </form>
       </div>
     </div>

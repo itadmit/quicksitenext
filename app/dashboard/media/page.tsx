@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import PageHeader from '@/components/dashboard/PageHeader';
+import ListPageLayout from '@/components/dashboard/ListPageLayout';
 import MediaClient from './MediaClient';
 
 export const metadata = { title: 'מדיה | דשבורד' };
@@ -16,9 +16,13 @@ export default async function MediaPage({ searchParams }: { searchParams: Promis
   const items = await prisma.mediaItem.findMany({ where, orderBy: { createdAt: 'desc' } });
 
   return (
-    <div className="space-y-5">
-      <PageHeader title="ספריית מדיה" subtitle={`${items.length} קבצים`} />
+    <ListPageLayout
+      title="ספריית מדיה"
+      subtitle={`${items.length} קבצים`}
+      searchBasePath="/dashboard/media"
+      searchPlaceholder="חיפוש לפי שם קובץ..."
+    >
       <MediaClient items={JSON.parse(JSON.stringify(items))} />
-    </div>
+    </ListPageLayout>
   );
 }

@@ -55,7 +55,7 @@ export default function MediaClient({ items }: { items: MediaItem[] }) {
   return (
     <div className="space-y-5">
       {/* Search */}
-      <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-6 py-4">
+      <div className="rounded-xl border border-slate-100 bg-white px-6 py-4">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-[18px] text-slate-400">search</span>
           <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} placeholder="חיפוש לפי שם קובץ..." className="flex-1 border-none bg-transparent text-sm text-navy outline-none placeholder:text-slate-400" />
@@ -63,14 +63,14 @@ export default function MediaClient({ items }: { items: MediaItem[] }) {
       </div>
 
       {/* Upload */}
-      <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-        <div className="border-b border-slate-100 px-6 py-4"><h2 className="font-noto text-base font-semibold text-navy">העלאת קובץ</h2></div>
+      <div className="rounded-xl border border-slate-100 bg-white">
+        <div className="border-b border-slate-100 px-6 py-4"><h2 className="text-[14px] font-semibold text-navy">העלאת קובץ</h2></div>
         <div className="px-6 py-5">
           <form action={formAction} className="flex items-end gap-3">
             <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">בחר קובץ</span>
               <input name="file" type="file" accept="image/*" required multiple className="w-full rounded-xl border-0 bg-slate-50 px-4 py-2.5 text-sm text-navy ring-1 ring-slate-200/60 file:mr-3 file:border-0 file:bg-ocean/[0.08] file:px-3 file:py-1 file:text-xs file:font-semibold file:text-ocean file:rounded-full focus:outline-none focus:ring-2 focus:ring-ocean/20" />
             </label>
-            <button type="submit" disabled={pending} className="whitespace-nowrap rounded-full bg-ocean shadow-sm px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">{pending ? 'מעלה...' : 'העלה'}</button>
+            <button type="submit" disabled={pending} className="cursor-pointer whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? 'מעלה...' : 'העלה'}</button>
           </form>
           {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
           {state?.success && <p className="mt-2 text-sm text-green-600">הקובץ הועלה בהצלחה</p>}
@@ -78,14 +78,14 @@ export default function MediaClient({ items }: { items: MediaItem[] }) {
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-6 py-12 text-center">
+        <div className="rounded-xl border border-slate-100 bg-white px-6 py-12 text-center">
           <span className="material-symbols-outlined mb-3 block text-4xl text-slate-300">photo_library</span>
           <p className="text-sm text-slate-500">אין קבצי מדיה עדיין</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {items.map(item => (
-            <div key={item.id} className="group overflow-hidden rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <div key={item.id} className="group overflow-hidden rounded-xl border border-slate-100 bg-white">
               <div className="relative aspect-square bg-slate-100">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={item.url} alt={item.alt || item.filename} className="h-full w-full object-cover" />

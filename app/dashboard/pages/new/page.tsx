@@ -6,7 +6,7 @@ export const metadata = { title: 'עמוד חדש | דשבורד' };
 
 export default function NewPagePage() {
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-4xl space-y-5">
       <PageHeader title="עמוד חדש" backHref="/dashboard/pages" />
       <DashboardCard>
         <NewPageForm />

@@ -73,8 +73,8 @@ export default function PostForm({ categories, tags }: { categories: Category[];
       </div>
 
       <div className="flex gap-3 pt-2">
-        <button type="submit" disabled={pending} className="rounded-full bg-ocean px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">{pending ? 'שומר...' : 'צור פוסט'}</button>
-        <Link href="/dashboard/posts" className="rounded-full border border-slate-200 px-6 py-2.5 text-sm font-semibold text-navy transition-colors hover:border-ocean hover:text-ocean">ביטול</Link>
+        <button type="submit" disabled={pending} className="rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? 'שומר...' : 'צור פוסט'}</button>
+        <Link href="/dashboard/posts" className="rounded-lg border border-slate-200 px-4 py-2 text-[13px] font-semibold text-slate-600 transition-colors duration-150 hover:border-slate-300 hover:text-navy">ביטול</Link>
       </div>
     </form>
   );

@@ -29,15 +29,15 @@ export default function CptClient({ cpts }: { cpts: Cpt[] }) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="font-noto text-[15px] font-semibold text-navy">סוג חדש</h2>
+      <div className="rounded-xl border border-slate-100 bg-white">
+        <div className="border-b border-slate-100 px-5 py-4">
+          <h2 className="text-[14px] font-semibold text-navy">סוג חדש</h2>
         </div>
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           <form action={formAction} className="flex items-end gap-3">
             <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">שם</span><input name="name" required className={inputCls} /></label>
             <label className="flex-1"><span className="mb-1 block text-xs font-medium text-slate-500">סלאג</span><input name="slug" required dir="ltr" className={inputCls + ' font-mono'} /></label>
-            <button type="submit" disabled={pending} className="whitespace-nowrap rounded-full bg-ocean px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ocean/85 disabled:opacity-50">{pending ? '...' : 'צור'}</button>
+            <button type="submit" disabled={pending} className="cursor-pointer whitespace-nowrap rounded-lg bg-navy px-4 py-2 text-[13px] font-semibold text-white transition-colors duration-150 hover:bg-navy/85 disabled:opacity-50">{pending ? '...' : 'צור'}</button>
           </form>
           {state?.error && <p className="mt-2 text-sm text-red-600">{state.error}</p>}
         </div>
@@ -54,9 +54,9 @@ export default function CptClient({ cpts }: { cpts: Cpt[] }) {
               <DataTableCell className="text-slate-500">{cpt._count.entries}</DataTableCell>
               <DataTableCell>
                 <div className="flex justify-end gap-3">
-                  <Link href={`/dashboard/cpt/${cpt.id}`} className="text-[13px] font-medium text-ocean hover:underline">רשומות</Link>
-                  <Link href={`/dashboard/cpt/${cpt.id}/fields`} className="text-[13px] font-medium text-slate-500 hover:text-ocean hover:underline">שדות</Link>
-                  <button onClick={() => handleDelete(cpt.id)} disabled={deleting} className="text-[13px] font-medium text-red-600 hover:underline disabled:opacity-50">מחק</button>
+                  <Link href={`/dashboard/cpt/${cpt.id}`} className="text-[13px] font-medium text-navy hover:underline">רשומות</Link>
+                  <Link href={`/dashboard/cpt/${cpt.id}/fields`} className="text-[13px] font-medium text-slate-500 hover:text-navy hover:underline">שדות</Link>
+                  <button onClick={() => handleDelete(cpt.id)} disabled={deleting} className="cursor-pointer text-[13px] font-medium text-slate-400 hover:text-red-500 disabled:opacity-50">מחק</button>
                 </div>
               </DataTableCell>
             </DataTableRow>
