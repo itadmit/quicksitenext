@@ -1,6 +1,7 @@
 'use client';
 
 import { Type, MousePointer, Palette } from 'lucide-react';
+import LinkPicker from './LinkPicker';
 
 type Props = {
   data: Record<string, unknown>;
@@ -48,15 +49,12 @@ export default function CtaBlockEditor({ data, onChange }: Props) {
           <MousePointer className="h-3 w-3 text-slate-400" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-navy/60">כפתור</span>
         </div>
-        <div className="grid grid-cols-2 gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+        <div className="space-y-3 rounded-xl border border-slate-100 bg-slate-50/50 p-3">
           <div>
             <label className={label}>טקסט</label>
             <input value={(data.buttonLabel as string) ?? ''} onChange={(e) => update('buttonLabel', e.target.value)} className={input} />
           </div>
-          <div>
-            <label className={label}>קישור</label>
-            <input value={(data.buttonHref as string) ?? ''} onChange={(e) => update('buttonHref', e.target.value)} dir="ltr" className={`${input} font-mono`} placeholder="#" />
-          </div>
+          <LinkPicker value={(data.buttonHref as string) ?? ''} onChange={(v) => update('buttonHref', v)} />
         </div>
       </div>
 

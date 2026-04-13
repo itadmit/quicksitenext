@@ -65,8 +65,8 @@ export default function PropertiesPanel() {
         <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100">
           <MousePointerClick className="h-5 w-5 text-slate-300" />
         </div>
-        <p className="text-sm font-medium text-slate-400">בחרו בלוק לעריכה</p>
-        <p className="mt-1 text-[11px] leading-relaxed text-slate-300">
+        <p className="text-[12px] font-medium text-slate-400">בחרו בלוק לעריכה</p>
+        <p className="mt-1 text-[12px] leading-relaxed text-slate-300">
           לחצו על בלוק בקנבס או בשכבות<br />כדי לערוך את המאפיינים שלו
         </p>
       </div>

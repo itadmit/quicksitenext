@@ -6,11 +6,12 @@ import {
   ArrowRight, Undo2, Redo2, Monitor, Tablet, Smartphone,
   ZoomIn, ZoomOut, Settings, ExternalLink, Save, Check,
   AlertCircle, Loader2, ChevronLeft, Keyboard, X,
-  FileText, Globe, Search as SearchIcon,
+  FileText, Globe, Search as SearchIcon, Code2,
 } from 'lucide-react';
 import { blockLabels, type BlockType } from '@/lib/block-registry';
 import { useEditor, type DeviceMode } from './EditorContext';
-import { updatePageMetaFromEditorAction, publishPageAction } from '@/app/dashboard/pages/[id]/visual/actions';
+import { updatePageMetaFromEditorAction, publishPageAction, saveTrackingAction, fetchTrackingSettings } from '@/app/dashboard/pages/[id]/visual/actions';
+import ThemePalette from './ThemePalette';
 
 type Props = {
   tenantSettings: { siteName: string; primaryColor: string; logoUrl: string | null };
@@ -51,7 +52,9 @@ export default function EditorToolbar(_props: Props) {
   const [showZoomMenu, setShowZoomMenu] = useState(false);
   const [settingsError, setSettingsError] = useState<string | null>(null);
   const [settingsSaving, setSettingsSaving] = useState(false);
-  const [settingsTab, setSettingsTab] = useState<'general' | 'seo'>('general');
+  const [settingsTab, setSettingsTab] = useState<'general' | 'seo' | 'tracking'>('general');
+  const [tracking, setTracking] = useState({ analyticsId: '', fbPixelId: '', gtmId: '', customHeadCode: '' });
+  const [trackingLoaded, setTrackingLoaded] = useState(false);
 
   const shortcutsRef = useRef<HTMLDivElement>(null);
   const shortcutsBtnRef = useRef<HTMLButtonElement>(null);
@@ -92,6 +95,27 @@ export default function EditorToolbar(_props: Props) {
     setPageMeta({ ...pageMeta, status: 'published' });
   };
 
+  useEffect(() => {
+    if (showSettings && settingsTab === 'tracking' && !trackingLoaded) {
+      fetchTrackingSettings().then((data) => {
+        if (data) setTracking(data);
+        setTrackingLoaded(true);
+      });
+    }
+  }, [showSettings, settingsTab, trackingLoaded]);
+
+  const handleTrackingSave = async () => {
+    setSettingsError(null);
+    setSettingsSaving(true);
+    const result = await saveTrackingAction(tracking);
+    setSettingsSaving(false);
+    if (result.success) {
+      setShowSettings(false);
+    } else {
+      setSettingsError(result.error || 'שגיאה');
+    }
+  };
+
   const shortcutGroups = SHORTCUTS.reduce<Record<string, typeof SHORTCUTS>>((acc, s) => {
     (acc[s.group] ??= []).push(s);
     return acc;
@@ -108,7 +132,7 @@ export default function EditorToolbar(_props: Props) {
           >
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
-          <span className="text-[11px] font-semibold text-navy truncate max-w-36">{pageMeta.title}</span>
+          <span className="text-[12px] font-semibold text-navy truncate max-w-36">{pageMeta.title}</span>
           <span className={`rounded-full px-1.5 py-px text-[9px] font-semibold ${
             pageMeta.status === 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'
           }`}>
@@ -117,7 +141,7 @@ export default function EditorToolbar(_props: Props) {
           {selectedLabel && (
             <>
               <ChevronLeft className="h-3 w-3 text-slate-300" />
-              <span className="text-[11px] font-medium text-ocean">{selectedLabel}</span>
+              <span className="text-[12px] font-medium text-ocean">{selectedLabel}</span>
               <button
                 onClick={() => setSelectedBlockId(null)}
                 className="flex h-4 w-4 items-center justify-center rounded text-slate-400 hover:text-navy cursor-pointer"
@@ -192,7 +216,7 @@ export default function EditorToolbar(_props: Props) {
                     <button
                       key={z}
                       onClick={() => { setZoom(z); setShowZoomMenu(false); }}
-                      className={`flex w-full items-center justify-between px-3 py-1.5 text-[11px] transition-colors cursor-pointer ${
+                      className={`flex w-full items-center justify-between px-3 py-1.5 text-[12px] transition-colors cursor-pointer ${
                         zoom === z ? 'bg-ocean/[0.06] font-semibold text-ocean' : 'text-slate-600 hover:bg-slate-50'
                       }`}
                     >
@@ -203,7 +227,7 @@ export default function EditorToolbar(_props: Props) {
                   <div className="my-1 border-t border-slate-100" />
                   <button
                     onClick={() => { setZoom(100); setShowZoomMenu(false); }}
-                    className="flex w-full items-center px-3 py-1.5 text-[11px] text-slate-500 hover:bg-slate-50 cursor-pointer"
+                    className="flex w-full items-center px-3 py-1.5 text-[12px] text-slate-500 hover:bg-slate-50 cursor-pointer"
                   >
                     איפוס ל-100%
                   </button>
@@ -255,6 +279,8 @@ export default function EditorToolbar(_props: Props) {
             <Keyboard className="h-3.5 w-3.5" />
           </button>
 
+          <ThemePalette />
+
           <button
             onClick={() => { setShowSettings(true); setSettingsTab('general'); setSettingsError(null); }}
             className="flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-50 hover:text-navy transition-colors cursor-pointer"
@@ -275,7 +301,7 @@ export default function EditorToolbar(_props: Props) {
 
           <button
             onClick={handlePublish}
-            className="mr-1 rounded-full bg-ocean px-3.5 py-1 text-[11px] font-semibold text-white hover:bg-ocean/85 transition-colors cursor-pointer"
+            className="mr-1 rounded-full bg-ocean px-3.5 py-1 text-[12px] font-semibold text-white hover:bg-ocean/85 transition-colors cursor-pointer"
           >
             פרסם
           </button>
@@ -293,7 +319,7 @@ export default function EditorToolbar(_props: Props) {
             <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
               <div className="flex items-center gap-1.5">
                 <Keyboard className="h-3.5 w-3.5 text-slate-400" />
-                <span className="text-[11px] font-semibold text-navy">קיצורי מקלדת</span>
+                <span className="text-[12px] font-semibold text-navy">קיצורי מקלדת</span>
               </div>
               <button
                 onClick={() => setShowShortcuts(false)}
@@ -310,7 +336,7 @@ export default function EditorToolbar(_props: Props) {
                   </div>
                   {items.map((s) => (
                     <div key={s.keys} className="flex items-center justify-between rounded-md px-2 py-[5px] hover:bg-slate-50">
-                      <span className="text-[11px] text-slate-600">{s.label}</span>
+                      <span className="text-[12px] text-slate-600">{s.label}</span>
                       <kbd className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-mono font-medium text-slate-500 shadow-sm" dir="ltr">
                         {s.keys}
                       </kbd>
@@ -356,7 +382,7 @@ export default function EditorToolbar(_props: Props) {
             <div className="flex border-b border-slate-100 px-5">
               <button
                 onClick={() => setSettingsTab('general')}
-                className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-[11px] font-semibold transition-colors cursor-pointer ${
+                className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-[12px] font-semibold transition-colors cursor-pointer ${
                   settingsTab === 'general'
                     ? 'border-ocean text-ocean'
                     : 'border-transparent text-slate-400 hover:text-navy'
@@ -367,7 +393,7 @@ export default function EditorToolbar(_props: Props) {
               </button>
               <button
                 onClick={() => setSettingsTab('seo')}
-                className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-[11px] font-semibold transition-colors cursor-pointer ${
+                className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-[12px] font-semibold transition-colors cursor-pointer ${
                   settingsTab === 'seo'
                     ? 'border-ocean text-ocean'
                     : 'border-transparent text-slate-400 hover:text-navy'
@@ -375,6 +401,17 @@ export default function EditorToolbar(_props: Props) {
               >
                 <Globe className="h-3 w-3" />
                 SEO
+              </button>
+              <button
+                onClick={() => setSettingsTab('tracking')}
+                className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-[12px] font-semibold transition-colors cursor-pointer ${
+                  settingsTab === 'tracking'
+                    ? 'border-ocean text-ocean'
+                    : 'border-transparent text-slate-400 hover:text-navy'
+                }`}
+              >
+                <Code2 className="h-3 w-3" />
+                הטמעות
               </button>
             </div>
 
@@ -466,6 +503,63 @@ export default function EditorToolbar(_props: Props) {
                 </div>
               )}
 
+              {settingsTab === 'tracking' && (
+                <div className="space-y-4">
+                  <div className="rounded-lg border border-ocean/20 bg-ocean-bg p-3">
+                    <p className="text-[12px] font-semibold text-navy">פיקסלים והטמעות</p>
+                    <p className="mt-0.5 text-[11px] text-slate-500">הוסיפו קודי מעקב לאתר. הקודים יוזרקו בכל עמודי האתר.</p>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">Facebook Pixel ID</label>
+                    <input
+                      value={tracking.fbPixelId}
+                      onChange={(e) => setTracking({ ...tracking, fbPixelId: e.target.value })}
+                      placeholder="123456789012345"
+                      dir="ltr"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-mono text-navy placeholder:text-slate-300 focus:border-ocean focus:outline-none focus:ring-1 focus:ring-ocean/30"
+                    />
+                    <p className="mt-1 text-[10px] text-slate-400">מזהה הפיקסל מ-Meta Business Suite</p>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">Google Tag Manager ID</label>
+                    <input
+                      value={tracking.gtmId}
+                      onChange={(e) => setTracking({ ...tracking, gtmId: e.target.value })}
+                      placeholder="GTM-XXXXXXX"
+                      dir="ltr"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-mono text-navy placeholder:text-slate-300 focus:border-ocean focus:outline-none focus:ring-1 focus:ring-ocean/30"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">Google Analytics ID</label>
+                    <input
+                      value={tracking.analyticsId}
+                      onChange={(e) => setTracking({ ...tracking, analyticsId: e.target.value })}
+                      placeholder="G-XXXXXXXXXX"
+                      dir="ltr"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-mono text-navy placeholder:text-slate-300 focus:border-ocean focus:outline-none focus:ring-1 focus:ring-ocean/30"
+                    />
+                    <p className="mt-1 text-[10px] text-slate-400">אם אתם משתמשים ב-GTM, מומלץ להוסיף את GA דרך GTM</p>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">קוד מותאם אישית (HEAD)</label>
+                    <textarea
+                      value={tracking.customHeadCode}
+                      onChange={(e) => setTracking({ ...tracking, customHeadCode: e.target.value })}
+                      placeholder={'<script>\n  // קוד מעקב מותאם\n</script>'}
+                      dir="ltr"
+                      rows={4}
+                      className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs font-mono text-navy placeholder:text-slate-300 resize-none focus:border-ocean focus:outline-none focus:ring-1 focus:ring-ocean/30"
+                    />
+                    <p className="mt-1 text-[10px] text-slate-400">קוד שיוזרק בתגית HEAD — מתאים ל-Hotjar, Clarity וכו׳</p>
+                  </div>
+                </div>
+              )}
+
               {settingsError && (
                 <div className="mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2">
                   <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 text-red-500" />
@@ -478,14 +572,14 @@ export default function EditorToolbar(_props: Props) {
             <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3.5">
               <button
                 onClick={() => setShowSettings(false)}
-                className="rounded-full border border-slate-200 px-4 py-2 text-[11px] font-semibold text-navy hover:border-slate-300 transition-colors cursor-pointer"
+                className="rounded-full border border-slate-200 px-4 py-2 text-[12px] font-semibold text-navy hover:border-slate-300 transition-colors cursor-pointer"
               >
                 ביטול
               </button>
               <button
-                onClick={handleMetaSave}
+                onClick={settingsTab === 'tracking' ? handleTrackingSave : handleMetaSave}
                 disabled={settingsSaving}
-                className="flex items-center gap-1.5 rounded-full bg-ocean px-5 py-2 text-[11px] font-semibold text-white hover:bg-ocean/85 transition-colors disabled:opacity-50 cursor-pointer"
+                className="flex items-center gap-1.5 rounded-full bg-ocean px-5 py-2 text-[12px] font-semibold text-white hover:bg-ocean/85 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {settingsSaving ? (
                   <Loader2 className="h-3 w-3 animate-spin" />

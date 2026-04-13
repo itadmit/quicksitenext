@@ -1,3 +1,7 @@
+'use client';
+
+import { trackEvent } from '@/lib/tracking';
+
 type Props = {
   data: Record<string, unknown>;
   tenantId: string;
@@ -30,6 +34,7 @@ export default function CtaBlock({ data }: Props) {
                 : 'text-white'
             }`}
             style={!isPrimary ? { backgroundColor: 'var(--tenant-primary)' } : undefined}
+            onClick={() => trackEvent('ClickCTA', { label: buttonLabel, href: buttonHref, position: 'cta_block' })}
           >
             {buttonLabel}
           </a>

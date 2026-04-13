@@ -14,6 +14,28 @@ export type PageMeta = {
   seoDescription: string;
 };
 
+export type ThemeColors = {
+  primary: string;
+  headingText: string;
+  bodyText: string;
+  buttonText: string;
+  background: string;
+  heroOverlay: string;
+  heroGradientFrom: string;
+  heroGradientTo: string;
+};
+
+export const DEFAULT_THEME: ThemeColors = {
+  primary: '#a28b5d',
+  headingText: '#ffffff',
+  bodyText: '#ffffffb3',
+  buttonText: '#ffffff',
+  background: '#ffffff',
+  heroOverlay: '#00000080',
+  heroGradientFrom: '#a28b5d',
+  heroGradientTo: '#1a1a1a',
+};
+
 export type DragState = {
   dragIndex: number;
   overIndex: number;
@@ -48,6 +70,8 @@ export type EditorContextType = {
   dragState: DragState;
   setDragState: (state: DragState) => void;
   canvasRef: React.RefObject<HTMLDivElement | null>;
+  theme: ThemeColors;
+  setTheme: (t: ThemeColors) => void;
 };
 
 export const EditorContext = createContext<EditorContextType | null>(null);

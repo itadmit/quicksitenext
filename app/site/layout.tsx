@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import TenantHeader from '@/components/tenant/TenantHeader';
 import TenantFooter from '@/components/tenant/TenantFooter';
 import TenantPopupHost from '@/components/tenant/PopupHost';
+import TrackPageView from '@/components/tenant/TrackPageView';
 
 async function resolveTenant() {
   const h = await headers();
@@ -66,6 +67,19 @@ export default async function TenantSiteLayout({
 
   const primaryColor = settings?.primaryColor || '#a28b5d';
 
+  let themeVars: Record<string, string> = {};
+  try {
+    const parsed = JSON.parse(settings?.themeJson || '{}');
+    if (parsed.primary) themeVars['--tenant-primary'] = parsed.primary;
+    if (parsed.headingText) themeVars['--theme-heading'] = parsed.headingText;
+    if (parsed.bodyText) themeVars['--theme-body'] = parsed.bodyText;
+    if (parsed.buttonText) themeVars['--theme-btn-text'] = parsed.buttonText;
+    if (parsed.background) themeVars['--theme-bg'] = parsed.background;
+    if (parsed.heroOverlay) themeVars['--theme-overlay'] = parsed.heroOverlay;
+    if (parsed.heroGradientFrom) themeVars['--theme-grad-from'] = parsed.heroGradientFrom;
+    if (parsed.heroGradientTo) themeVars['--theme-grad-to'] = parsed.heroGradientTo;
+  } catch { /* use defaults */ }
+
   const popups = tenant.popups.map((p) => ({
     id: p.id,
     enabled: p.enabled,
@@ -87,7 +101,7 @@ export default async function TenantSiteLayout({
   return (
     <div
       className="flex min-h-screen flex-col font-sans text-charcoal"
-      style={{ '--tenant-primary': primaryColor } as React.CSSProperties}
+      style={{ '--tenant-primary': primaryColor, ...themeVars } as React.CSSProperties}
     >
       <TenantHeader
         siteName={settings?.siteName || tenant.name}
@@ -105,17 +119,61 @@ export default async function TenantSiteLayout({
       />
 
       <TenantPopupHost popups={popups} />
+      <TrackPageView />
 
       {settings?.customCss ? (
         <style dangerouslySetInnerHTML={{ __html: settings.customCss }} />
       ) : null}
 
-      {settings?.analyticsId && (
+      {/* Google Tag Manager */}
+      {settings?.gtmId && (
+        <>
+          <script dangerouslySetInnerHTML={{ __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${settings.gtmId}');` }} />
+          <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${settings.gtmId}`} height="0" width="0" style={{ display: 'none', visibility: 'hidden' }} /></noscript>
+        </>
+      )}
+
+      {/* Google Analytics (standalone, without GTM) */}
+      {settings?.analyticsId && !settings?.gtmId && (
         <>
           <script async src={`https://www.googletagmanager.com/gtag/js?id=${settings.analyticsId}`} />
           <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${settings.analyticsId}');` }} />
         </>
       )}
+
+      {/* Facebook Pixel */}
+      {settings?.fbPixelId && (
+        <>
+          <script dangerouslySetInnerHTML={{ __html: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${settings.fbPixelId}');fbq('track','PageView');` }} />
+          <noscript><img height="1" width="1" style={{ display: 'none' }} src={`https://www.facebook.com/tr?id=${settings.fbPixelId}&ev=PageView&noscript=1`} alt="" /></noscript>
+        </>
+      )}
+
+      {/* Custom head code */}
+      {settings?.customHeadCode && (
+        <script dangerouslySetInnerHTML={{ __html: settings.customHeadCode }} />
+      )}
+
+      {/* QS Tracking Events Script */}
+      <script dangerouslySetInnerHTML={{ __html: `
+        window.qsTrack=function(eventName,params){
+          params=params||{};
+          try{
+            if(typeof fbq==='function'){
+              if(eventName==='Lead')fbq('track','Lead',params);
+              else if(eventName==='ViewContent')fbq('track','ViewContent',params);
+              else fbq('trackCustom',eventName,params);
+            }
+          }catch(e){}
+          try{
+            if(typeof gtag==='function'){
+              gtag('event',eventName,params);
+            } else if(window.dataLayer){
+              window.dataLayer.push({event:eventName,...params});
+            }
+          }catch(e){}
+        };
+      `}} />
     </div>
   );
 }

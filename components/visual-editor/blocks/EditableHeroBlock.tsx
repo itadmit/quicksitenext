@@ -10,7 +10,7 @@ type Props = {
 };
 
 function btnClasses(variant: string) {
-  const base = 'inline-block px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.15em] text-white transition';
+  const base = 'inline-block px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.15em] transition';
   switch (variant) {
     case 'outline':
       return `${base} border border-white/30 hover:border-white/60`;
@@ -21,9 +21,11 @@ function btnClasses(variant: string) {
   }
 }
 
-function btnStyle(variant: string) {
-  if (variant === 'filled' || !variant) return { backgroundColor: 'var(--tenant-primary)' };
-  return undefined;
+function btnStyle(variant: string): React.CSSProperties {
+  if (variant === 'filled' || !variant) {
+    return { backgroundColor: 'var(--tenant-primary)', color: 'var(--theme-btn-text)' };
+  }
+  return { color: 'var(--theme-btn-text)' };
 }
 
 export default function EditableHeroBlock({ data, onChange }: Props) {
@@ -45,9 +47,13 @@ export default function EditableHeroBlock({ data, onChange }: Props) {
   return (
     <section
       className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-6 py-24"
-      style={bg ? { backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: 'linear-gradient(135deg, var(--tenant-primary) 0%, #1a1a1a 100%)' }}
+      style={
+        bg
+          ? { backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+          : { background: 'linear-gradient(135deg, var(--theme-grad-from) 0%, var(--theme-grad-to) 100%)' }
+      }
     >
-      {bg && <div className="absolute inset-0 bg-black/50" />}
+      {bg && <div className="absolute inset-0" style={{ backgroundColor: 'var(--theme-overlay)' }} />}
 
       <button
         onClick={handleBgChange}
@@ -63,15 +69,17 @@ export default function EditableHeroBlock({ data, onChange }: Props) {
           value={title}
           onChange={(v) => update('title', v)}
           tag="h1"
-          className="font-noto text-4xl font-black leading-tight text-white md:text-6xl"
+          className="font-noto text-4xl font-black leading-tight md:text-6xl"
           placeholder="כותרת ראשית"
+          style={{ color: 'var(--theme-heading)' }}
         />
         <EditableText
           value={subtitle}
           onChange={(v) => update('subtitle', v)}
           tag="p"
-          className="mt-4 text-lg text-white/70 md:text-xl"
+          className="mt-4 text-lg md:text-xl"
           placeholder="תת כותרת"
+          style={{ color: 'var(--theme-body)' }}
         />
         {(btn1Label || btn2Label || true) && (
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -80,8 +88,9 @@ export default function EditableHeroBlock({ data, onChange }: Props) {
                 value={btn1Label}
                 onChange={(v) => update('primaryBtnLabel', v)}
                 tag="span"
-                className="text-white"
+                className=""
                 placeholder="טקסט כפתור"
+                style={{ color: 'inherit' }}
               />
             </div>
             {(btn2Label || true) && (
@@ -90,8 +99,9 @@ export default function EditableHeroBlock({ data, onChange }: Props) {
                   value={btn2Label}
                   onChange={(v) => update('secondaryBtnLabel', v)}
                   tag="span"
-                  className="text-white"
+                  className=""
                   placeholder="כפתור משני"
+                  style={{ color: 'inherit' }}
                 />
               </div>
             )}

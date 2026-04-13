@@ -333,8 +333,12 @@ model SiteSettings {
   primaryColor       String  @default("#a28b5d")
   footerText         String  @default("")
   socialLinks        String  @default("[]") // JSON array
+  themeJson          String  @default("{}")
   customCss          String  @default("")
   analyticsId        String  @default("")
+  fbPixelId          String  @default("")
+  gtmId              String  @default("")
+  customHeadCode     String  @default("")
   defaultSeoTitle    String  @default("")
   defaultSeoDesc     String  @default("")
 

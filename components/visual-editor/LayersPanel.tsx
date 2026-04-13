@@ -85,12 +85,12 @@ export default function LayersPanel({ onToggle }: Props) {
   }, []);
 
   return (
-    <div className="flex h-full w-56 flex-col">
+    <div className="flex h-full w-64 flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2.5">
         <div className="flex items-center gap-1.5">
           <Layers className="h-3.5 w-3.5 text-slate-400" />
-          <span className="text-[11px] font-semibold text-navy">שכבות</span>
+          <span className="text-[12px] font-semibold text-navy">שכבות</span>
           <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
             {blocks.length}
           </span>
@@ -142,7 +142,7 @@ export default function LayersPanel({ onToggle }: Props) {
               >
                 <GripVertical className="h-3 w-3 flex-shrink-0 text-slate-300 opacity-0 transition-opacity group-hover:opacity-100 cursor-grab" />
                 <span className={`flex-shrink-0 ${isSelected ? 'text-ocean' : 'text-slate-400'}`}>{icon}</span>
-                <span className={`flex-1 truncate text-[11px] ${isSelected ? 'font-semibold' : 'font-medium'}`}>
+                <span className={`flex-1 truncate text-[12px] ${isSelected ? 'font-semibold' : 'font-medium'}`}>
                   {label}
                 </span>
                 <span className="text-[9px] text-slate-300 opacity-0 group-hover:opacity-100">
@@ -156,7 +156,7 @@ export default function LayersPanel({ onToggle }: Props) {
         {blocks.length === 0 && (
           <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
             <Layers className="h-6 w-6 text-slate-200" />
-            <p className="text-[11px] text-slate-400">העמוד ריק</p>
+            <p className="text-[12px] text-slate-400">העמוד ריק</p>
           </div>
         )}
       </div>

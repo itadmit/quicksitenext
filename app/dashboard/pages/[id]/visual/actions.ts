@@ -161,3 +161,132 @@ export async function updatePageMetaFromEditorAction(
   revalidatePath(`/dashboard/pages/${pageId}`);
   return { success: true };
 }
+
+/* ── Save tracking/pixels to SiteSettings ── */
+
+export async function saveTrackingAction(data: {
+  analyticsId: string;
+  fbPixelId: string;
+  gtmId: string;
+  customHeadCode: string;
+}) {
+  const user = await requireUser();
+  const tenantId = user.memberships[0]?.tenantId;
+  if (!tenantId) return { error: 'לא נמצא ארגון' };
+
+  await prisma.siteSettings.upsert({
+    where: { tenantId },
+    update: {
+      analyticsId: data.analyticsId,
+      fbPixelId: data.fbPixelId,
+      gtmId: data.gtmId,
+      customHeadCode: data.customHeadCode,
+    },
+    create: {
+      tenantId,
+      analyticsId: data.analyticsId,
+      fbPixelId: data.fbPixelId,
+      gtmId: data.gtmId,
+      customHeadCode: data.customHeadCode,
+    },
+  });
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+
+export async function fetchTrackingSettings() {
+  const user = await requireUser();
+  const tenantId = user.memberships[0]?.tenantId;
+  if (!tenantId) return null;
+
+  const settings = await prisma.siteSettings.findUnique({ where: { tenantId } });
+  if (!settings) return { analyticsId: '', fbPixelId: '', gtmId: '', customHeadCode: '' };
+
+  return {
+    analyticsId: settings.analyticsId,
+    fbPixelId: settings.fbPixelId,
+    gtmId: settings.gtmId,
+    customHeadCode: settings.customHeadCode,
+  };
+}
+
+/* ── Save theme to SiteSettings ── */
+
+export async function saveThemeAction(themeJson: string) {
+  const user = await requireUser();
+  const tenantId = user.memberships[0]?.tenantId;
+  if (!tenantId) return { error: 'לא נמצא ארגון' };
+
+  await prisma.siteSettings.upsert({
+    where: { tenantId },
+    update: { themeJson },
+    create: { tenantId, themeJson },
+  });
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+
+/* ── Linkable resources for smart link picker ── */
+
+export type LinkableItem = {
+  type: 'page' | 'post' | 'category' | 'custom';
+  label: string;
+  href: string;
+  status?: string;
+};
+
+export async function fetchLinkableItems(): Promise<LinkableItem[]> {
+  const user = await requireUser();
+  const tenantId = user.memberships[0]?.tenantId;
+  if (!tenantId) return [];
+
+  const [pages, posts, categories] = await Promise.all([
+    prisma.page.findMany({
+      where: { tenantId },
+      orderBy: { sortOrder: 'asc' },
+      select: { title: true, slug: true, status: true, isHome: true },
+    }),
+    prisma.post.findMany({
+      where: { tenantId },
+      orderBy: { createdAt: 'desc' },
+      select: { title: true, slug: true, status: true },
+    }),
+    prisma.category.findMany({
+      where: { tenantId },
+      orderBy: { name: 'asc' },
+      select: { name: true, slug: true },
+    }),
+  ]);
+
+  const items: LinkableItem[] = [];
+
+  for (const p of pages) {
+    items.push({
+      type: 'page',
+      label: p.title,
+      href: p.isHome ? '/' : `/${p.slug}`,
+      status: p.status,
+    });
+  }
+
+  for (const post of posts) {
+    items.push({
+      type: 'post',
+      label: post.title,
+      href: `/blog/${post.slug}`,
+      status: post.status,
+    });
+  }
+
+  for (const cat of categories) {
+    items.push({
+      type: 'category',
+      label: cat.name,
+      href: `/blog/category/${cat.slug}`,
+    });
+  }
+
+  return items;
+}

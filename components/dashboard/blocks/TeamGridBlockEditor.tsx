@@ -1,7 +1,8 @@
 'use client';
 
-import { Plus, X, User, Link as LinkIcon } from 'lucide-react';
+import { Plus, X, User } from 'lucide-react';
 import ImagePickerField from './ImagePickerField';
+import LinkPicker from './LinkPicker';
 
 type Member = { name: string; role: string; image: string; link: string };
 
@@ -63,13 +64,7 @@ export default function TeamGridBlockEditor({ data, onChange }: Props) {
                 <input value={member.role} onChange={(e) => updateMember(i, 'role', e.target.value)} className={input} />
               </div>
             </div>
-            <div>
-              <label className={label}>
-                <LinkIcon className="mb-px ml-1 inline h-2.5 w-2.5" />
-                קישור
-              </label>
-              <input value={member.link} onChange={(e) => updateMember(i, 'link', e.target.value)} dir="ltr" className={`${input} font-mono text-[11px]`} placeholder="https://..." />
-            </div>
+            <LinkPicker value={member.link} onChange={(url) => updateMember(i, 'link', url)} />
           </div>
         </div>
       ))}

@@ -40,7 +40,7 @@ const EDITABLE_BLOCKS: Record<string, React.ComponentType<{ data: Record<string,
 };
 
 export default function EditorCanvas({ tenantSettings }: Props) {
-  const { blocks, updateBlock, setSelectedBlockId, zoom, canvasRef } = useEditor();
+  const { blocks, updateBlock, setSelectedBlockId, zoom, canvasRef, theme } = useEditor();
 
   const handleCanvasClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -74,7 +74,16 @@ export default function EditorCanvas({ tenantSettings }: Props) {
           <DeviceFrame>
             <div
               className="font-sans text-charcoal"
-              style={{ '--tenant-primary': tenantSettings.primaryColor } as React.CSSProperties}
+              style={{
+                '--tenant-primary': theme.primary,
+                '--theme-heading': theme.headingText,
+                '--theme-body': theme.bodyText,
+                '--theme-btn-text': theme.buttonText,
+                '--theme-bg': theme.background,
+                '--theme-overlay': theme.heroOverlay,
+                '--theme-grad-from': theme.heroGradientFrom,
+                '--theme-grad-to': theme.heroGradientTo,
+              } as React.CSSProperties}
             >
               {/* Header preview */}
               <header className="relative z-10 border-b border-charcoal/5 bg-white/95 px-4 py-2 backdrop-blur-sm">

@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useActionState } from 'react';
 import { submitLeadAction, type SubmitLeadState } from '@/app/actions/submit-lead';
+import { trackEvent } from '@/lib/tracking';
 
 type Props = {
   data: Record<string, unknown>;
@@ -13,6 +15,12 @@ export default function ContactFormBlock({ data, tenantId }: Props) {
   const buttonLabel = (data.buttonLabel as string) || 'שליחה';
 
   const [state, formAction, pending] = useActionState<SubmitLeadState, FormData>(submitLeadAction, undefined);
+
+  useEffect(() => {
+    if (state?.success) {
+      trackEvent('Lead', { source: 'contact_form' });
+    }
+  }, [state?.success]);
 
   if (state?.success) {
     return (

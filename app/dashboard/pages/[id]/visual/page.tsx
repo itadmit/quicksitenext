@@ -33,6 +33,11 @@ export default async function VisualEditorPage({ params }: Props) {
 
   const siteSettings = tenant?.siteSettings;
 
+  let initialTheme = {};
+  try {
+    initialTheme = JSON.parse(siteSettings?.themeJson || '{}');
+  } catch { /* use defaults */ }
+
   return (
     <VisualEditor
       pageId={page.id}
@@ -49,6 +54,7 @@ export default async function VisualEditorPage({ params }: Props) {
         primaryColor: siteSettings?.primaryColor || '#a28b5d',
         logoUrl: siteSettings?.logoUrl || null,
       }}
+      initialTheme={initialTheme}
     />
   );
 }

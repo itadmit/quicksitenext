@@ -7,7 +7,7 @@ import {
   type BlockType,
 } from '@/lib/block-registry';
 import { autoSaveAction } from '@/app/dashboard/pages/[id]/visual/actions';
-import { EditorContext, type DeviceMode, type SaveStatus, type PageMeta, type DragState } from './EditorContext';
+import { EditorContext, type DeviceMode, type SaveStatus, type PageMeta, type DragState, type ThemeColors, DEFAULT_THEME } from './EditorContext';
 import { useEditorHistory } from './useEditorHistory';
 import EditorToolbar from './EditorToolbar';
 import EditorCanvas from './EditorCanvas';
@@ -26,13 +26,14 @@ type Props = {
   initialBlocks: Block[];
   pageMeta: PageMeta;
   tenantSettings: TenantSettings;
+  initialTheme?: Partial<ThemeColors>;
 };
 
 function genId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
-export default function VisualEditor({ pageId, initialBlocks, pageMeta: initialMeta, tenantSettings }: Props) {
+export default function VisualEditor({ pageId, initialBlocks, pageMeta: initialMeta, tenantSettings, initialTheme }: Props) {
   const { blocks, pushState, undo, redo, canUndo, canRedo } = useEditorHistory(initialBlocks);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [hoveredBlockId, setHoveredBlockId] = useState<string | null>(null);
@@ -43,6 +44,11 @@ export default function VisualEditor({ pageId, initialBlocks, pageMeta: initialM
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
   const [pageMeta, setPageMeta] = useState<PageMeta>(initialMeta);
   const [dragState, setDragState] = useState<DragState>(null);
+  const [theme, setTheme] = useState<ThemeColors>({
+    ...DEFAULT_THEME,
+    primary: tenantSettings.primaryColor,
+    ...initialTheme,
+  });
 
   const [imagePickerCallback, setImagePickerCallback] = useState<((url: string) => void) | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -235,6 +241,8 @@ export default function VisualEditor({ pageId, initialBlocks, pageMeta: initialM
     dragState,
     setDragState,
     canvasRef,
+    theme,
+    setTheme,
   };
 
   return (
@@ -246,7 +254,7 @@ export default function VisualEditor({ pageId, initialBlocks, pageMeta: initialM
           {/* Left panel - Layers */}
           <div
             className={`flex-shrink-0 border-l border-slate-200/80 bg-white transition-all duration-200 ease-out ${
-              leftPanelOpen ? 'w-56' : 'w-0'
+              leftPanelOpen ? 'w-64' : 'w-0'
             } overflow-hidden`}
           >
             <LayersPanel onToggle={() => setLeftPanelOpen(false)} />

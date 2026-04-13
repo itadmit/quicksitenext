@@ -183,7 +183,7 @@ export default function BlockWrapper({ blockId, index, children }: Props) {
               <div className="flex h-5 w-5 items-center justify-center rounded bg-ocean/10">
                 <MoreHorizontal className="h-3 w-3 text-ocean" />
               </div>
-              <span className="text-[11px] font-semibold text-navy">{blockLabel}</span>
+              <span className="text-[12px] font-semibold text-navy">{blockLabel}</span>
               <span className="text-[9px] text-slate-400">#{index + 1}</span>
             </div>
 

@@ -139,7 +139,7 @@ export default function ImagePicker({ onSelect, onClose }: Props) {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-[11px] font-semibold transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-[12px] font-semibold transition-colors cursor-pointer ${
                 tab === t.key
                   ? 'border-ocean text-ocean'
                   : 'border-transparent text-slate-400 hover:text-navy'
@@ -190,7 +190,7 @@ export default function ImagePicker({ onSelect, onClose }: Props) {
                   <div className="flex h-64 items-center justify-center">
                     <div className="flex flex-col items-center gap-2">
                       <Loader2 className="h-6 w-6 animate-spin text-ocean/40" />
-                      <p className="text-[11px] text-slate-400">טוען ספרייה...</p>
+                      <p className="text-[12px] text-slate-400">טוען ספרייה...</p>
                     </div>
                   </div>
                 ) : filteredItems.length === 0 ? (
@@ -201,13 +201,13 @@ export default function ImagePicker({ onSelect, onClose }: Props) {
                     <p className="text-sm font-medium text-slate-500">
                       {searchQuery ? 'לא נמצאו תמונות' : 'אין תמונות בספרייה'}
                     </p>
-                    <p className="mt-0.5 text-[11px] text-slate-400">
+                    <p className="mt-0.5 text-[12px] text-slate-400">
                       {searchQuery ? 'נסו חיפוש אחר' : 'העלו תמונה ראשונה'}
                     </p>
                     {!searchQuery && (
                       <button
                         onClick={() => setTab('upload')}
-                        className="mt-3 rounded-full bg-ocean px-4 py-2 text-[11px] font-semibold text-white hover:bg-ocean/85 transition-colors cursor-pointer"
+                        className="mt-3 rounded-full bg-ocean px-4 py-2 text-[12px] font-semibold text-white hover:bg-ocean/85 transition-colors cursor-pointer"
                       >
                         העלו תמונה
                       </button>
@@ -263,7 +263,7 @@ export default function ImagePicker({ onSelect, onClose }: Props) {
                     <Loader2 className="absolute inset-0 m-auto h-8 w-8 animate-spin text-ocean" />
                   </div>
                   <p className="text-sm font-medium text-navy">מעלה תמונה...</p>
-                  <p className="text-[11px] text-slate-400">רק רגע</p>
+                  <p className="text-[12px] text-slate-400">רק רגע</p>
                 </div>
               ) : (
                 <button
@@ -275,7 +275,7 @@ export default function ImagePicker({ onSelect, onClose }: Props) {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-navy">לחצו להעלאת תמונה</p>
-                    <p className="mt-1 text-[11px] text-slate-400">או גררו תמונה לכל מקום בחלון</p>
+                    <p className="mt-1 text-[12px] text-slate-400">או גררו תמונה לכל מקום בחלון</p>
                   </div>
                   <p className="text-[10px] text-slate-300">JPEG, PNG, GIF, WebP &middot; עד 5MB</p>
                 </button>
@@ -316,7 +316,7 @@ export default function ImagePicker({ onSelect, onClose }: Props) {
                   </div>
                   <button
                     onClick={() => onSelect(urlValue)}
-                    className="flex items-center gap-1.5 rounded-full bg-ocean px-5 py-2.5 text-[11px] font-semibold text-white hover:bg-ocean/85 transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 rounded-full bg-ocean px-5 py-2.5 text-[12px] font-semibold text-white hover:bg-ocean/85 transition-colors cursor-pointer"
                   >
                     <Check className="h-3 w-3" />
                     בחר תמונה

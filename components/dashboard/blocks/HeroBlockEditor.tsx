@@ -2,6 +2,7 @@
 
 import { Type, MousePointer, Camera, ChevronDown } from 'lucide-react';
 import ImagePickerField from './ImagePickerField';
+import LinkPicker from './LinkPicker';
 
 type Props = {
   data: Record<string, unknown>;
@@ -15,7 +16,6 @@ const BTN_VARIANTS = [
 ];
 
 const input = 'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-navy placeholder:text-slate-300 outline-none focus:border-ocean focus:ring-1 focus:ring-ocean/30 transition-colors';
-const label = 'mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60';
 
 export default function HeroBlockEditor({ data, onChange }: Props) {
   const update = (key: string, value: string) => onChange({ ...data, [key]: value });
@@ -24,11 +24,11 @@ export default function HeroBlockEditor({ data, onChange }: Props) {
     <div className="space-y-5">
       <Section icon={<Type className="h-3 w-3" />} title="תוכן">
         <div>
-          <label className={label}>כותרת</label>
+          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">כותרת</label>
           <input value={(data.title as string) ?? ''} onChange={(e) => update('title', e.target.value)} className={input} />
         </div>
         <div>
-          <label className={label}>תת כותרת</label>
+          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-navy/60">תת כותרת</label>
           <input value={(data.subtitle as string) ?? ''} onChange={(e) => update('subtitle', e.target.value)} className={input} />
         </div>
       </Section>
@@ -87,16 +87,11 @@ function BtnEditor({
   return (
     <div className="space-y-2.5">
       <span className="text-[10px] font-bold text-navy/80">{labelText}</span>
-      <div className="grid grid-cols-2 gap-2.5">
-        <div>
-          <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-navy/60">טקסט</label>
-          <input value={nameValue} onChange={(e) => onNameChange(e.target.value)} className={input} placeholder="טקסט" />
-        </div>
-        <div>
-          <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-navy/60">קישור</label>
-          <input value={hrefValue} onChange={(e) => onHrefChange(e.target.value)} dir="ltr" className={`${input} font-mono`} placeholder="#" />
-        </div>
+      <div>
+        <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-navy/60">טקסט</label>
+        <input value={nameValue} onChange={(e) => onNameChange(e.target.value)} className={input} placeholder="טקסט כפתור" />
       </div>
+      <LinkPicker value={hrefValue} onChange={onHrefChange} />
       <div>
         <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-navy/60">סגנון</label>
         <div className="relative">
