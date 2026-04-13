@@ -67,7 +67,7 @@ export default async function TenantSiteLayout({
 
   const primaryColor = settings?.primaryColor || '#a28b5d';
 
-  let themeVars: Record<string, string> = {};
+  const themeVars: Record<string, string> = {};
   try {
     const parsed = JSON.parse(settings?.themeJson || '{}');
     if (parsed.primary) themeVars['--tenant-primary'] = parsed.primary;

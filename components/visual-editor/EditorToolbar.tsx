@@ -6,7 +6,7 @@ import {
   ArrowRight, Undo2, Redo2, Monitor, Tablet, Smartphone,
   ZoomIn, ZoomOut, Settings, ExternalLink, Save, Check,
   AlertCircle, Loader2, ChevronLeft, Keyboard, X,
-  FileText, Globe, Search as SearchIcon, Code2,
+  FileText, Globe, Code2,
 } from 'lucide-react';
 import { blockLabels, type BlockType } from '@/lib/block-registry';
 import { useEditor, type DeviceMode } from './EditorContext';
@@ -36,7 +36,8 @@ const SHORTCUTS = [
   { keys: '⌘ + גלגלת', label: 'זום', group: 'תצוגה' },
 ];
 
-export default function EditorToolbar(_props: Props) {
+export default function EditorToolbar(_p: Props) {
+  void _p;
   const {
     blocks,
     undo, redo, canUndo, canRedo,
