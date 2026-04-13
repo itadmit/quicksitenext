@@ -9,7 +9,7 @@ import {
 type Props = {
   value: string;
   onChange: (value: string) => void;
-  tag?: keyof JSX.IntrinsicElements;
+  tag?: keyof React.JSX.IntrinsicElements;
   className?: string;
   placeholder?: string;
   richText?: boolean;
